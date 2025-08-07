@@ -1,6 +1,6 @@
 # 블루프린트 기초
 
-import { Callout, Steps, Tabs, Cards, Card } from 'nextra/components'
+import { Callout, Steps, Tabs } from 'nextra/components'
 
 <Callout type="success" emoji="🎯">
   블루프린트는 UE5의 비주얼 스크립팅 시스템입니다. 코드를 작성하지 않고도 게임 로직을 구현할 수 있습니다.
@@ -18,20 +18,17 @@ import { Callout, Steps, Tabs, Cards, Card } from 'nextra/components'
 
 ## 블루프린트 타입
 
-<Cards>
-  <Card title="Blueprint Class" href="#blueprint-class">
-    가장 일반적인 타입. 액터, 폰, 캐릭터 등 생성
-  </Card>
-  <Card title="Level Blueprint" href="#level-blueprint">
-    특정 레벨에만 적용되는 로직
-  </Card>
-  <Card title="Widget Blueprint" href="#widget-blueprint">
-    UI 요소 제작용
-  </Card>
-  <Card title="Animation Blueprint" href="#animation-blueprint">
-    캐릭터 애니메이션 제어
-  </Card>
-</Cards>
+### Blueprint Class
+가장 일반적인 타입. 액터, 폰, 캐릭터 등 생성
+
+### Level Blueprint
+특정 레벨에만 적용되는 로직
+
+### Widget Blueprint
+UI 요소 제작용
+
+### Animation Blueprint
+캐릭터 애니메이션 제어
 
 ## 튜토리얼 1: 회전하는 큐브
 
@@ -306,20 +303,17 @@ DefaultSceneRoot
 
 ### 블루프린트 간 통신 방법
 
-<Cards>
-  <Card title="Direct Reference" href="#direct">
-    다른 블루프린트 직접 참조
-  </Card>
-  <Card title="Cast" href="#cast">
-    특정 클래스로 변환
-  </Card>
-  <Card title="Interface" href="#interface">
-    인터페이스를 통한 통신
-  </Card>
-  <Card title="Event Dispatcher" href="#dispatcher">
-    이벤트 기반 통신
-  </Card>
-</Cards>
+#### Direct Reference
+다른 블루프린트 직접 참조
+
+#### Cast
+특정 클래스로 변환
+
+#### Interface
+인터페이스를 통한 통신
+
+#### Event Dispatcher
+이벤트 기반 통신
 
 ### 예제: 스위치와 라이트
 
