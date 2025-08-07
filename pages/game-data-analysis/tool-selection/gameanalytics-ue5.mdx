@@ -1,0 +1,478 @@
+import { Callout, Cards, Tabs, Steps, FileTree } from 'nextra/components'
+
+# GameAnalytics UE5 통합 가이드
+
+언리얼 엔진 5에서 GameAnalytics를 구현하는 완벽한 가이드
+
+<Callout type="info" emoji="🎮">
+  GameAnalytics는 무료로 사용 가능한 강력한 게임 분석 플랫폼입니다.
+  UE5와의 통합은 약 30분이면 완료할 수 있습니다.
+</Callout>
+
+## 사전 준비사항
+
+<Steps>
+### GameAnalytics 계정 생성
+[GameAnalytics.com](https://gameanalytics.com)에서 무료 계정 생성
+
+### 게임 등록
+대시보드에서 새 게임 추가 및 Game Key, Secret Key 획득
+
+### UE5 프로젝트 준비
+언리얼 엔진 5.0 이상 버전 확인
+</Steps>
+
+## SDK 설치
+
+### 방법 1: Marketplace 설치 (권장)
+
+<Steps>
+### Epic Games Launcher 실행
+언리얼 엔진 마켓플레이스 접속
+
+### GameAnalytics SDK 검색
+"GameAnalytics SDK" 검색 및 프로젝트에 추가
+
+### 프로젝트 재시작
+플러그인 활성화를 위해 프로젝트 재시작
+</Steps>
+
+### 방법 2: 수동 설치
+
+<FileTree>
+  <FileTree.Folder name="YourProject" defaultOpen>
+    <FileTree.Folder name="Plugins" defaultOpen>
+      <FileTree.Folder name="GameAnalytics">
+        <FileTree.File name="GameAnalytics.uplugin" />
+        <FileTree.Folder name="Source">
+          <FileTree.File name="GameAnalytics.cpp" />
+        </FileTree.Folder>
+      </FileTree.Folder>
+    </FileTree.Folder>
+  </FileTree.Folder>
+</FileTree>
+
+## 초기 설정
+
+### 1. 플러그인 활성화
+
+```cpp
+// YourProject.Build.cs
+public class YourProject : ModuleRules
+{
+    public YourProject(ReadOnlyTargetRules Target) : base(Target)
+    {
+        PublicDependencyModuleNames.AddRange(new string[] { 
+            "Core", 
+            "CoreUObject", 
+            "Engine", 
+            "GameAnalytics"  // GameAnalytics 모듈 추가
+        });
+    }
+}
+```
+
+### 2. GameAnalytics 초기화
+
+<Tabs items={['C++ 구현', 'Blueprint 구현']}>
+  <Tabs.Tab>
+    ```cpp
+    // GameInstance 또는 GameMode에서 초기화
+    #include "GameAnalytics.h"
+    
+    void UMyGameInstance::Init()
+    {
+        Super::Init();
+        
+        // GameAnalytics 초기화
+        UGameAnalytics::Initialize(
+            "YOUR_GAME_KEY",
+            "YOUR_SECRET_KEY"
+        );
+        
+        // 디버그 로그 활성화 (개발 중에만)
+        #if WITH_EDITOR
+            UGameAnalytics::SetEnabledInfoLog(true);
+            UGameAnalytics::SetEnabledVerboseLog(true);
+        #endif
+        
+        // 자동 세션 처리 활성화
+        UGameAnalytics::SetEnabledAutomaticSessionHandling(true);
+    }
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **1. GameInstance Blueprint 열기**
+    
+    **2. Event Init 노드에서:**
+    - `Initialize GameAnalytics` 노드 추가
+    - Game Key와 Secret Key 입력
+    - Build Version 설정 (예: "1.0.0")
+    
+    **3. 자동 세션 처리:**
+    - `Set Enabled Automatic Session Handling` 노드 추가
+    - Enabled = True 설정
+  </Tabs.Tab>
+</Tabs>
+
+## 이벤트 구현
+
+### 📊 진행도 이벤트 (Progression Events)
+
+레벨 시작, 완료, 실패 추적
+
+<Tabs items={['C++', 'Blueprint']}>
+  <Tabs.Tab>
+    ```cpp
+    // 레벨 시작
+    void AMyGameMode::OnLevelStart(int32 LevelNumber)
+    {
+        FString Progression01 = FString::Printf(TEXT("World_%02d"), CurrentWorld);
+        FString Progression02 = FString::Printf(TEXT("Level_%02d"), LevelNumber);
+        
+        UGameAnalytics::AddProgressionEventWithScore(
+            EGAProgressionStatus::Start,
+            Progression01,
+            Progression02,
+            "",
+            0  // 시작 시 점수는 0
+        );
+    }
+    
+    // 레벨 완료
+    void AMyGameMode::OnLevelComplete(int32 Score)
+    {
+        FString Progression01 = FString::Printf(TEXT("World_%02d"), CurrentWorld);
+        FString Progression02 = FString::Printf(TEXT("Level_%02d"), CurrentLevel);
+        
+        UGameAnalytics::AddProgressionEventWithScore(
+            EGAProgressionStatus::Complete,
+            Progression01,
+            Progression02,
+            "",
+            Score
+        );
+    }
+    
+    // 레벨 실패
+    void AMyGameMode::OnLevelFail()
+    {
+        UGameAnalytics::AddProgressionEvent(
+            EGAProgressionStatus::Fail,
+            FString::Printf(TEXT("World_%02d"), CurrentWorld),
+            FString::Printf(TEXT("Level_%02d"), CurrentLevel),
+            ""
+        );
+    }
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **레벨 시작 이벤트:**
+    1. `Add Progression Event` 노드 추가
+    2. Status = `Start`
+    3. Progression01 = "World_01"
+    4. Progression02 = "Level_05"
+    
+    **레벨 완료 이벤트:**
+    1. `Add Progression Event with Score` 노드 추가
+    2. Status = `Complete`
+    3. Score = 플레이어 점수 변수 연결
+  </Tabs.Tab>
+</Tabs>
+
+### 💰 비즈니스 이벤트 (Business Events)
+
+인앱 구매 추적
+
+```cpp
+// IAP 구매 완료
+void UMyStoreManager::OnPurchaseComplete(const FString& ProductId, float Price)
+{
+    UGameAnalytics::AddBusinessEvent(
+        "USD",           // 통화
+        Price * 100,     // 센트 단위로 변환
+        "IAP",           // 아이템 타입
+        ProductId,       // 아이템 ID
+        "Shop",          // 카트 타입
+        "",              // 영수증 (선택사항)
+        ""               // 서명 (선택사항)
+    );
+}
+```
+
+### 💎 리소스 이벤트 (Resource Events)
+
+가상 화폐 획득/사용 추적
+
+<Tabs items={['화폐 획득', '화폐 사용', '아이템 획득']}>
+  <Tabs.Tab>
+    ```cpp
+    // 재화 획득
+    void UMyEconomyManager::AddCurrency(const FString& Currency, int32 Amount, const FString& Source)
+    {
+        UGameAnalytics::AddResourceEvent(
+            EGAResourceFlowType::Source,  // 획득
+            Currency,                      // "Gems", "Gold" 등
+            Amount,
+            "Reward",                      // 아이템 타입
+            Source                         // "LevelComplete", "DailyBonus" 등
+        );
+        
+        // 실제 재화 추가 로직
+        PlayerCurrency[Currency] += Amount;
+    }
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```cpp
+    // 재화 사용
+    void UMyEconomyManager::SpendCurrency(const FString& Currency, int32 Amount, const FString& Item)
+    {
+        UGameAnalytics::AddResourceEvent(
+            EGAResourceFlowType::Sink,    // 사용
+            Currency,
+            Amount,
+            "Shop",                        // 아이템 타입
+            Item                           // 구매한 아이템
+        );
+        
+        // 실제 재화 차감 로직
+        PlayerCurrency[Currency] -= Amount;
+    }
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```cpp
+    // 아이템 획득
+    void UMyInventoryManager::AddItem(const FString& ItemId, int32 Quantity, const FString& Source)
+    {
+        UGameAnalytics::AddResourceEvent(
+            EGAResourceFlowType::Source,
+            "Items",
+            Quantity,
+            ItemId,
+            Source
+        );
+    }
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+### 🎨 디자인 이벤트 (Design Events)
+
+커스텀 게임플레이 이벤트
+
+```cpp
+// 커스텀 이벤트 예제
+void UMyGameAnalytics::TrackCustomEvent(const FString& EventName, float Value)
+{
+    // 단순 이벤트
+    UGameAnalytics::AddDesignEvent(EventName);
+    
+    // 값이 있는 이벤트
+    UGameAnalytics::AddDesignEventWithValue(EventName, Value);
+    
+    // 계층적 이벤트
+    FString HierarchicalEvent = FString::Printf(
+        TEXT("Kill:Enemy:%s"), 
+        *EnemyType
+    );
+    UGameAnalytics::AddDesignEventWithValue(HierarchicalEvent, DamageDealt);
+}
+
+// 실제 사용 예제
+void AMyCharacter::OnEnemyKilled(AEnemy* Enemy)
+{
+    FString EventName = FString::Printf(
+        TEXT("Combat:Kill:%s"), 
+        *Enemy->GetEnemyType()
+    );
+    
+    UGameAnalytics::AddDesignEventWithValue(
+        EventName, 
+        Enemy->GetExpReward()
+    );
+}
+```
+
+### ❌ 에러 이벤트 (Error Events)
+
+에러 및 예외 추적
+
+```cpp
+// 에러 로깅
+void UMyErrorHandler::LogError(const FString& Message, EGAErrorSeverity Severity)
+{
+    UGameAnalytics::AddErrorEvent(Severity, Message);
+}
+
+// 사용 예제
+void UMyNetworkManager::OnConnectionFailed(const FString& Reason)
+{
+    UGameAnalytics::AddErrorEvent(
+        EGAErrorSeverity::Error,
+        FString::Printf(TEXT("Network:ConnectionFailed:%s"), *Reason)
+    );
+}
+```
+
+## 사용자 속성 설정
+
+### 사용자 정보 설정
+
+```cpp
+void UMyAnalytics::SetUserProperties()
+{
+    // 사용자 ID 설정 (선택사항)
+    UGameAnalytics::SetCustomUserId("player_12345");
+    
+    // 사용자 속성
+    UGameAnalytics::SetGender(EGAGender::Male);
+    UGameAnalytics::SetBirthYear(1990);
+    
+    // 커스텀 차원 (최대 3개)
+    UGameAnalytics::SetCustomDimension01("Premium");  // 유저 타입
+    UGameAnalytics::SetCustomDimension02("Guild_A");  // 길드
+    UGameAnalytics::SetCustomDimension03("Server_1"); // 서버
+}
+```
+
+## A/B 테스팅 설정
+
+### Remote Config 사용
+
+```cpp
+void UMyGameManager::InitializeRemoteConfig()
+{
+    // Remote Config 초기화
+    UGameAnalytics::ConfigureAvailableCustomDimensions01(
+        {"Standard", "Premium", "VIP"}
+    );
+    
+    // 설정값 가져오기
+    FString ConfigValue = UGameAnalytics::GetRemoteConfigsValueAsString(
+        "difficulty_multiplier", 
+        "1.0"  // 기본값
+    );
+    
+    DifficultyMultiplier = FCString::Atof(*ConfigValue);
+}
+
+// Remote Config 준비 확인
+void UMyGameManager::OnRemoteConfigsReady()
+{
+    if (UGameAnalytics::IsRemoteConfigsReady())
+    {
+        // 설정값 적용
+        ApplyRemoteConfigs();
+    }
+}
+```
+
+## 디버깅 및 검증
+
+### 로그 레벨 설정
+
+```cpp
+#if WITH_EDITOR
+    // 개발 중 디버그 로그 활성화
+    UGameAnalytics::SetEnabledInfoLog(true);
+    UGameAnalytics::SetEnabledVerboseLog(true);
+    UGameAnalytics::SetEnabledManualSessionHandling(false);
+#else
+    // 릴리즈 빌드에서는 로그 비활성화
+    UGameAnalytics::SetEnabledInfoLog(false);
+    UGameAnalytics::SetEnabledVerboseLog(false);
+#endif
+```
+
+### 이벤트 검증 체크리스트
+
+<Steps>
+### SDK 초기화 확인
+로그에서 "GameAnalytics SDK initialized" 메시지 확인
+
+### 이벤트 전송 확인
+로그에서 이벤트 전송 성공 메시지 확인
+
+### 대시보드 확인
+GameAnalytics 대시보드에서 실시간 데이터 확인
+
+### 에러 처리
+에러 로그 확인 및 처리
+</Steps>
+
+## 최적화 팁
+
+<Callout type="info">
+  **성능 최적화 권장사항:**
+  
+  ✅ 이벤트 배칭: 자동으로 처리됨
+  ✅ 오프라인 지원: SDK가 자동으로 큐잉
+  ✅ 세션 관리: 자동 세션 처리 사용
+  ✅ 스레드 안전: 모든 API는 스레드 안전
+</Callout>
+
+## 일반적인 문제 해결
+
+### 이벤트가 대시보드에 표시되지 않음
+
+1. **Game Key/Secret Key 확인**
+2. **SDK 초기화 확인**
+3. **인터넷 연결 확인**
+4. **빌드 버전 설정 확인**
+
+### 크래시 발생
+
+```cpp
+// 안전한 초기화 패턴
+if (UGameAnalytics::IsInitialized())
+{
+    // 이벤트 전송
+    UGameAnalytics::AddProgressionEvent(...);
+}
+```
+
+### 메모리 누수
+
+- SDK는 자동으로 메모리 관리
+- 수동으로 정리할 필요 없음
+
+## 프로덕션 체크리스트
+
+<Steps>
+### 키 설정
+- [ ] Production Game Key 설정
+- [ ] Production Secret Key 설정
+
+### 빌드 설정
+- [ ] 빌드 버전 설정
+- [ ] 디버그 로그 비활성화
+
+### 이벤트 검증
+- [ ] 모든 핵심 이벤트 구현
+- [ ] 파라미터 검증
+- [ ] 에러 핸들링
+
+### 규정 준수
+- [ ] GDPR 동의 구현
+- [ ] 개인정보 제외 확인
+</Steps>
+
+## 다음 단계
+
+<Cards>
+  <Cards.Card title="📊 대시보드 활용" href="/game-data-analysis/dashboard" arrow>
+    GameAnalytics 대시보드 사용법
+  </Cards.Card>
+  <Cards.Card title="🔍 데이터 분석" href="/game-data-analysis/analysis" arrow>
+    수집된 데이터 분석하기
+  </Cards.Card>
+  <Cards.Card title="⚡ 고급 기능" href="/game-data-analysis/advanced" arrow>
+    코호트 분석, 퍼널 분석 등
+  </Cards.Card>
+</Cards>

@@ -1,0 +1,344 @@
+import { Callout, Steps, FileTree } from 'nextra/components'
+
+# 이벤트 설계 가이드
+
+효과적인 게임 분석을 위한 이벤트 택소노미 설계 완벽 가이드
+
+<Callout type="info" emoji="📊">
+  잘 설계된 이벤트 체계는 의미 있는 인사이트를 도출하는 핵심입니다.
+  초기 설계가 향후 분석의 품질을 결정합니다.
+</Callout>
+
+## 이벤트 설계 원칙
+
+### 1. 일관성 (Consistency)
+- 모든 이벤트에 통일된 명명 규칙 적용
+- 파라미터 타입과 형식 표준화
+- 팀 전체가 이해할 수 있는 명확한 구조
+
+### 2. 확장성 (Scalability)
+- 미래 기능 추가를 고려한 유연한 설계
+- 버전 관리 가능한 구조
+- 하위 호환성 유지
+
+### 3. 실용성 (Practicality)
+- 실제 의사결정에 필요한 데이터만 수집
+- 과도한 이벤트 추적 방지
+- 분석 가능한 수준의 세분화
+
+## 이벤트 카테고리
+
+### 핵심 이벤트 카테고리
+
+#### 📱 세션 이벤트
+- `session_start`: 게임 시작
+- `session_end`: 게임 종료
+- `session_pause`: 일시정지
+- `session_resume`: 재개
+
+#### 👤 사용자 이벤트
+- `user_signup`: 회원가입
+- `user_login`: 로그인
+- `user_logout`: 로그아웃
+- `profile_update`: 프로필 수정
+
+#### 🎮 게임플레이 이벤트
+- `level_start`: 레벨 시작
+- `level_complete`: 레벨 완료
+- `level_fail`: 레벨 실패
+- `achievement_unlock`: 업적 달성
+
+#### 💰 수익화 이벤트
+- `purchase_start`: 구매 시작
+- `purchase_complete`: 구매 완료
+- `purchase_fail`: 구매 실패
+- `ad_impression`: 광고 노출
+- `ad_click`: 광고 클릭
+
+#### 📊 진행도 이벤트
+- `tutorial_start`: 튜토리얼 시작
+- `tutorial_complete`: 튜토리얼 완료
+- `tutorial_skip`: 튜토리얼 스킵
+- `milestone_reach`: 마일스톤 도달
+
+## 이벤트 명명 규칙
+
+### 권장 명명 패턴
+
+```
+{category}_{action}_{target}
+```
+
+**예시:**
+- `gameplay_complete_level`
+- `ui_click_shopbutton`
+- `economy_spend_gems`
+
+### 명명 규칙 베스트 프랙티스
+
+<Steps>
+### 소문자 사용
+모든 이벤트명은 소문자로 작성
+
+### 언더스코어 구분
+단어 간 구분은 언더스코어(_) 사용
+
+### 동사-명사 순서
+action_object 형태로 구성
+
+### 축약어 자제
+명확성을 위해 전체 단어 사용
+
+### 일관된 용어
+프로젝트 전체에서 동일 용어 사용
+</Steps>
+
+## 파라미터 설계
+
+### 필수 공통 파라미터
+
+모든 이벤트에 포함되어야 할 기본 파라미터:
+
+```json
+{
+  "event_name": "level_complete",
+  "timestamp": "2024-01-15T10:30:00Z",
+  "user_id": "user_12345",
+  "session_id": "session_67890",
+  "platform": "android",
+  "app_version": "1.2.3",
+  "device_model": "Samsung Galaxy S21"
+}
+```
+
+### 이벤트별 커스텀 파라미터
+
+#### 레벨 완료 이벤트
+```json
+{
+  "event_name": "level_complete",
+  "level_id": "world_1_stage_3",
+  "level_name": "숲의 시작",
+  "score": 15000,
+  "stars": 3,
+  "time_spent": 180,
+  "deaths": 2,
+  "power_ups_used": ["shield", "double_jump"],
+  "currency_earned": {
+    "gold": 100,
+    "gems": 5
+  }
+}
+```
+
+#### 구매 이벤트
+```json
+{
+  "event_name": "purchase_complete",
+  "product_id": "gem_pack_large",
+  "product_name": "큰 보석 팩",
+  "price": 9.99,
+  "currency": "USD",
+  "payment_method": "google_play",
+  "discount_applied": true,
+  "discount_amount": 2.00
+}
+```
+
+## 이벤트 구현 예시
+
+### Unity C# 예시
+```csharp
+public class AnalyticsManager : MonoBehaviour
+{
+    public void TrackLevelComplete(int levelId, int score, int stars)
+    {
+        var eventParams = new Dictionary<string, object>
+        {
+            {"level_id", levelId},
+            {"score", score},
+            {"stars", stars},
+            {"time_spent", Time.timeSinceLevelLoad}
+        };
+        
+        Analytics.CustomEvent("level_complete", eventParams);
+    }
+    
+    public void TrackPurchase(string productId, float price, string currency)
+    {
+        var eventParams = new Dictionary<string, object>
+        {
+            {"product_id", productId},
+            {"price", price},
+            {"currency", currency},
+            {"timestamp", DateTime.UtcNow.ToString()}
+        };
+        
+        Analytics.CustomEvent("purchase_complete", eventParams);
+    }
+}
+```
+
+### Unreal Engine C++ 예시
+```cpp
+void UAnalyticsManager::TrackLevelComplete(int32 LevelId, int32 Score, int32 Stars)
+{
+    TArray<FAnalyticsEventAttribute> EventAttributes;
+    EventAttributes.Add(FAnalyticsEventAttribute(TEXT("level_id"), LevelId));
+    EventAttributes.Add(FAnalyticsEventAttribute(TEXT("score"), Score));
+    EventAttributes.Add(FAnalyticsEventAttribute(TEXT("stars"), Stars));
+    
+    FAnalytics::Get().GetDefaultConfiguredProvider()->
+        RecordEvent(TEXT("level_complete"), EventAttributes);
+}
+```
+
+## 이벤트 택소노미 템플릿
+
+### 프로젝트 이벤트 구조
+
+<FileTree>
+  <FileTree.Folder name="events" defaultOpen>
+    <FileTree.Folder name="session" defaultOpen>
+      <FileTree.File name="session_start.json" />
+      <FileTree.File name="session_end.json" />
+    </FileTree.Folder>
+    <FileTree.Folder name="gameplay" defaultOpen>
+      <FileTree.File name="level_start.json" />
+      <FileTree.File name="level_complete.json" />
+      <FileTree.File name="level_fail.json" />
+    </FileTree.Folder>
+    <FileTree.Folder name="economy" defaultOpen>
+      <FileTree.File name="currency_earn.json" />
+      <FileTree.File name="currency_spend.json" />
+      <FileTree.File name="item_purchase.json" />
+    </FileTree.Folder>
+    <FileTree.Folder name="progression" defaultOpen>
+      <FileTree.File name="tutorial_complete.json" />
+      <FileTree.File name="achievement_unlock.json" />
+      <FileTree.File name="milestone_reach.json" />
+    </FileTree.Folder>
+  </FileTree.Folder>
+</FileTree>
+
+## 이벤트 우선순위
+
+### P0 - 필수 이벤트 (Critical)
+반드시 구현해야 할 핵심 이벤트:
+- 세션 시작/종료
+- 신규 사용자 등록
+- 튜토리얼 완료
+- 첫 구매
+- 첫 레벨 완료
+
+### P1 - 중요 이벤트 (Important)
+초기 런칭 시 포함되어야 할 이벤트:
+- 레벨 진행도
+- 인앱 구매
+- 광고 시청
+- 주요 기능 사용
+
+### P2 - 보조 이벤트 (Nice to Have)
+점진적으로 추가할 이벤트:
+- 세부 UI 인터랙션
+- 소셜 기능 사용
+- 설정 변경
+- A/B 테스트 관련
+
+## 이벤트 검증 체크리스트
+
+<Steps>
+### 명명 규칙 확인
+- 일관된 네이밍 컨벤션
+- 이해하기 쉬운 이름
+- 중복 이벤트 없음
+
+### 파라미터 검증
+- 필수 파라미터 포함
+- 데이터 타입 일치
+- 값의 범위 적절성
+
+### 구현 테스트
+- 이벤트 발생 확인
+- 데이터 정확성 검증
+- 성능 영향 측정
+
+### 문서화
+- 이벤트 정의서 작성
+- 구현 가이드 제공
+- 변경 이력 관리
+
+### 팀 리뷰
+- 개발팀 검토
+- 분석팀 승인
+- 이해관계자 동의
+</Steps>
+
+## 흔한 실수와 해결책
+
+### ❌ 실수 1: 너무 많은 이벤트
+**문제**: 수백 개의 이벤트로 인한 분석 복잡도 증가
+**해결**: 핵심 KPI에 집중, 단계적 추가
+
+### ❌ 실수 2: 일관성 없는 명명
+**문제**: `levelComplete`, `level_end`, `stageFinish` 혼재
+**해결**: 명명 규칙 문서화 및 엄격한 적용
+
+### ❌ 실수 3: 파라미터 불일치
+**문제**: 같은 의미의 다른 파라미터명 사용
+**해결**: 글로벌 파라미터 딕셔너리 관리
+
+### ❌ 실수 4: 민감 정보 포함
+**문제**: 개인정보나 결제 정보 직접 전송
+**해결**: 익명화, 해싱, 별도 보안 채널 사용
+
+## 고급 이벤트 설계
+
+### 퍼널 분석을 위한 설계
+```json
+{
+  "funnel_name": "onboarding",
+  "funnel_step": 3,
+  "funnel_total_steps": 5,
+  "step_name": "character_selection",
+  "time_since_start": 120
+}
+```
+
+### 코호트 분석을 위한 설계
+```json
+{
+  "user_properties": {
+    "acquisition_date": "2024-01-01",
+    "acquisition_source": "facebook_ads",
+    "first_purchase_date": "2024-01-05",
+    "player_type": "whale",
+    "lifetime_value": 150.00
+  }
+}
+```
+
+### A/B 테스트를 위한 설계
+```json
+{
+  "experiment_id": "tutorial_v2",
+  "variant": "control",
+  "experiment_properties": {
+    "tutorial_length": "short",
+    "reward_type": "currency",
+    "skip_enabled": false
+  }
+}
+```
+
+<Callout type="success">
+  **팁**: 이벤트 설계는 반복적인 프로세스입니다. 초기에 완벽할 수 없으므로 버전 관리와 점진적 개선에 집중하세요.
+</Callout>
+
+## 다음 단계
+
+이벤트 설계를 완료했다면 실제 구현으로 넘어가세요:
+
+- [GameAnalytics UE5 통합 가이드](/game-data-analysis/tool-selection/gameanalytics-ue5)
+- [데이터 분석 대시보드 구축](/game-data-analysis)
+- [분석 도구 선택 가이드](/game-data-analysis/tool-selection)
