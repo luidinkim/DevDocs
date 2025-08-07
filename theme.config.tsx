@@ -17,6 +17,7 @@ const config = {
   sidebar: {
     defaultMenuCollapseLevel: 1,
     toggleButton: true,
+    autoCollapse: true,
   },
   toc: {
     backToTop: true,
@@ -35,7 +36,13 @@ const config = {
   i18n: [
     { locale: 'ko', text: '한국어' },
     { locale: 'en', text: 'English' }
-  ]
+  ],
+  darkMode: true,
+  themeSwitch: {
+    dark: '다크 모드',
+    light: '라이트 모드',
+    system: '시스템 설정'
+  }
 }
 
 export default config
