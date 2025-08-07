@@ -1,0 +1,86 @@
+# 웹 분석 도구
+
+웹사이트와 웹 애플리케이션을 위한 분석 솔루션
+
+## Google Analytics 4 (GA4)
+
+### 핵심 기능
+- 이벤트 기반 추적
+- 크로스 플랫폼 분석
+- 머신러닝 인사이트
+- 프라이버시 중심 설계
+
+### 구현
+```javascript
+// gtag.js 설정
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+
+// 커스텀 이벤트
+gtag('event', 'purchase', {
+  value: 25.00,
+  currency: 'USD',
+  items: [{
+    item_id: 'SKU123',
+    item_name: 'Product Name',
+    price: 25.00,
+    quantity: 1
+  }]
+});
+```
+
+## Mixpanel
+
+### 특징
+- 사용자 중심 분석
+- 강력한 세그먼테이션
+- A/B 테스팅
+- 리텐션 분석
+
+### 구현
+```javascript
+// 이벤트 추적
+mixpanel.track('Sign Up', {
+  'Sign Up Method': 'Google',
+  'Location': 'Header'
+});
+
+// 사용자 프로필 업데이트
+mixpanel.people.set({
+  '$email': 'user@example.com',
+  'Plan': 'Premium'
+});
+```
+
+## Amplitude
+
+### 강점
+- 제품 분석 특화
+- 행동 코호트
+- 예측 분석
+- 실험 플랫폼
+
+### 주요 차트
+- 퍼널 분석
+- 리텐션 차트
+- 경로 분석
+- 임팩트 분석
+
+## Matomo (구 Piwik)
+
+### 특징
+- 오픈소스
+- 데이터 소유권
+- GDPR 준수
+- 셀프 호스팅 가능
+
+## 선택 기준
+
+| 도구 | 장점 | 단점 | 적합한 경우 |
+|------|------|------|------------|
+| GA4 | 무료, Google 통합 | 복잡한 설정 | 일반 웹사이트 |
+| Mixpanel | 강력한 기능 | 비용 | 제품 분석 |
+| Amplitude | 제품 특화 | 학습 곡선 | SaaS 제품 |
+| Matomo | 데이터 소유권 | 유지보수 | 프라이버시 중시 |

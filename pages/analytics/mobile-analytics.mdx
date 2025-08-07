@@ -1,0 +1,110 @@
+# 모바일 앱 분석
+
+iOS와 Android 앱을 위한 분석 도구와 구현 가이드
+
+## Firebase Analytics
+
+### 플랫폼별 구현
+
+#### Android
+```kotlin
+// 이벤트 로깅
+Firebase.analytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT) {
+    param(FirebaseAnalytics.Param.ITEM_ID, "id123")
+    param(FirebaseAnalytics.Param.ITEM_NAME, "content_name")
+    param(FirebaseAnalytics.Param.CONTENT_TYPE, "image")
+}
+```
+
+#### iOS
+```swift
+// 이벤트 로깅
+Analytics.logEvent(AnalyticsEventSelectContent, parameters: [
+    AnalyticsParameterItemID: "id123",
+    AnalyticsParameterItemName: "content_name",
+    AnalyticsParameterContentType: "image"
+])
+```
+
+## Flurry Analytics
+
+### 특징
+- 무료 분석 서비스
+- Yahoo 제공
+- 크래시 분석
+- 사용자 세그먼트
+
+### 주요 기능
+- 실시간 메트릭
+- 커스텀 이벤트
+- 사용자 경로 분석
+- 푸시 알림 분석
+
+## AppsFlyer
+
+### 모바일 마케팅 분석
+- 어트리뷰션 추적
+- 딥링킹
+- 리타게팅 캠페인
+- 사기 방지
+
+### ROI 측정
+```javascript
+// 수익 이벤트
+AppsFlyerLib.getInstance().logEvent(
+    context,
+    AFInAppEventType.PURCHASE,
+    {
+        AFInAppEventParameterName.REVENUE: 12.99,
+        AFInAppEventParameterName.CURRENCY: "USD",
+        AFInAppEventParameterName.QUANTITY: 1
+    }
+);
+```
+
+## Crashlytics
+
+### 크래시 리포팅
+- 실시간 크래시 보고
+- 상세한 스택 트레이스
+- 사용자 영향도 분석
+- 자동 알림
+
+### 구현
+```swift
+// 커스텀 로그
+Crashlytics.crashlytics().log("User clicked purchase button")
+
+// 커스텀 키
+Crashlytics.crashlytics().setCustomValue("premium_user", forKey: "user_type")
+
+// 강제 크래시 (테스트용)
+fatalError("Test crash")
+```
+
+## App Annie (data.ai)
+
+### 시장 인텔리전스
+- 앱 스토어 순위
+- 경쟁사 분석
+- 시장 트렌드
+- 수익 추정
+
+## 성능 모니터링
+
+### 주요 지표
+- 앱 시작 시간
+- 화면 렌더링 시간
+- 네트워크 지연
+- 배터리 사용량
+- 메모리 사용량
+
+### 도구별 비교
+
+| 기능 | Firebase | Flurry | AppsFlyer | Crashlytics |
+|------|----------|--------|-----------|-------------|
+| 이벤트 추적 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐ |
+| 크래시 분석 | ⭐⭐⭐ | ⭐⭐⭐ | ⭐ | ⭐⭐⭐⭐⭐ |
+| 마케팅 분석 | ⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐ |
+| 무료 티어 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐⭐ |
+| 실시간 분석 | ⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |

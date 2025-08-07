@@ -1,0 +1,148 @@
+# 데이터 시각화
+
+데이터를 효과적으로 시각화하기 위한 도구와 기법
+
+## 시각화 라이브러리
+
+### D3.js
+가장 강력하고 유연한 데이터 시각화 라이브러리
+
+```javascript
+// 기본 막대 차트
+const data = [30, 86, 168, 281, 303, 365];
+
+d3.select(".chart")
+  .selectAll("div")
+  .data(data)
+  .enter().append("div")
+  .style("width", d => `${d}px`)
+  .text(d => d);
+```
+
+### Chart.js
+간단하고 반응형 차트 라이브러리
+
+```javascript
+// 라인 차트
+new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: ['1월', '2월', '3월', '4월', '5월', '6월'],
+    datasets: [{
+      label: '매출',
+      data: [12, 19, 3, 5, 2, 3],
+      borderColor: 'rgb(75, 192, 192)',
+      tension: 0.1
+    }]
+  }
+});
+```
+
+### Apache ECharts
+엔터프라이즈급 차트 솔루션
+
+```javascript
+// 파이 차트
+option = {
+  title: {
+    text: '사용자 분포',
+    left: 'center'
+  },
+  series: [{
+    type: 'pie',
+    radius: '50%',
+    data: [
+      {value: 1048, name: '모바일'},
+      {value: 735, name: '데스크톱'},
+      {value: 580, name: '태블릿'}
+    ]
+  }]
+};
+```
+
+## 대시보드 플랫폼
+
+### Grafana
+오픈소스 모니터링 및 관찰성 플랫폼
+
+#### 특징
+- 다양한 데이터소스 지원
+- 실시간 알림
+- 플러그인 생태계
+- 템플릿 변수
+
+### Kibana
+Elasticsearch 데이터 시각화
+
+#### 주요 기능
+- 로그 분석
+- 지리 공간 데이터
+- 머신러닝 통합
+- Canvas 대시보드
+
+### Tableau
+엔터프라이즈 BI 솔루션
+
+#### 강점
+- 드래그 앤 드롭 인터페이스
+- 고급 분석 기능
+- 스토리텔링
+- 모바일 최적화
+
+### Power BI
+Microsoft의 비즈니스 분석 도구
+
+#### 특징
+- Office 365 통합
+- 자연어 쿼리
+- AI 인사이트
+- 실시간 대시보드
+
+## 시각화 원칙
+
+### 차트 선택 가이드
+
+| 데이터 유형 | 추천 차트 | 사용 사례 |
+|------------|----------|----------|
+| 시계열 | 라인 차트 | 트렌드 분석 |
+| 비교 | 막대 차트 | 카테고리 비교 |
+| 구성 | 파이 차트 | 비율 표시 |
+| 분포 | 히스토그램 | 빈도 분석 |
+| 관계 | 산점도 | 상관관계 |
+| 지리 | 히트맵 | 지역별 데이터 |
+
+### 색상 사용 원칙
+1. **일관성**: 동일한 의미는 동일한 색상
+2. **접근성**: 색맹 사용자 고려
+3. **대비**: 충분한 명도 차이
+4. **의미**: 직관적인 색상 선택 (빨강=위험, 초록=안전)
+
+### 인터랙티브 요소
+- 툴팁으로 상세 정보 제공
+- 줌/팬 기능
+- 필터와 드릴다운
+- 실시간 업데이트
+
+## 실시간 모니터링
+
+### 메트릭 수집
+```javascript
+// Prometheus 메트릭
+const prometheus = require('prom-client');
+const httpRequestDuration = new prometheus.Histogram({
+  name: 'http_request_duration_seconds',
+  help: 'Duration of HTTP requests in seconds',
+  labelNames: ['method', 'route', 'status']
+});
+
+// 메트릭 기록
+httpRequestDuration
+  .labels(req.method, req.route.path, res.statusCode)
+  .observe(responseTime);
+```
+
+### 알림 설정
+- 임계값 기반 알림
+- 이상 탐지
+- 예측 알림
+- 에스컬레이션 정책
