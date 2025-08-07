@@ -1,13 +1,15 @@
-import { createNextraConfig } from 'nextra'
+import nextra from 'nextra'
 
-const withNextra = createNextraConfig({
+const withNextra = nextra({
   defaultShowCopyCode: true
 })
 
-export default withNextra({
+const nextConfig = {
   reactStrictMode: true,
   i18n: {
     locales: ['ko', 'en'],
     defaultLocale: 'ko'
   }
-})
+}
+
+export default withNextra(nextConfig)
