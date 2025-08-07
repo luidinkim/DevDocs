@@ -85,30 +85,64 @@ SDK 통합 및 이벤트 코드 구현
 - **소셜 기능 활용**: 친구 초대, 길드 가입률
 - **이벤트 참여율**: 특별 이벤트 참여도
 
-## 주요 분석 도구 비교
+## 주요 분석 도구 상세 비교
 
-| 도구 | 장점 | 단점 | 적합한 경우 |
-|------|------|------|------------|
-| **GameAnalytics** | 무료, 사용 쉬움 | 고급 기능 제한 | 인디/중소 개발사 |
-| **Unity Analytics** | Unity 통합 우수 | Unity 전용 | Unity 프로젝트 |
-| **Firebase** | Google 생태계 | 복잡한 설정 | 크로스 플랫폼 |
-| **Amplitude** | 강력한 분석 | 비용 높음 | 대규모 프로젝트 |
-| **mixpanel** | 실시간 분석 | 학습 곡선 | 라이브 서비스 |
+### 🎮 GameAnalytics
+**완전 무료의 게임 특화 분석 플랫폼**
+
+- **장점**: 무료, 간단한 SDK 통합, 실시간 대시보드, 업계 벤치마크 제공
+- **단점**: 고급 기능 제한, 365일 데이터 보관, 대시보드 커스터마이징 제한
+- **적합한 경우**: 인디 개발자, 중소 스튜디오, 첫 게임 출시, 예산 제약 프로젝트
+
+### 🎯 Unity Analytics
+**Unity 엔진 완벽 통합 솔루션**
+
+- **장점**: Unity 에디터 내장, Unity 서비스(Ads, IAP) 연동, 자동 이벤트 수집
+- **단점**: Unity 전용, MAU 기반 과금, Unity 생태계 내 제한
+- **가격**: Personal 무료(50K MAU), Plus $40/월(200K MAU), Pro 맞춤 가격
+- **적합한 경우**: Unity 기반 프로젝트, Unity 생태계 활용, 중소 모바일 게임
+
+### 🔥 Firebase Analytics
+**Google의 강력한 모바일 앱 플랫폼**
+
+- **장점**: 대부분 무료, Google 생태계 통합, BigQuery 연동, 크로스 플랫폼
+- **단점**: 복잡한 초기 설정, 모바일 중심, Google Cloud 학습 필요
+- **가격**: Spark 무료(기본), Blaze 사용량 기반
+- **적합한 경우**: 모바일 중심, Google 광고 활용, 대규모 데이터 분석
+
+### 📊 Amplitude
+**엔터프라이즈급 제품 분석 플랫폼**
+
+- **장점**: 업계 최고 수준 분석, 실시간 데이터, 팀 협업, A/B 테스트 내장
+- **단점**: 높은 비용, 복잡성, 소규모 프로젝트에 오버스펙
+- **가격**: Starter 무료(10만 이벤트/월), Growth $995/월, Enterprise 맞춤
+- **적합한 경우**: 대규모 라이브 서비스, 데이터 팀 보유, 성장 중인 스타트업
+
+## 도구 선택 가이드
+
+### 프로젝트 규모별 추천
+- **소규모 (MAU < 10K)**: GameAnalytics
+- **중규모 (10K < MAU < 100K)**: Firebase + GameAnalytics 
+- **대규모 (MAU > 100K)**: Amplitude 또는 자체 구축
+
+### 플랫폼별 추천
+- **모바일 게임**: Firebase (소규모) → Amplitude (대규모)
+- **PC/콘솔 게임**: GameAnalytics → 자체 구축
+- **Unity 프로젝트**: Unity Analytics + GameAnalytics
+- **Unreal 프로젝트**: GameAnalytics + 커스텀 솔루션
 
 <Callout type="warning">
   분석 도구 선택 시 데이터 프라이버시 규정(GDPR, COPPA 등)을 반드시 고려하세요.
 </Callout>
 
+
 ## 구현 가이드
 
 <Cards>
-  <Cards.Card title="분석 도구 선택" href="/game-data-analysis/tool-selection" arrow>
-    프로젝트에 맞는 최적의 분석 도구 선택 가이드
-  </Cards.Card>
   <Cards.Card title="이벤트 설계" href="/game-data-analysis/event-design" arrow>
     효과적인 이벤트 택소노미 설계 방법
   </Cards.Card>
-  <Cards.Card title="GameAnalytics + UE5" href="/game-data-analysis/tool-selection/gameanalytics-ue5" arrow>
+  <Cards.Card title="GameAnalytics + UE5" href="/game-data-analysis/gameanalytics-ue5" arrow>
     언리얼 엔진 5에서 GameAnalytics 구현하기
   </Cards.Card>
 </Cards>
@@ -161,13 +195,10 @@ SDK 통합 및 이벤트 코드 구현
 게임 데이터 분석을 시작할 준비가 되셨나요? 아래 가이드를 참고하여 첫 걸음을 내딛어보세요.
 
 <Cards>
-  <Cards.Card title="🎯 분석 도구 선택하기" href="/game-data-analysis/tool-selection" arrow>
-    프로젝트 규모와 예산에 맞는 도구 선택
-  </Cards.Card>
   <Cards.Card title="📊 이벤트 설계하기" href="/game-data-analysis/event-design" arrow>
     효과적인 이벤트 택소노미 구축
   </Cards.Card>
-  <Cards.Card title="🚀 구현 시작하기" href="/game-data-analysis/tool-selection/gameanalytics-ue5" arrow>
+  <Cards.Card title="🚀 GameAnalytics 구현하기" href="/game-data-analysis/gameanalytics-ue5" arrow>
     UE5 + GameAnalytics 실전 구현
   </Cards.Card>
 </Cards>
