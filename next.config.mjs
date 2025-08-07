@@ -6,10 +6,6 @@ const withNextra = nextra({
 
 const nextConfig = {
   reactStrictMode: true,
-  i18n: {
-    locales: ['ko', 'en'],
-    defaultLocale: 'ko'
-  },
   typescript: {
     ignoreBuildErrors: false
   },

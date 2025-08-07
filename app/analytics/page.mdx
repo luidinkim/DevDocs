@@ -1,0 +1,127 @@
+# 게임 분석 도구 완벽 가이드
+
+게임 개발과 운영에 필수적인 분석 도구들을 종합적으로 비교하고 분석합니다.
+
+## 주요 분석 플랫폼
+
+### 1. Unity Analytics
+Unity 엔진과 완벽하게 통합된 분석 솔루션
+
+**장점:**
+- Unity 에디터 내 직접 통합
+- 실시간 데이터 대시보드
+- 무료 티어 제공
+
+**단점:**
+- Unity 프로젝트에만 제한
+- 고급 기능은 유료
+
+### 2. GameAnalytics
+크로스 플랫폼 게임 분석 서비스
+
+**장점:**
+- 다양한 엔진 지원
+- 완전 무료
+- 사용하기 쉬운 SDK
+
+**단점:**
+- 커스터마이징 제한
+- 데이터 보관 기간 제한
+
+### 3. Firebase Analytics
+Google의 포괄적인 앱 분석 플랫폼
+
+**장점:**
+- Google 생태계와 통합
+- 강력한 이벤트 추적
+- 무제한 무료 분석
+
+**단점:**
+- 초기 설정 복잡
+- 게임 특화 기능 부족
+
+## 비교 매트릭스
+
+| 기능 | Unity Analytics | GameAnalytics | Firebase |
+|------|----------------|---------------|----------|
+| 가격 | 무료/유료 | 무료 | 무료 |
+| 실시간 분석 | ✅ | ✅ | ✅ |
+| 커스텀 이벤트 | ✅ | 제한적 | ✅ |
+| A/B 테스팅 | ✅ | ❌ | ✅ |
+| 데이터 내보내기 | 유료 | ✅ | ✅ |
+
+## 구현 예제
+
+### Unity Analytics 기본 설정
+
+```csharp
+using UnityEngine.Analytics;
+
+public class AnalyticsManager : MonoBehaviour
+{
+    void Start()
+    {
+        // 게임 시작 이벤트
+        Analytics.CustomEvent("gameStart", new Dictionary<string, object>
+        {
+            { "level", 1 },
+            { "difficulty", "normal" }
+        });
+    }
+    
+    public void TrackPurchase(string item, float price)
+    {
+        Analytics.Transaction(item, price, "USD");
+    }
+}
+```
+
+### GameAnalytics 이벤트 추적
+
+```csharp
+using GameAnalyticsSDK;
+
+public class GATracking : MonoBehaviour
+{
+    void Start()
+    {
+        GameAnalytics.Initialize();
+    }
+    
+    public void TrackProgress()
+    {
+        GameAnalytics.NewProgressionEvent(
+            GAProgressionStatus.Complete,
+            "world01",
+            "stage01"
+        );
+    }
+}
+```
+
+## 선택 가이드
+
+### 소규모 인디 게임
+- **추천**: GameAnalytics
+- **이유**: 무료, 간단한 설정, 기본 기능 충분
+
+### 중대규모 상업 게임
+- **추천**: Unity Analytics (Unity 사용 시) 또는 Firebase
+- **이유**: 확장성, 고급 기능, 데이터 통합
+
+### 멀티플랫폼 게임
+- **추천**: Firebase Analytics
+- **이유**: 크로스 플랫폼 지원, Google 서비스 통합
+
+## 모범 사례
+
+1. **이벤트 설계를 먼저**: 추적할 핵심 지표를 사전에 정의
+2. **개인정보 보호**: GDPR, CCPA 준수 확인
+3. **데이터 검증**: 구현 후 데이터 정확성 검증
+4. **정기적 리뷰**: 주기적으로 분석 데이터 검토 및 개선
+
+## 다음 단계
+
+- [분석 구현 튜토리얼](/tutorials/analytics-implementation)
+- [데이터 시각화 가이드](/guides/data-visualization)
+- [사용자 행동 분석](/guides/user-behavior)
