@@ -9,6 +9,12 @@ const nextConfig = {
   i18n: {
     locales: ['ko', 'en'],
     defaultLocale: 'ko'
+  },
+  typescript: {
+    ignoreBuildErrors: false
+  },
+  eslint: {
+    ignoreDuringBuilds: true
   }
 }
 

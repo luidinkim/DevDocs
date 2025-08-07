@@ -29,6 +29,12 @@ yarn-error.log*
 .env*.local
 .env
 
+# Local settings and sensitive files
+.claude/
+push-commands.txt
+GITHUB_PUSH_GUIDE.md
+*token*.txt
+
 # Vercel
 .vercel
 
