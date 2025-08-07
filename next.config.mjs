@@ -1,8 +1,11 @@
-import nextra from 'nextra'
+import createMDX from '@next/mdx'
 
-const withNextra = nextra({
-  defaultShowCopyCode: true,
-  mdxBaseDirectory: 'app'
+const withMDX = createMDX({
+  extension: /\.mdx?$/,
+  options: {
+    remarkPlugins: [],
+    rehypePlugins: [],
+  }
 })
 
 const nextConfig = {
@@ -16,4 +19,4 @@ const nextConfig = {
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx']
 }
 
-export default withNextra(nextConfig)
+export default withMDX(nextConfig)
