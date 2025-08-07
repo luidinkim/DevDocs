@@ -1,0 +1,333 @@
+# 기본 레벨 디자인
+
+import { Callout, Steps, Tabs, FileTree } from 'nextra/components'
+
+<Callout type="info" emoji="🏗️">
+  이 튜토리얼에서는 간단한 레벨을 만들면서 UE5의 기본 도구들을 익힙니다. 약 20분 정도 소요됩니다.
+</Callout>
+
+## 학습 목표
+
+- 기본 지오메트리 배치
+- 변환 도구 사용법 (이동, 회전, 스케일)
+- 조명 시스템 이해
+- 머티리얼 적용
+- 레벨 구성 기초
+
+## 준비 사항
+
+<Callout type="warning">
+  이 튜토리얼은 [첫 프로젝트 생성](/unreal-engine-5/first-project)을 완료했다고 가정합니다. StarterContent가 포함된 프로젝트가 필요합니다.
+</Callout>
+
+## 레벨 디자인 단계
+
+<Steps>
+
+### 새 레벨 생성
+
+1. **File** → **New Level**
+2. **Basic** 템플릿 선택 (기본 조명 포함)
+3. **File** → **Save Current Level As**
+4. 이름: "MyFirstLevel"로 저장
+
+### 바닥 만들기
+
+#### 큰 바닥 플랫폼 생성
+
+1. **Content Drawer** 열기 (Ctrl+Space)
+2. 경로: `StarterContent > Architecture`
+3. **Floor_400x400** 메시를 뷰포트로 드래그
+
+#### 변환 설정
+
+Details 패널에서 정확한 값 입력:
+
+| 속성 | X | Y | Z |
+|------|---|---|---|
+| **Location** | 0 | 0 | 0 |
+| **Rotation** | 0 | 0 | 0 |
+| **Scale** | 10 | 10 | 1 |
+
+<Callout type="tip">
+  Transform 값을 직접 입력하면 정확한 배치가 가능합니다. Tab 키로 필드 간 이동할 수 있습니다.
+</Callout>
+
+### 벽 배치하기
+
+#### 첫 번째 벽 생성
+
+1. `StarterContent > Architecture > Wall_400x400` 드래그
+2. **W 키**: 이동 도구 활성화
+3. 벽을 바닥 가장자리로 이동
+
+#### 빠른 복제 방법
+
+<Tabs items={['Alt + 드래그', 'Ctrl+D', '배열 복제']}>
+  <Tabs.Tab>
+    **Alt + 드래그 (추천)**
+    1. 벽 선택
+    2. Alt 키 누른 상태로 드래그
+    3. 그리드 스냅으로 정렬
+    4. 4면의 벽 생성
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **Ctrl+D 복제**
+    1. 오브젝트 선택
+    2. Ctrl+D로 복제
+    3. 이동 도구로 위치 조정
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **배열 복제 (고급)**
+    1. Edit → Duplicate Special
+    2. Count: 4
+    3. Rotation Z: 90도
+    4. Apply
+  </Tabs.Tab>
+</Tabs>
+
+#### 벽 회전하기
+
+```
+💡 E 키를 눌러 회전 모드로 전환
+- 빨간 원: X축 회전 (Pitch)
+- 초록 원: Y축 회전 (Roll)
+- 파란 원: Z축 회전 (Yaw)
+```
+
+### 조명 시스템 구성
+
+#### 주요 조명 타입
+
+<FileTree>
+  <FileTree.Folder name="Lights" defaultOpen>
+    <FileTree.File name="Directional Light (태양광)" />
+    <FileTree.File name="Point Light (전구)" />
+    <FileTree.File name="Spot Light (스포트라이트)" />
+    <FileTree.File name="Rect Light (면광원)" />
+    <FileTree.File name="Sky Light (환경광)" />
+  </FileTree.Folder>
+</FileTree>
+
+#### Directional Light 설정
+
+1. **Place Actors** 패널 → **Lights**
+2. **Directional Light** 드래그
+3. 설정값:
+
+| 속성 | 값 | 설명 |
+|------|-----|------|
+| **Intensity** | 10 lux | 밝기 |
+| **Light Color** | 따뜻한 주황색 | 햇빛 느낌 |
+| **Source Angle** | 1.0 | 부드러운 그림자 |
+| **Rotation** | (-45, 45, 0) | 오후 햇빛 각도 |
+
+#### Point Light 추가
+
+실내 조명 효과:
+
+1. **Point Light** 배치
+2. 위치: 방 중앙, 높이 300
+3. 설정:
+   - Intensity: 5000 cd
+   - Attenuation Radius: 1000
+   - Soft Source Radius: 20
+
+<Callout type="success">
+  **Lumen 실시간 GI**: UE5의 Lumen은 실시간으로 글로벌 일루미네이션을 계산합니다. 라이트를 이동하면 즉시 반영됩니다!
+</Callout>
+
+### 프롭(소품) 배치
+
+#### 가구 배치하기
+
+<Tabs items={['의자', '테이블', '장식품']}>
+  <Tabs.Tab>
+    **의자 배치**
+    1. `StarterContent > Props > SM_Chair`
+    2. 테이블 주변에 4개 배치
+    3. 각 의자 45도씩 회전
+    4. 그룹 선택: Ctrl+G
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **테이블 배치**
+    1. `StarterContent > Props > SM_TableRound`
+    2. 방 중앙 배치
+    3. Scale: (1.5, 1.5, 1.0)
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **장식품 추가**
+    - `SM_Lamp_Wall`: 벽 조명
+    - `SM_Couch`: 소파
+    - `SM_DoorFrame`: 문틀
+    - `SM_Statue`: 조각상
+  </Tabs.Tab>
+</Tabs>
+
+#### 스마트 배치 팁
+
+| 단축키 | 기능 |
+|--------|------|
+| **End** | 오브젝트를 바닥에 붙이기 |
+| **Alt+Shift+드래그** | 카메라 방향으로 이동 |
+| **Ctrl+End** | 피벗을 바닥으로 이동 |
+
+### 머티리얼 적용
+
+#### 머티리얼 찾기
+
+<FileTree>
+  <FileTree.Folder name="StarterContent" defaultOpen>
+    <FileTree.Folder name="Materials" defaultOpen>
+      <FileTree.File name="M_Brick_Clay_New" />
+      <FileTree.File name="M_Wood_Floor" />
+      <FileTree.File name="M_Metal_Gold" />
+      <FileTree.File name="M_Glass" />
+      <FileTree.File name="M_Concrete_Tiles" />
+    </FileTree.Folder>
+  </FileTree.Folder>
+</FileTree>
+
+#### 적용 방법
+
+<Steps>
+### 오브젝트 선택
+뷰포트나 아웃라이너에서 오브젝트 클릭
+
+### 머티리얼 찾기
+Content Browser에서 원하는 머티리얼 검색
+
+### 드래그 앤 드롭
+두 가지 방법:
+- Details 패널의 Materials 슬롯에 드롭
+- 뷰포트의 오브젝트에 직접 드롭
+
+### 다중 적용
+여러 오브젝트 선택 후 한 번에 적용 가능
+</Steps>
+
+#### 추천 머티리얼 조합
+
+| 오브젝트 | 추천 머티리얼 | 효과 |
+|----------|--------------|------|
+| 바닥 | M_Wood_Floor | 따뜻한 나무 질감 |
+| 벽 | M_Brick_Clay_New | 벽돌 질감 |
+| 기둥 | M_Concrete_Tiles | 콘크리트 느낌 |
+| 장식품 | M_Metal_Gold | 금속 광택 |
+
+### 포스트 프로세싱 볼륨
+
+화면 효과 추가:
+
+1. **Place Actors** → **Volumes**
+2. **Post Process Volume** 배치
+3. Details에서 **Infinite Extent** 체크
+4. 설정 조정:
+
+<Tabs items={['Exposure', 'Color Grading', 'Bloom']}>
+  <Tabs.Tab>
+    **자동 노출 설정**
+    - Min Brightness: 0.5
+    - Max Brightness: 2.0
+    - Speed Up: 3.0
+    - Speed Down: 1.0
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **색상 보정**
+    - Saturation: 1.2
+    - Contrast: 1.1
+    - Gamma: 1.0
+    - Gain: (1.0, 1.0, 1.0)
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **블룸 효과**
+    - Intensity: 1.0
+    - Threshold: 1.0
+    - Size: 4.0
+  </Tabs.Tab>
+</Tabs>
+
+</Steps>
+
+## 그리드와 스냅 설정
+
+### 그리드 스냅 옵션
+
+뷰포트 우측 상단 툴바:
+
+| 아이콘 | 기능 | 단축키 |
+|--------|------|---------|
+| 🔳 | 그리드 스냅 토글 | G |
+| 📐 | 회전 스냅 토글 | R |
+| 📏 | 스케일 스냅 토글 | S |
+
+### 스냅 값 설정
+
+- **이동 스냅**: 10, 50, 100 units
+- **회전 스냅**: 5°, 10°, 15°, 45°
+- **스케일 스냅**: 0.1, 0.25, 0.5
+
+## 레벨 최적화 팁
+
+<Callout type="warning">
+  성능을 위해 다음 사항들을 고려하세요:
+</Callout>
+
+### LOD (Level of Detail)
+
+- 먼 거리의 오브젝트는 자동으로 단순화
+- Static Mesh Editor에서 LOD 설정 가능
+
+### 라이트맵 해상도
+
+```
+낮음: 32
+중간: 64 (기본)
+높음: 128
+매우 높음: 256+
+```
+
+### Nanite 메시
+
+- 고폴리곤 메시에 자동 적용
+- Details → Nanite Settings에서 확인
+
+## 실습 과제
+
+다음 요소들을 포함한 방을 만들어보세요:
+
+- [ ] 4개의 벽과 바닥
+- [ ] 최소 2개의 다른 조명 타입
+- [ ] 5개 이상의 프롭 배치
+- [ ] 3개 이상의 다른 머티리얼
+- [ ] 창문 또는 문 추가
+- [ ] Post Process Volume 설정
+
+## 문제 해결
+
+<Tabs items={['오브젝트 선택 안됨', '그림자 문제', '머티리얼 안보임']}>
+  <Tabs.Tab>
+    **선택 문제 해결**
+    - T 키: 반투명 오브젝트 선택 토글
+    - H 키: 선택한 오브젝트 숨기기
+    - Ctrl+H: 모든 오브젝트 표시
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **그림자 품질**
+    - Project Settings → Rendering
+    - Shadow Map Method: Virtual Shadow Maps
+    - Contact Shadows 활성화
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **머티리얼 표시 문제**
+    - Shader 컴파일 대기
+    - 뷰포트 모드를 Lit으로 변경
+    - 머티리얼 인스턴스 재생성
+  </Tabs.Tab>
+</Tabs>
+
+## 다음 단계
+
+<Callout type="success">
+  기본 레벨 디자인을 완료했습니다! 이제 [블루프린트 기초](/unreal-engine-5/blueprint-basics)를 학습하여 상호작용을 추가해보세요.
+</Callout>

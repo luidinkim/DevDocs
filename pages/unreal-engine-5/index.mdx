@@ -1,0 +1,98 @@
+# 언리얼 엔진 5 초보자 가이드
+
+import { Callout, Cards, Card, Steps, Tabs } from 'nextra/components'
+
+<Callout type="info" emoji="🎮">
+  이 가이드는 언리얼 엔진 5를 처음 접하는 분들을 위해 작성되었습니다. 엔진의 기본 인터페이스부터 시작하여 첫 프로젝트를 만들고 기본적인 기능들을 활용하는 방법을 단계별로 안내합니다.
+</Callout>
+
+## 언리얼 엔진 5란?
+
+언리얼 엔진 5(UE5)는 Epic Games에서 개발한 최첨단 게임 엔진으로, 게임 개발뿐만 아니라 영화, 건축 시각화, 가상 프로덕션 등 다양한 분야에서 사용되고 있습니다.
+
+## 주요 특징
+
+<Cards>
+  <Card title="Nanite" href="#nanite">
+    영화 수준의 디테일을 실시간으로 렌더링하는 가상화된 지오메트리 시스템
+  </Card>
+  <Card title="Lumen" href="#lumen">
+    완전히 동적인 글로벌 일루미네이션과 반사를 제공하는 라이팅 시스템
+  </Card>
+  <Card title="World Partition" href="#world-partition">
+    대규모 오픈 월드를 효율적으로 관리하고 스트리밍하는 시스템
+  </Card>
+  <Card title="무료 라이선스" href="#license">
+    수익 100만 달러까지 로열티 없이 무료로 사용 가능
+  </Card>
+</Cards>
+
+## 시스템 요구사항
+
+<Tabs items={['최소 사양', '권장 사양', '최적 사양']}>
+  <Tabs.Tab>
+    - **OS**: Windows 10 64-bit
+    - **프로세서**: Quad-core Intel 또는 AMD, 2.5 GHz
+    - **메모리**: 8 GB RAM
+    - **그래픽**: DirectX 11 또는 12 호환
+    - **저장공간**: 100 GB
+  </Tabs.Tab>
+  <Tabs.Tab>
+    - **OS**: Windows 10/11 64-bit
+    - **프로세서**: 6-core Intel 또는 AMD, 3.0 GHz
+    - **메모리**: 16 GB RAM
+    - **그래픽**: NVIDIA GTX 1070 / AMD RX 5700 이상
+    - **저장공간**: 200 GB SSD
+  </Tabs.Tab>
+  <Tabs.Tab>
+    - **OS**: Windows 11 64-bit
+    - **프로세서**: 8-core Intel i7 또는 AMD Ryzen 7
+    - **메모리**: 32 GB RAM
+    - **그래픽**: NVIDIA RTX 3070 / AMD RX 6800 XT 이상
+    - **저장공간**: 500 GB NVMe SSD
+  </Tabs.Tab>
+</Tabs>
+
+## 학습 로드맵
+
+<Steps>
+### 엔진 설치 및 설정
+Epic Games Launcher를 통해 UE5를 설치하고 초기 설정을 완료합니다.
+
+### 인터페이스 익히기
+엔진의 주요 패널과 도구들의 위치와 기능을 파악합니다.
+
+### 첫 프로젝트 생성
+템플릿을 사용하여 첫 번째 프로젝트를 만들어봅니다.
+
+### 기본 레벨 디자인
+간단한 환경을 구성하면서 기본 도구 사용법을 익힙니다.
+
+### 블루프린트 학습
+비주얼 스크립팅으로 상호작용을 구현합니다.
+
+### 고급 기능 탐색
+머티리얼, 애니메이션, 파티클 등 심화 기능을 학습합니다.
+</Steps>
+
+## 이 가이드에서 다루는 내용
+
+- ✅ UE5 인터페이스 완벽 가이드
+- ✅ 첫 프로젝트 생성 및 설정
+- ✅ 기본 레벨 디자인 테크닉
+- ✅ 블루프린트 비주얼 스크립팅 입문
+- ✅ 실습 가능한 단계별 튜토리얼
+- ✅ 다음 학습 단계 안내
+
+<Callout type="success">
+  각 섹션은 실습 위주로 구성되어 있어, 따라하면서 자연스럽게 UE5의 핵심 기능을 익힐 수 있습니다.
+</Callout>
+
+## 빠른 시작
+
+바로 시작하고 싶다면 다음 섹션들을 순서대로 진행하세요:
+
+1. [인터페이스 레이아웃](/unreal-engine-5/interface-layout) - 엔진 UI 이해하기
+2. [첫 프로젝트 생성](/unreal-engine-5/first-project) - 프로젝트 설정과 실행
+3. [기본 레벨 디자인](/unreal-engine-5/level-design) - 첫 번째 레벨 만들기
+4. [블루프린트 기초](/unreal-engine-5/blueprint-basics) - 상호작용 구현하기

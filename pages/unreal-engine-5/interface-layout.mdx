@@ -1,0 +1,208 @@
+# 엔진 인터페이스 레이아웃
+
+import { Callout, Tabs, FileTree } from 'nextra/components'
+
+<Callout type="info">
+  UE5의 인터페이스는 모듈식으로 구성되어 있어 필요에 따라 패널을 이동하거나 숨길 수 있습니다.
+</Callout>
+
+## 주요 인터페이스 구성 요소
+
+UE5를 처음 실행하면 다음과 같은 6개의 주요 영역을 볼 수 있습니다:
+
+## 1. 메인 툴바 (Main Toolbar)
+
+화면 최상단에 위치한 메인 툴바는 자주 사용하는 기능들에 빠르게 접근할 수 있도록 합니다.
+
+### 주요 버튼들
+
+| 버튼 | 단축키 | 기능 |
+|------|--------|------|
+| **Save** | Ctrl+S | 현재 레벨 저장 |
+| **Save All** | Ctrl+Shift+S | 모든 변경사항 저장 |
+| **Content Drawer** | Ctrl+Space | 콘텐츠 브라우저 토글 |
+| **Blueprints** | - | 블루프린트 메뉴 |
+| **Play** | Alt+P | 게임 플레이 테스트 |
+| **Platforms** | - | 빌드 및 배포 설정 |
+
+## 2. 뷰포트 (Viewport)
+
+레벨을 시각적으로 편집하는 메인 작업 공간입니다.
+
+### 뷰포트 네비게이션
+
+<Tabs items={['마우스 조작', '키보드 단축키', '뷰포트 모드']}>
+  <Tabs.Tab>
+    - **우클릭 + 드래그**: 카메라 회전
+    - **우클릭 + WASD**: 카메라 이동
+    - **Alt + 좌클릭 드래그**: 오브젝트 중심 회전
+    - **Alt + 우클릭 드래그**: 줌 인/아웃
+    - **마우스 휠**: 줌 인/아웃
+    - **가운데 버튼 드래그**: 패닝
+  </Tabs.Tab>
+  <Tabs.Tab>
+    - **F**: 선택한 오브젝트에 포커스
+    - **G**: 게임 뷰 모드 토글
+    - **W**: 이동 도구 선택
+    - **E**: 회전 도구 선택
+    - **R**: 스케일 도구 선택
+    - **Spacebar**: 도구 순환
+    - **1-8**: 뷰포트 모드 변경
+  </Tabs.Tab>
+  <Tabs.Tab>
+    - **Lit**: 최종 렌더링 모습 (기본)
+    - **Unlit**: 라이팅 없이 텍스처만
+    - **Wireframe**: 메시 와이어프레임
+    - **Detail Lighting**: 라이팅만 표시
+    - **Lighting Only**: 라이팅 정보만
+    - **Light Complexity**: 라이트 복잡도
+    - **Shader Complexity**: 셰이더 복잡도
+  </Tabs.Tab>
+</Tabs>
+
+### 뷰포트 옵션
+
+<Callout type="tip">
+  뷰포트 좌측 상단의 햄버거 메뉴(☰)를 클릭하면 추가 옵션을 설정할 수 있습니다:
+  - 그리드 표시/숨기기
+  - 통계 정보 표시
+  - 뷰포트 레이아웃 변경
+</Callout>
+
+## 3. 월드 아웃라이너 (World Outliner)
+
+레벨에 있는 모든 액터(오브젝트)를 계층 구조로 표시합니다.
+
+### 주요 기능
+
+- 🔍 **검색**: 액터 이름으로 빠르게 찾기
+- 👁️ **가시성**: 눈 아이콘으로 표시/숨기기
+- 📁 **폴더**: 액터를 폴더로 정리
+- 🔒 **잠금**: 실수로 선택/편집 방지
+
+### 액터 관리 팁
+
+```
+💡 팁: 여러 액터를 선택하려면:
+- Ctrl + 클릭: 개별 선택/해제
+- Shift + 클릭: 범위 선택
+- Ctrl + A: 모두 선택
+```
+
+## 4. 디테일 패널 (Details Panel)
+
+선택한 액터의 모든 속성을 편집할 수 있습니다.
+
+### 주요 섹션
+
+<FileTree>
+  <FileTree.Folder name="Transform" defaultOpen>
+    <FileTree.File name="Location (위치)" />
+    <FileTree.File name="Rotation (회전)" />
+    <FileTree.File name="Scale (스케일)" />
+  </FileTree.Folder>
+  <FileTree.Folder name="Materials">
+    <FileTree.File name="Element 0" />
+    <FileTree.File name="Element 1" />
+  </FileTree.Folder>
+  <FileTree.Folder name="Lighting">
+    <FileTree.File name="Cast Shadow" />
+    <FileTree.File name="Affect Distance Field" />
+  </FileTree.Folder>
+  <FileTree.Folder name="Physics">
+    <FileTree.File name="Simulate Physics" />
+    <FileTree.File name="Mass" />
+  </FileTree.Folder>
+  <FileTree.Folder name="Collision">
+    <FileTree.File name="Collision Presets" />
+    <FileTree.File name="Collision Responses" />
+  </FileTree.Folder>
+</FileTree>
+
+## 5. 콘텐츠 브라우저 (Content Browser)
+
+프로젝트의 모든 에셋을 관리하는 파일 탐색기입니다.
+
+### 폴더 구조 예시
+
+<FileTree>
+  <FileTree.Folder name="Content" defaultOpen>
+    <FileTree.Folder name="StarterContent">
+      <FileTree.Folder name="Architecture" />
+      <FileTree.Folder name="Materials" />
+      <FileTree.Folder name="Props" />
+      <FileTree.Folder name="Particles" />
+    </FileTree.Folder>
+    <FileTree.Folder name="MyProject">
+      <FileTree.Folder name="Blueprints" />
+      <FileTree.Folder name="Maps" />
+      <FileTree.Folder name="UI" />
+    </FileTree.Folder>
+  </FileTree.Folder>
+</FileTree>
+
+### 에셋 필터링
+
+| 필터 타입 | 설명 |
+|-----------|------|
+| **Blueprints** | 블루프린트 클래스 |
+| **Static Mesh** | 3D 모델 |
+| **Materials** | 머티리얼과 텍스처 |
+| **Sounds** | 오디오 파일 |
+| **Animations** | 애니메이션 시퀀스 |
+
+## 6. 모드 패널 (Mode Panel)
+
+다양한 편집 도구와 모드를 제공합니다.
+
+<Tabs items={['Select', 'Landscape', 'Foliage', 'Modeling']}>
+  <Tabs.Tab>
+    **기본 선택 모드**
+    - 액터 선택 및 변환
+    - 기본 편집 도구
+    - 일반적인 레벨 편집
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **지형 편집 모드**
+    - 지형 생성 및 조각
+    - 페인팅 도구
+    - 침식 효과
+    - 스플라인 도구
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **폴리지 모드**
+    - 나무, 풀, 바위 배치
+    - 페인트 브러시
+    - 밀도 조절
+    - LOD 설정
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **모델링 모드**
+    - 기본 도형 생성
+    - 메시 편집
+    - UV 매핑
+    - 폴리곤 편집
+  </Tabs.Tab>
+</Tabs>
+
+## 인터페이스 커스터마이징
+
+### 레이아웃 저장
+
+1. **Window** 메뉴 → **Save Layout**
+2. 레이아웃 이름 지정
+3. 필요시 **Load Layout**으로 불러오기
+
+### 패널 도킹
+
+- 패널 탭을 드래그하여 위치 변경
+- 파란색 가이드라인이 도킹 위치 표시
+- 탭으로 그룹화 가능
+
+<Callout type="success">
+  인터페이스는 작업 스타일에 맞게 자유롭게 커스터마이징할 수 있습니다. 자주 사용하는 레이아웃을 저장해두면 효율적입니다.
+</Callout>
+
+## 다음 단계
+
+인터페이스에 익숙해졌다면, [첫 프로젝트 생성](/unreal-engine-5/first-project)으로 진행하세요!

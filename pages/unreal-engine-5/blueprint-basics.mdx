@@ -1,0 +1,436 @@
+# 블루프린트 기초
+
+import { Callout, Steps, Tabs, Cards, Card } from 'nextra/components'
+
+<Callout type="success" emoji="🎯">
+  블루프린트는 UE5의 비주얼 스크립팅 시스템입니다. 코드를 작성하지 않고도 게임 로직을 구현할 수 있습니다.
+</Callout>
+
+## 블루프린트란?
+
+블루프린트는 노드 기반의 비주얼 스크립팅 시스템으로, 다음과 같은 작업이 가능합니다:
+
+- 🎮 게임플레이 로직 구현
+- 🎬 애니메이션 제어
+- 🎨 UI 시스템 구축
+- 🔧 커스텀 도구 제작
+- 🌟 파티클 효과 제어
+
+## 블루프린트 타입
+
+<Cards>
+  <Card title="Blueprint Class" href="#blueprint-class">
+    가장 일반적인 타입. 액터, 폰, 캐릭터 등 생성
+  </Card>
+  <Card title="Level Blueprint" href="#level-blueprint">
+    특정 레벨에만 적용되는 로직
+  </Card>
+  <Card title="Widget Blueprint" href="#widget-blueprint">
+    UI 요소 제작용
+  </Card>
+  <Card title="Animation Blueprint" href="#animation-blueprint">
+    캐릭터 애니메이션 제어
+  </Card>
+</Cards>
+
+## 튜토리얼 1: 회전하는 큐브
+
+### 목표
+마우스를 가져가면 색이 변하고 계속 회전하는 인터랙티브 큐브를 만듭니다.
+
+<Steps>
+
+### 블루프린트 클래스 생성
+
+1. Content Browser에서 우클릭
+2. **Blueprint Class** 선택
+3. **Actor** 클래스 선택
+4. 이름: `BP_InteractiveCube`
+
+### 컴포넌트 추가
+
+블루프린트를 더블클릭하여 에디터 열기:
+
+#### Components 패널에서:
+
+1. **Add Component** → **Static Mesh**
+   - 이름: `CubeMesh`
+   - Static Mesh: `Cube` 선택
+   - Material: `M_Metal_Steel` 적용
+
+2. **Add Component** → **Box Collision**
+   - 이름: `TriggerBox`
+   - Box Extent: (60, 60, 60)
+   - Collision Presets: `OverlapAllDynamic`
+
+3. **Add Component** → **Point Light**
+   - 이름: `InteractionLight`
+   - Intensity: 0 (초기값)
+   - Light Color: 파란색
+
+### 이벤트 그래프 프로그래밍
+
+**Event Graph** 탭으로 이동:
+
+#### 회전 애니메이션
+
+<Tabs items={['노드 생성', '연결 방법', '값 설정']}>
+  <Tabs.Tab>
+    필요한 노드들:
+    - Event Tick
+    - Add Actor Local Rotation
+    - Make Rotator
+  </Tabs.Tab>
+  <Tabs.Tab>
+    1. **Event Tick** 노드 생성
+    2. 우클릭 → "Add Actor Local Rotation" 검색
+    3. 두 노드를 연결 (흰색 실행 핀)
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Delta Rotation 설정:
+    - X (Pitch): 0
+    - Y (Yaw): 1.0
+    - Z (Roll): 0
+  </Tabs.Tab>
+</Tabs>
+
+```
+Event Tick → Add Actor Local Rotation
+             └─ Delta Rotation: (0, 1, 0)
+```
+
+#### 마우스 오버 상호작용
+
+<Tabs items={['Begin Overlap', 'End Overlap', '추가 효과']}>
+  <Tabs.Tab>
+    **마우스 오버시 색상 변경:**
+    
+    1. TriggerBox 선택
+    2. Details → Events → On Component Begin Overlap 추가
+    3. 노드 연결:
+    ```
+    On Component Begin Overlap → Set Material
+                                 ├─ Target: CubeMesh
+                                 └─ Material: M_Metal_Gold
+    ```
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **마우스 아웃시 원래대로:**
+    
+    1. On Component End Overlap 추가
+    2. 노드 연결:
+    ```
+    On Component End Overlap → Set Material
+                              ├─ Target: CubeMesh
+                              └─ Material: M_Metal_Steel
+    ```
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **라이트 효과 추가:**
+    
+    Begin Overlap에 추가:
+    ```
+    → Set Intensity
+      ├─ Target: InteractionLight
+      └─ New Intensity: 5000
+    ```
+    
+    End Overlap에 추가:
+    ```
+    → Set Intensity
+      ├─ Target: InteractionLight
+      └─ New Intensity: 0
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+### 컴파일 및 저장
+
+1. 툴바의 **Compile** 버튼 클릭
+2. **Save** 버튼 클릭
+3. 에러가 없는지 확인
+
+### 레벨에 배치 및 테스트
+
+1. `BP_InteractiveCube`를 레벨로 드래그
+2. Play 모드 실행 (Alt+P)
+3. 큐브에 가까이 가서 상호작용 확인
+
+</Steps>
+
+## 튜토리얼 2: 점프 패드
+
+### 목표
+플레이어를 높이 점프시키는 패드를 만듭니다.
+
+<Steps>
+
+### 블루프린트 생성
+
+1. 새 Blueprint Class 생성
+2. Actor 선택
+3. 이름: `BP_JumpPad`
+
+### 컴포넌트 설정
+
+1. **Static Mesh** 추가
+   - Mesh: `Cylinder`
+   - Scale: (2, 2, 0.2)
+   - Material: `M_Tech_Hex_Tile`
+
+2. **Box Collision** 추가
+   - Box Extent: (100, 100, 50)
+   - Location Z: 50
+
+3. **Particle System** 추가
+   - Template: `P_Sparks`
+   - Auto Activate: false
+
+### 점프 로직 구현
+
+Event Graph에서:
+
+```
+On Component Begin Overlap (Box)
+→ Cast to Character
+  → Branch (Is Valid)
+    → Launch Character
+      ├─ Launch Velocity: (0, 0, 1500)
+      └─ Override XY/Z: true, true
+    → Activate (Particle System)
+    → Play Sound at Location
+      └─ Sound: S_Jumppad
+```
+
+#### 노드 상세 설명
+
+<Tabs items={['Cast to Character', 'Launch Character', 'Effects']}>
+  <Tabs.Tab>
+    **Cast to Character:**
+    - Other Actor를 Character로 변환
+    - 플레이어인지 확인
+    - 실패시 아무 동작 안함
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **Launch Character:**
+    - Launch Velocity: 점프 힘
+    - Z값 1500 = 높은 점프
+    - Override: 기존 속도 무시
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **시각/청각 효과:**
+    - Particle 활성화
+    - 사운드 재생
+    - 옵션: 카메라 쉐이크
+  </Tabs.Tab>
+</Tabs>
+
+</Steps>
+
+## 튜토리얼 3: 자동문
+
+### 목표
+플레이어가 접근하면 자동으로 열리는 문을 만듭니다.
+
+<Steps>
+
+### 블루프린트 생성
+
+1. Blueprint Class → Actor
+2. 이름: `BP_AutoDoor`
+
+### 컴포넌트 구조
+
+```
+DefaultSceneRoot
+├─ DoorFrame (Static Mesh)
+├─ DoorLeft (Static Mesh)
+├─ DoorRight (Static Mesh)
+├─ TriggerBox (Box Collision)
+└─ DoorSound (Audio Component)
+```
+
+### Timeline으로 부드러운 애니메이션
+
+1. Event Graph에서 우클릭
+2. **Add Timeline** 노드 생성
+3. Timeline 이름: `DoorAnimation`
+
+#### Timeline 설정
+
+더블클릭하여 Timeline 에디터 열기:
+
+1. **Add Float Track** → 이름: `DoorAlpha`
+2. 키프레임 추가:
+   - Time: 0.0, Value: 0.0
+   - Time: 1.0, Value: 90.0
+3. Length: 1.0초
+
+### 문 열기/닫기 로직
+
+<Tabs items={['열기 로직', '닫기 로직', '사운드 추가']}>
+  <Tabs.Tab>
+    ```
+    On Component Begin Overlap
+    → Play (Timeline)
+    
+    Timeline Update → Set Relative Rotation
+                     ├─ Target: DoorLeft
+                     └─ Rotation: (0, -DoorAlpha, 0)
+                     
+                   → Set Relative Rotation
+                     ├─ Target: DoorRight
+                     └─ Rotation: (0, DoorAlpha, 0)
+    ```
+  </Tabs.Tab>
+  <Tabs.Tab>
+    ```
+    On Component End Overlap
+    → Reverse (Timeline)
+    ```
+  </Tabs.Tab>
+  <Tabs.Tab>
+    ```
+    Timeline Started → Play (Audio Component)
+                      └─ Sound: Door_Open
+    
+    Timeline Finished → Play (Audio Component)
+                       └─ Sound: Door_Close
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+</Steps>
+
+## 블루프린트 통신
+
+### 블루프린트 간 통신 방법
+
+<Cards>
+  <Card title="Direct Reference" href="#direct">
+    다른 블루프린트 직접 참조
+  </Card>
+  <Card title="Cast" href="#cast">
+    특정 클래스로 변환
+  </Card>
+  <Card title="Interface" href="#interface">
+    인터페이스를 통한 통신
+  </Card>
+  <Card title="Event Dispatcher" href="#dispatcher">
+    이벤트 기반 통신
+  </Card>
+</Cards>
+
+### 예제: 스위치와 라이트
+
+<Steps>
+
+### 스위치 블루프린트
+
+```
+BP_Switch:
+- On Interact
+  → Get All Actors of Class (BP_Light)
+  → ForEach Loop
+    → Toggle Light (Interface Call)
+```
+
+### 라이트 블루프린트
+
+```
+BP_Light:
+- Toggle Light (Interface Event)
+  → Branch (Is Light On?)
+    → Set Visibility (Light Component)
+    → Set Is Light On (Boolean)
+```
+
+</Steps>
+
+## 디버깅 팁
+
+### Print String 노드
+
+개발 중 값 확인:
+
+```
+Event → Print String
+        ├─ In String: "Player Health: "
+        ├─ Duration: 2.0
+        └─ Text Color: Green
+```
+
+### 브레이크포인트
+
+1. 노드에 우클릭
+2. **Add Breakpoint** 선택
+3. Play 시 일시정지되어 값 확인 가능
+
+### 시각적 디버깅
+
+<Tabs items={['Draw Debug', 'Log 출력', 'Watch 변수']}>
+  <Tabs.Tab>
+    **Draw Debug 노드들:**
+    - Draw Debug Line
+    - Draw Debug Sphere
+    - Draw Debug Box
+    - Draw Debug String
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **Output Log 확인:**
+    - Window → Developer Tools → Output Log
+    - 카테고리별 필터링
+    - 에러/경고 확인
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **변수 모니터링:**
+    - 변수에 우클릭 → Watch
+    - 실시간 값 변화 확인
+  </Tabs.Tab>
+</Tabs>
+
+## 성능 최적화
+
+<Callout type="warning">
+  블루프린트 성능을 위한 중요 팁들:
+</Callout>
+
+### Tick 이벤트 최소화
+
+- Event Tick 대신 Timer 사용
+- 조건부 Tick 활성화
+- Set Actor Tick Enabled 활용
+
+### 효율적인 노드 사용
+
+| 피해야 할 것 | 대신 사용 |
+|-------------|-----------|
+| Get All Actors | 직접 참조 저장 |
+| Tick에서 Cast | Begin Play에서 한 번만 |
+| 복잡한 수학 in Tick | Timer 또는 Event 기반 |
+
+## 실습 과제
+
+다음 기능들을 구현해보세요:
+
+- [ ] 체력 시스템이 있는 타겟
+- [ ] 아이템 수집 시스템
+- [ ] 간단한 퍼즐 메커니즘
+- [ ] 움직이는 플랫폼
+- [ ] 텔레포트 시스템
+
+## 추가 학습 자료
+
+### 공식 문서
+- [Blueprint Visual Scripting](https://docs.unrealengine.com/5.0/ko/blueprints-visual-scripting-in-unreal-engine/)
+- [Blueprint Best Practices](https://docs.unrealengine.com/5.0/ko/blueprint-best-practices/)
+
+### 추천 프로젝트
+1. **인벤토리 시스템**: 아이템 수집/사용
+2. **대화 시스템**: NPC와 상호작용
+3. **퀘스트 시스템**: 목표 추적
+4. **세이브/로드**: 게임 진행 저장
+
+<Callout type="success">
+  블루프린트 기초를 완료했습니다! 이제 [다음 단계](/unreal-engine-5/next-steps)에서 더 고급 주제들을 탐색해보세요.
+</Callout>

@@ -1,0 +1,260 @@
+# 첫 프로젝트 생성하기
+
+import { Callout, Steps, Cards, Card, Tabs } from 'nextra/components'
+
+<Callout type="success" emoji="🚀">
+  이 튜토리얼에서는 UE5로 첫 번째 프로젝트를 생성하고 기본 설정을 이해합니다. 약 10분 정도 소요됩니다.
+</Callout>
+
+## 학습 목표
+
+- Epic Games Launcher를 통한 프로젝트 생성
+- 프로젝트 템플릿 선택 방법
+- 프로젝트 설정 이해
+- 첫 실행 및 테스트
+
+## 사전 준비
+
+<Steps>
+### Epic Games Launcher 설치
+[Epic Games](https://www.epicgames.com)에서 런처를 다운로드하고 설치합니다.
+
+### Unreal Engine 5 설치
+런처의 Library 탭에서 UE5를 설치합니다. (약 100GB 필요)
+
+### 계정 생성
+Epic Games 계정이 필요합니다. (무료)
+</Steps>
+
+## 프로젝트 생성 단계
+
+<Steps>
+
+### 언리얼 엔진 실행
+
+1. Epic Games Launcher 실행
+2. **Library** 탭 선택
+3. Unreal Engine 5.x 옆의 **Launch** 버튼 클릭
+4. Unreal Project Browser가 열립니다
+
+### 프로젝트 카테고리 선택
+
+<Cards>
+  <Card title="Games" href="#games">
+    **추천** - 게임 개발용 템플릿
+  </Card>
+  <Card title="Film, TV & Live Events" href="#film">
+    영상 제작용 템플릿
+  </Card>
+  <Card title="Architecture" href="#architecture">
+    건축 시각화용 템플릿
+  </Card>
+  <Card title="Automotive" href="#automotive">
+    자동차 디자인용 템플릿
+  </Card>
+</Cards>
+
+초보자는 **Games** 카테고리를 선택하세요.
+
+### 템플릿 선택
+
+<Tabs items={['Third Person (추천)', 'First Person', 'Top Down', 'Blank']}>
+  <Tabs.Tab>
+    **Third Person Template**
+    - ✅ 3인칭 캐릭터 컨트롤러 포함
+    - ✅ 기본 애니메이션 설정
+    - ✅ 카메라 시스템 구현
+    - ✅ 초보자 학습에 최적
+    
+    ```
+    추천 이유: 
+    - 즉시 플레이 가능한 캐릭터
+    - 다양한 메카닉 학습 가능
+    - 대부분의 게임에 응용 가능
+    ```
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **First Person Template**
+    - 1인칭 시점 캐릭터
+    - 기본 무기 시스템
+    - 발사체 블루프린트
+    - FPS 게임 제작용
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **Top Down Template**
+    - 탑다운 시점
+    - 마우스 클릭 이동
+    - RTS/MOBA 스타일
+    - 전략 게임용
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **Blank Template**
+    - 빈 프로젝트
+    - 최소한의 설정
+    - 완전한 커스터마이징
+    - 숙련자용
+  </Tabs.Tab>
+</Tabs>
+
+### 프로젝트 설정
+
+상세 설정 옵션들:
+
+| 설정 | 추천값 | 설명 |
+|------|--------|------|
+| **Target Platform** | Desktop | 개발 대상 플랫폼 |
+| **Quality Preset** | Maximum | 그래픽 품질 (나중에 조정 가능) |
+| **Starter Content** | ✅ Include | 학습용 기본 에셋 포함 |
+| **Raytracing** | ❌ Disable | RTX 카드 필요, 성능 영향 |
+
+<Callout type="info">
+  **Starter Content**는 다양한 머티리얼, 메시, 파티클 등 학습에 유용한 에셋들을 포함합니다. 초보자는 반드시 포함시키세요.
+</Callout>
+
+### 프로젝트 이름 및 위치
+
+```
+프로젝트 이름: MyFirstUE5Project
+위치: C:\UE5Projects\MyFirstUE5Project
+```
+
+<Callout type="warning">
+  프로젝트 경로에 한글이나 특수문자를 사용하지 마세요. 오류의 원인이 될 수 있습니다.
+</Callout>
+
+### 프로젝트 생성
+
+**Create** 버튼을 클릭하면:
+1. 프로젝트 파일 생성 (1-2분)
+2. 에디터 로딩
+3. 기본 레벨 열기
+
+</Steps>
+
+## 첫 실행 및 테스트
+
+### 인터페이스 확인
+
+프로젝트가 열리면 다음을 확인할 수 있습니다:
+
+- **뷰포트**: 기본 레벨이 표시됨
+- **콘텐츠 브라우저**: StarterContent 폴더
+- **월드 아웃라이너**: 레벨의 액터들
+- **디테일 패널**: 선택한 액터 속성
+
+### 플레이 테스트
+
+<Tabs items={['플레이 방법', '컨트롤', '플레이 모드 옵션']}>
+  <Tabs.Tab>
+    1. 툴바의 **Play** 버튼 클릭 (또는 **Alt+P**)
+    2. 뷰포트에서 게임이 실행됨
+    3. **Esc** 키로 종료
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **Third Person 템플릿 기본 컨트롤:**
+    - **W, A, S, D**: 이동
+    - **Space**: 점프
+    - **마우스**: 카메라 회전
+    - **Shift**: 달리기
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Play 버튼 옆 드롭다운 메뉴:
+    - **Selected Viewport**: 현재 뷰포트에서 실행
+    - **New Editor Window**: 새 창에서 실행
+    - **Standalone Game**: 독립 실행
+    - **Simulate**: 플레이어 없이 시뮬레이션
+  </Tabs.Tab>
+</Tabs>
+
+## 프로젝트 구조 이해하기
+
+### 폴더 구조
+
+```
+MyFirstUE5Project/
+├── Config/           # 프로젝트 설정 파일
+├── Content/          # 게임 에셋 (중요!)
+│   ├── StarterContent/
+│   └── ThirdPerson/
+├── Intermediate/     # 임시 파일 (무시)
+├── Saved/           # 저장된 데이터
+└── MyFirstUE5Project.uproject  # 프로젝트 파일
+```
+
+### 중요 폴더 설명
+
+| 폴더 | 용도 | 백업 필요 |
+|------|------|-----------|
+| **Content** | 모든 게임 에셋 | ✅ 필수 |
+| **Config** | 프로젝트 설정 | ✅ 필수 |
+| **Source** | C++ 소스 코드 | ✅ (C++ 사용시) |
+| **Intermediate** | 캐시 파일 | ❌ |
+| **Saved** | 로그, 백업 | ⚠️ 선택적 |
+
+## 프로젝트 저장
+
+<Callout type="error" emoji="⚠️">
+  작업 중 자주 저장하는 습관을 들이세요!
+</Callout>
+
+### 저장 단축키
+
+- **Ctrl + S**: 현재 레벨 저장
+- **Ctrl + Shift + S**: 모든 변경사항 저장
+- **Ctrl + Alt + S**: 다른 이름으로 저장
+
+### 자동 저장 설정
+
+1. **Edit** → **Editor Preferences**
+2. **Loading & Saving** → **Auto Save**
+3. 다음 옵션 활성화:
+   - Enable AutoSave ✅
+   - Save interval: 10분
+   - Save Maps ✅
+   - Save Content ✅
+
+## 문제 해결
+
+### 자주 발생하는 문제들
+
+<Tabs items={['실행 오류', '성능 문제', '저장 실패']}>
+  <Tabs.Tab>
+    **"Failed to open project"**
+    - 프로젝트 경로에 한글/특수문자 확인
+    - 관리자 권한으로 실행
+    - 엔진 버전 확인
+    
+    **"Shader compiling"**
+    - 첫 실행시 정상 (5-20분 소요)
+    - 백그라운드에서 진행됨
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **낮은 FPS**
+    - Scalability Settings 조정
+    - Engine Scalability → Medium 또는 Low
+    
+    **메모리 부족**
+    - 최소 16GB RAM 권장
+    - 다른 프로그램 종료
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **"Failed to save"**
+    - 디스크 공간 확인
+    - 파일 권한 확인
+    - 안티바이러스 예외 추가
+  </Tabs.Tab>
+</Tabs>
+
+## 학습 체크포인트 ✅
+
+프로젝트 생성을 완료했다면 다음을 확인하세요:
+
+- [ ] 프로젝트가 정상적으로 생성됨
+- [ ] Play 모드에서 캐릭터 조작 가능
+- [ ] 기본 인터페이스 위치 파악
+- [ ] 프로젝트 저장 완료
+- [ ] 자동 저장 설정
+
+<Callout type="success">
+  축하합니다! 첫 UE5 프로젝트를 성공적으로 생성했습니다. 이제 [기본 레벨 디자인](/unreal-engine-5/level-design)으로 진행하세요.
+</Callout>
