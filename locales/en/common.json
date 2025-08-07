@@ -1,0 +1,47 @@
+{
+  "navigation": {
+    "home": "Home",
+    "documentation": "Documentation",
+    "analytics": "Analytics Tools",
+    "about": "About",
+    "gettingStarted": "Getting Started",
+    "search": "Search..."
+  },
+  "home": {
+    "title": "Development Documentation Platform",
+    "subtitle": "A systematic platform for managing and sharing personal development materials and educational resources for students",
+    "getStarted": "Get Started",
+    "viewDocs": "View Documentation"
+  },
+  "features": {
+    "structure": {
+      "title": "Organized Structure",
+      "description": "Logically structured document hierarchy"
+    },
+    "search": {
+      "title": "Powerful Search",
+      "description": "Fast and accurate full-text search"
+    },
+    "darkMode": {
+      "title": "Dark Mode",
+      "description": "Eye-friendly dark theme support"
+    },
+    "multilingual": {
+      "title": "Multi-language Support",
+      "description": "Content in Korean and English"
+    },
+    "responsive": {
+      "title": "Responsive Design",
+      "description": "Optimized experience on all devices"
+    },
+    "performance": {
+      "title": "Fast Loading",
+      "description": "Quick page loads with static generation"
+    }
+  },
+  "footer": {
+    "copyright": "© 2025 DevDocs. All rights reserved.",
+    "github": "GitHub",
+    "contact": "Contact"
+  }
+}
