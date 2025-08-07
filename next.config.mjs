@@ -1,7 +1,8 @@
 import nextra from 'nextra'
 
 const withNextra = nextra({
-  defaultShowCopyCode: true
+  defaultShowCopyCode: true,
+  mdxBaseDirectory: 'app'
 })
 
 const nextConfig = {
@@ -11,7 +12,8 @@ const nextConfig = {
   },
   eslint: {
     ignoreDuringBuilds: true
-  }
+  },
+  pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx']
 }
 
 export default withNextra(nextConfig)
