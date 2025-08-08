@@ -242,21 +242,40 @@ void OnMatchStart()
   통화 코드는 반드시 ISO 4217 형식 사용 (USD, EUR, KRW 등)
 </Callout>
 
-```cpp
-// IAP 구매 완료
-void UMyStoreManager::OnPurchaseComplete(const FString& ProductId, float Price)
-{
-    UGameAnalytics::addBusinessEvent(
-        "USD",           // 통화
-        Price * 100,     // 센트 단위로 변환
-        "IAP",           // 아이템 타입
-        ProductId,       // 아이템 ID
-        "Shop",          // 카트 타입
-        "",              // 영수증 (선택사항)
-        ""               // 서명 (선택사항)
-    );
-}
-```
+<Tabs items={['C++ 구현', 'Blueprint 구현']}>
+  <Tabs.Tab>
+    ```cpp
+    // IAP 구매 완료
+    void UMyStoreManager::OnPurchaseComplete(const FString& ProductId, float Price)
+    {
+        UGameAnalytics::addBusinessEvent(
+            "USD",           // 통화
+            Price * 100,     // 센트 단위로 변환
+            "IAP",           // 아이템 타입
+            ProductId,       // 아이템 ID
+            "Shop",          // 카트 타입
+            "",              // 영수증 (선택사항)
+            ""               // 서명 (선택사항)
+        );
+    }
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **블루프린트 구현:**
+    
+    1. **Add Business Event** 노드 추가
+    2. **Currency**: "USD" (또는 해당 통화 코드)
+    3. **Amount**: 199 (센트 단위, $1.99의 경우)
+    4. **Item Type**: "IAP" (아이템 타입)
+    5. **Item ID**: "com.game.product_id" (상품 ID)
+    6. **Cart Type**: "Shop" (카트 타입)
+    
+    **영수증 검증 (선택사항):**
+    - Receipt 필드에 영수증 데이터
+    - Signature 필드에 서명 데이터
+  </Tabs.Tab>
+</Tabs>
 
 ### 💎 리소스 이벤트 (Resource Events)
 
@@ -267,7 +286,7 @@ void UMyStoreManager::OnPurchaseComplete(const FString& ProductId, float Price)
   주요 거래 시점에만 호출하여 성능 영향을 최소화하세요.
 </Callout>
 
-<Tabs items={['화폐 획득', '화폐 사용', '아이템 획득']}>
+<Tabs items={['화폐 획득', '화폐 사용', '아이템 획득', 'Blueprint']}>
   <Tabs.Tab>
     ```cpp
     // 재화 획득
@@ -311,7 +330,7 @@ void UMyStoreManager::OnPurchaseComplete(const FString& ProductId, float Price)
     // 아이템 획득
     void UMyInventoryManager::AddItem(const FString& ItemId, int32 Quantity, const FString& Source)
     {
-        UGameAnalytics::AddResourceEvent(
+        UGameAnalytics::addResourceEvent(
             EGAResourceFlowType::Source,
             "Items",
             Quantity,
@@ -320,6 +339,34 @@ void UMyStoreManager::OnPurchaseComplete(const FString& ProductId, float Price)
         );
     }
     ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **블루프린트 구현:**
+    
+    **재화 획득:**
+    1. **Add Resource Event** 노드 추가
+    2. **Flow Type**: `Source` (획득)
+    3. **Currency**: "Gems" 또는 "Gold" 등
+    4. **Amount**: 획득 수량
+    5. **Item Type**: "Reward" (아이템 타입)
+    6. **Item ID**: "LevelComplete" 또는 "DailyBonus" 등
+    
+    **재화 사용:**
+    1. **Add Resource Event** 노드 추가
+    2. **Flow Type**: `Sink` (사용)
+    3. **Currency**: "Gems" 또는 "Gold" 등
+    4. **Amount**: 사용 수량
+    5. **Item Type**: "Shop" (아이템 타입)
+    6. **Item ID**: 구매한 아이템 이름
+    
+    **아이템 획득:**
+    1. **Add Resource Event** 노드 추가
+    2. **Flow Type**: `Source` (획득)
+    3. **Currency**: "Items"
+    4. **Amount**: 아이템 수량
+    5. **Item Type**: 아이템 ID
+    6. **Item ID**: 획득 경로 ("Quest", "Shop", "Drop" 등)
   </Tabs.Tab>
 </Tabs>
 
@@ -336,38 +383,66 @@ void UMyStoreManager::OnPurchaseComplete(const FString& ProductId, float Price)
   콜론(:)으로 구분하여 최대 5단계까지 구성 가능
 </Callout>
 
-```cpp
-// 커스텀 이벤트 예제
-void UMyGameAnalytics::TrackCustomEvent(const FString& EventName, float Value)
-{
-    // 단순 이벤트
-    UGameAnalytics::addDesignEvent(EventName);
+<Tabs items={['C++ 구현', 'Blueprint 구현']}>
+  <Tabs.Tab>
+    ```cpp
+    // 커스텀 이벤트 예제
+    void UMyGameAnalytics::TrackCustomEvent(const FString& EventName, float Value)
+    {
+        // 단순 이벤트
+        UGameAnalytics::addDesignEvent(EventName);
+        
+        // 값이 있는 이벤트
+        UGameAnalytics::addDesignEvent(EventName, Value);
+        
+        // 계층적 이벤트
+        FString HierarchicalEvent = FString::Printf(
+            TEXT("Kill:Enemy:%s"), 
+            *EnemyType
+        );
+        UGameAnalytics::addDesignEvent(HierarchicalEvent, DamageDealt);
+    }
     
-    // 값이 있는 이벤트
-    UGameAnalytics::addDesignEvent(EventName, Value);
+    // 실제 사용 예제
+    void AMyCharacter::OnEnemyKilled(AEnemy* Enemy)
+    {
+        FString EventName = FString::Printf(
+            TEXT("Combat:Kill:%s"), 
+            *Enemy->GetEnemyType()
+        );
+        
+        UGameAnalytics::addDesignEvent(
+            EventName, 
+            Enemy->GetExpReward()
+        );
+    }
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **블루프린트 구현:**
     
-    // 계층적 이벤트
-    FString HierarchicalEvent = FString::Printf(
-        TEXT("Kill:Enemy:%s"), 
-        *EnemyType
-    );
-    UGameAnalytics::addDesignEvent(HierarchicalEvent, DamageDealt);
-}
-
-// 실제 사용 예제
-void AMyCharacter::OnEnemyKilled(AEnemy* Enemy)
-{
-    FString EventName = FString::Printf(
-        TEXT("Combat:Kill:%s"), 
-        *Enemy->GetEnemyType()
-    );
+    **단순 이벤트:**
+    1. **Add Design Event** 노드 추가
+    2. **Event ID**: "UI:MainMenu:PlayButton" (이벤트 이름)
     
-    UGameAnalytics::addDesignEvent(
-        EventName, 
-        Enemy->GetExpReward()
-    );
-}
-```
+    **값이 있는 이벤트:**
+    1. **Add Design Event** 노드 추가
+    2. **Event ID**: "Kill:Enemy:Zombie"
+    3. **Value**: 100 (경험치, 점수 등)
+    
+    **계층적 이벤트 예시:**
+    - `"Combat:Kill:Boss"` - 보스 처치
+    - `"PowerUp:Use:Shield"` - 쉴드 사용
+    - `"Level:Complete:World1:Stage3"` - 레벨 완료
+    - `"UI:Shop:Purchase:Sword"` - 상점 구매
+    
+    **팁:**
+    - 콜론(:)으로 구분하여 계층 구조 생성
+    - 최대 5단계까지 가능
+    - 일관된 네이밍 규칙 사용
+  </Tabs.Tab>
+</Tabs>
 
 ### ❌ 에러 이벤트 (Error Events)
 
@@ -380,28 +455,75 @@ void AMyCharacter::OnEnemyKilled(AEnemy* Enemy)
 - `Error`: 에러 발생 (복구 가능)
 - `Critical`: 심각한 에러 (크래시 위험)
 
-```cpp
-// 에러 로깅
-void UMyErrorHandler::LogError(const FString& Message, EGAErrorSeverity Severity)
-{
-    UGameAnalytics::addErrorEvent(Severity, Message);
-}
-
-// 사용 예제
-void UMyNetworkManager::OnConnectionFailed(const FString& Reason)
-{
-    UGameAnalytics::addErrorEvent(
-        EGAErrorSeverity::Error,
-        FString::Printf(TEXT("Network:ConnectionFailed:%s"), *Reason)
-    );
-}
-```
+<Tabs items={['C++ 구현', 'Blueprint 구현']}>
+  <Tabs.Tab>
+    ```cpp
+    // 에러 로깅
+    void UMyErrorHandler::LogError(const FString& Message, EGAErrorSeverity Severity)
+    {
+        UGameAnalytics::addErrorEvent(Severity, Message);
+    }
+    
+    // 사용 예제
+    void UMyNetworkManager::OnConnectionFailed(const FString& Reason)
+    {
+        UGameAnalytics::addErrorEvent(
+            EGAErrorSeverity::Error,
+            FString::Printf(TEXT("Network:ConnectionFailed:%s"), *Reason)
+        );
+    }
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **블루프린트 구현:**
+    
+    1. **Add Error Event** 노드 추가
+    2. **Severity** 선택:
+       - `Debug` - 개발 중 디버깅
+       - `Info` - 정보성 메시지
+       - `Warning` - 경고
+       - `Error` - 일반 에러
+       - `Critical` - 심각한 에러
+    3. **Message**: 에러 메시지 입력
+    
+    **예시 메시지:**
+    - `"Network:Timeout:Server1"` - 네트워크 타임아웃
+    - `"Save:Failed:DiskFull"` - 저장 실패
+    - `"Load:AssetMissing:Character01"` - 에셋 로드 실패
+    - `"Physics:InvalidState:Ragdoll"` - 물리 에러
+    
+    **Blueprint 사용 팁:**
+    - Try/Catch 대신 Is Valid 체크 사용
+    - 에러 발생 지점에 즉시 로깅
+    - 의미 있는 에러 메시지 작성
+    - 카테고리:세부사항:원인 형식 권장
+  </Tabs.Tab>
+</Tabs>
 
 ### 📺 광고 이벤트 (Ad Events)
 
 광고 노출, 클릭, 실패 등을 추적합니다. 광고 수익화 최적화에 필수적인 데이터를 수집합니다.
 
-```cpp
+**광고 액션 타입**:
+- `Show`: 광고 표시
+- `Clicked`: 광고 클릭
+- `RewardReceived`: 보상형 광고 보상 수령
+- `Request`: 광고 요청
+- `Loaded`: 광고 로드 완료
+- `FailedShow`: 광고 표시 실패
+
+**광고 타입**:
+- `Video`: 일반 비디오 광고
+- `RewardedVideo`: 보상형 비디오
+- `Playable`: 플레이어블 광고
+- `Interstitial`: 전면 광고
+- `OfferWall`: 오퍼월
+- `Banner`: 배너 광고
+
+<Tabs items={['C++', 'Blueprint']}>
+  <Tabs.Tab>
+    ```cpp
 // 광고 표시
 void UMyAdManager::ShowRewardedAd()
 {
@@ -426,6 +548,19 @@ void UMyAdManager::OnAdClicked()
     );
 }
 
+// 보상 수령
+void UMyAdManager::OnRewardReceived(int32 RewardAmount)
+{
+    UGameAnalytics::addAdEvent(
+        EGAAdAction::RewardReceived,
+        EGAAdType::RewardedVideo,
+        "admob",
+        "level_complete",
+        EGAAdError::Unknown,
+        RewardAmount  // 보상 금액
+    );
+}
+
 // 광고 로드 실패
 void UMyAdManager::OnAdFailedToLoad(const FString& Error)
 {
@@ -437,7 +572,96 @@ void UMyAdManager::OnAdFailedToLoad(const FString& Error)
         EGAAdError::NoFill  // 또는 다른 에러 타입
     );
 }
+
+// 전면 광고 예제
+void UMyAdManager::ShowInterstitialAd()
+{
+    // 광고 요청
+    UGameAnalytics::addAdEvent(
+        EGAAdAction::Request,
+        EGAAdType::Interstitial,
+        "unity_ads",
+        "level_complete"
+    );
+    
+    // 광고 로드 성공 후 표시
+    UGameAnalytics::addAdEvent(
+        EGAAdAction::Show,
+        EGAAdType::Interstitial,
+        "unity_ads",
+        "level_complete"
+    );
+}
 ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **블루프린트 구현:**
+    
+    **보상형 비디오 광고:**
+    1. **Add Ad Event** 노드 추가
+    2. **Action**: `Show` (광고 표시 시)
+    3. **Ad Type**: `RewardedVideo`
+    4. **Ad SDK Name**: "admob" 또는 "unity_ads" 등
+    5. **Ad Placement**: "main_menu", "level_complete" 등 광고 위치
+    6. **Error Type**: `Unknown` (정상인 경우)
+    7. **Duration**: 광고 시청 시간 (초 단위, 선택사항)
+    
+    **광고 클릭 추적:**
+    1. **Add Ad Event** 노드 추가
+    2. **Action**: `Clicked`
+    3. **Ad Type**: 해당 광고 타입
+    4. **Ad SDK Name**: 광고 SDK 이름
+    5. **Ad Placement**: 광고 위치
+    
+    **보상 수령:**
+    1. **Add Ad Event** 노드 추가
+    2. **Action**: `RewardReceived`
+    3. **Ad Type**: `RewardedVideo`
+    4. **Ad SDK Name**: 광고 SDK 이름
+    5. **Ad Placement**: 광고 위치
+    6. **Duration**: 보상 금액 (코인 수 등)
+    
+    **광고 실패 처리:**
+    1. **Add Ad Event** 노드 추가
+    2. **Action**: `FailedShow`
+    3. **Ad Type**: 해당 광고 타입
+    4. **Ad SDK Name**: 광고 SDK 이름
+    5. **Ad Placement**: 광고 위치
+    6. **Error Type**: 
+       - `NoFill` - 광고 없음
+       - `NoInternet` - 인터넷 연결 없음
+       - `InvalidRequest` - 잘못된 요청
+       - `UnableToPrecache` - 프리캐시 실패
+       - `InternalError` - 내부 오류
+    
+    **전면 광고 플로우:**
+    ```
+    [게임 플로우]
+    ↓
+    [레벨 완료] → [Add Ad Event: Request]
+    ↓
+    [광고 로드 성공] → [Add Ad Event: Loaded]
+    ↓
+    [광고 표시] → [Add Ad Event: Show]
+    ↓
+    [선택사항: 클릭] → [Add Ad Event: Clicked]
+    ```
+    
+    **배너 광고 예시:**
+    1. **Add Ad Event** 노드 추가
+    2. **Action**: `Show`
+    3. **Ad Type**: `Banner`
+    4. **Ad SDK Name**: "admob"
+    5. **Ad Placement**: "bottom_banner" 또는 "top_banner"
+    
+    **팁:**
+    - 광고 SDK별로 일관된 이름 사용
+    - 광고 위치는 화면상 위치나 게임 상황 명시
+    - 에러 타입을 정확히 기록하여 문제 해결에 활용
+    - 보상형 광고는 반드시 보상 수령 이벤트도 추적
+  </Tabs.Tab>
+</Tabs>
 
 ### 🔧 커스텀 필드 (Custom Fields)
 
