@@ -1,11 +1,91 @@
 import { Callout } from 'nextra/components'
 import Mermaid from '../../components/Mermaid'
+import EnhancedMermaid from '../../components/EnhancedMermaid'
+import InteractiveDiagram from '../../components/InteractiveDiagram'
 
 # 🔄 Claude Code 워크플로우 다이어그램
 
 ## SuperClaude 전체 아키텍처
 
+### 기본 버전
 <Mermaid chart={`
+graph TB
+    subgraph "사용자 인터페이스"
+        A[사용자 입력]
+        B[sc: 명령어]
+        C[일반 명령어]
+    end
+    
+    subgraph "SuperClaude 오케스트레이터"
+        D[명령어 파서]
+        E[컨텍스트 분석기]
+        F[복잡도 평가]
+        G[자동 활성화 엔진]
+    end
+    
+    subgraph "페르소나 시스템"
+        H[Architect]
+        I[Frontend]
+        J[Backend]
+        K[Security]
+        L[Performance]
+        M[기타 6개]
+    end
+    
+    subgraph "MCP 서버"
+        N[Sequential Thinking]
+        O[Context7]
+        P[Magic]
+        Q[Playwright]
+    end
+    
+    subgraph "실행 엔진"
+        R[코드 생성]
+        S[파일 조작]
+        T[테스트 실행]
+        U[문서 생성]
+    end
+    
+    A --> B
+    A --> C
+    B --> D
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    G --> H
+    G --> I
+    G --> J
+    G --> K
+    G --> L
+    G --> M
+    G --> N
+    G --> O
+    G --> P
+    G --> Q
+    H --> R
+    I --> R
+    J --> R
+    K --> S
+    L --> T
+    N --> R
+    O --> R
+    P --> R
+    Q --> T
+    R --> V[결과 출력]
+    S --> V
+    T --> V
+    U --> V
+`} />
+
+### 향상된 인터랙티브 버전
+<EnhancedMermaid 
+  title="SuperClaude 전체 아키텍처 - Interactive"
+  description="마우스를 올려 상세 정보를 확인하고, 줌 기능을 사용해보세요"
+  enableZoom={true}
+  enableExport={true}
+  theme="modern"
+  chart={`
 graph TB
     subgraph "사용자 인터페이스"
         A[사용자 입력]
@@ -255,7 +335,33 @@ graph TD
     Execute --> Result[결과]
 `} />
 
+## 인터랙티브 다이어그램 예시
+
+<InteractiveDiagram
+  type="flowchart"
+  title="SuperClaude 플로우차트 - 완전 인터랙티브"
+  data={{
+    nodes: [
+      { id: 'input', label: '사용자 입력', x: 300, y: 50, icon: '👤', connections: ['parser'] },
+      { id: 'parser', label: '명령어 파서', x: 300, y: 150, icon: '⚙️', connections: ['analyzer', 'complexity'] },
+      { id: 'analyzer', label: '컨텍스트 분석', x: 150, y: 250, icon: '🔍', connections: ['persona'] },
+      { id: 'complexity', label: '복잡도 평가', x: 450, y: 250, icon: '📊', connections: ['mcp'] },
+      { id: 'persona', label: '페르소나 선택', x: 150, y: 350, icon: '🎭', connections: ['execute'] },
+      { id: 'mcp', label: 'MCP 서버', x: 450, y: 350, icon: '🖥️', connections: ['execute'] },
+      { id: 'execute', label: '실행 엔진', x: 300, y: 450, icon: '⚡', connections: ['output'] },
+      { id: 'output', label: '결과 출력', x: 300, y: 550, icon: '✅', connections: [] }
+    ]
+  }}
+/>
+
 <Callout type="info" emoji="💡">
 이 다이어그램들은 Claude Code와 SuperClaude의 내부 작동 방식을 시각적으로 보여줍니다.
 각 단계별로 어떤 컴포넌트가 활성화되고 어떻게 협업하는지 이해할 수 있습니다.
+
+**새로운 기능:**
+- 🔍 **줌 인/아웃**: 다이어그램을 확대/축소할 수 있습니다
+- 💾 **내보내기**: SVG 또는 PNG 형식으로 다운로드 가능
+- 🎨 **테마 지원**: 라이트/다크 모드 자동 전환
+- 🖱️ **인터랙티브**: 노드를 클릭하여 상세 정보 확인
+- 📱 **반응형**: 모바일에서도 완벽하게 작동
 </Callout>
