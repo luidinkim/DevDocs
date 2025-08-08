@@ -1,0 +1,371 @@
+import { Callout, Cards, Tabs, Steps } from 'nextra/components'
+import { LinkCard, LinkCards } from '../../components/LinkCard'
+
+# 🔌 MCP 서버 완벽 가이드
+
+## MCP(Model Context Protocol) 서버란?
+
+<Callout type="info" emoji="🚀">
+**MCP 서버는 Claude Code의 능력을 무한대로 확장합니다!**  
+외부 도구와 서비스를 Claude Code에 직접 연결하여 더 강력한 개발 환경을 만들 수 있습니다.
+</Callout>
+
+## 🌟 필수 MCP 서버 TOP 2
+
+### 1. Sequential Thinking (최강 추천 ⭐⭐⭐⭐⭐)
+
+#### 왜 Sequential이 게임 체인저인가?
+
+Sequential은 Claude의 사고 과정을 **체계적**이고 **논리적**으로 만들어줍니다.
+복잡한 문제를 단계별로 분해하고, 각 단계를 깊이 있게 분석합니다.
+
+#### 핵심 기능
+- 🧠 **구조화된 사고**: 문제를 논리적 단계로 분해
+- 🔍 **심층 분석**: 각 단계별 상세 분석
+- 📊 **체계적 접근**: 일관된 문제 해결 패턴
+- 🎯 **정확한 결론**: 증거 기반 의사결정
+
+#### 활성화 방법
+```bash
+# 자동 활성화 (복잡한 문제 감지 시)
+/analyze --think-hard  # Sequential 자동 활성화
+
+# 수동 활성화
+/analyze --seq
+/sc:analyze --sequential
+
+# SuperClaude 명령어
+sc:analyze --seq --ultrathink
+```
+
+#### 실전 활용 예시
+
+<Tabs items={['디버깅', '아키텍처 설계', '성능 분석']}>
+  <Tabs.Tab>
+    ```bash
+    # 복잡한 버그 추적
+    sc:troubleshoot "메모리 누수 문제" --seq
+    
+    # Sequential이 하는 일:
+    # 1. 증상 분석
+    # 2. 가능한 원인 나열
+    # 3. 각 원인별 확률 평가
+    # 4. 체계적 검증 계획
+    # 5. 단계별 디버깅 실행
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```bash
+    # 시스템 설계
+    sc:design "마이크로서비스 아키텍처" --seq
+    
+    # Sequential이 하는 일:
+    # 1. 요구사항 분석
+    # 2. 도메인 분해
+    # 3. 서비스 경계 정의
+    # 4. 통신 패턴 설계
+    # 5. 확장성 계획
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```bash
+    # 성능 최적화
+    sc:analyze --performance --seq
+    
+    # Sequential이 하는 일:
+    # 1. 현재 성능 측정
+    # 2. 병목 지점 식별
+    # 3. 원인 분석
+    # 4. 개선 방안 도출
+    # 5. 예상 효과 계산
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+### 2. Context7 (문서의 신 ⭐⭐⭐⭐⭐)
+
+#### 왜 Context7이 필수인가?
+
+Context7은 **모든 주요 라이브러리의 공식 문서**를 즉시 검색하고 활용합니다.
+더 이상 구글링하거나 문서를 찾아 헤맬 필요가 없습니다!
+
+#### 핵심 기능
+- 📚 **공식 문서 접근**: 1000+ 라이브러리 문서
+- 🔄 **실시간 업데이트**: 최신 버전 문서 자동 반영
+- 🌍 **다국어 지원**: 한국어 문서 포함
+- 💡 **예제 코드**: 실제 사용 가능한 코드 샘플
+
+#### 활성화 방법
+```bash
+# 자동 활성화 (라이브러리 import 감지)
+import React from 'react'  # Context7 자동 활성화
+
+# 수동 활성화
+/explain React hooks --c7
+/sc:implement --context7
+
+# SuperClaude 명령어
+sc:explain "React hooks" --c7
+```
+
+#### 지원 라이브러리 (일부)
+- **Frontend**: React, Vue, Angular, Svelte, Next.js
+- **Backend**: Express, NestJS, FastAPI, Django
+- **Database**: PostgreSQL, MongoDB, Redis
+- **DevOps**: Docker, Kubernetes, Terraform
+- **AI/ML**: TensorFlow, PyTorch, Scikit-learn
+
+#### 실전 활용 예시
+
+<Tabs items={['React 개발', 'API 구현', '문서 작성']}>
+  <Tabs.Tab>
+    ```bash
+    # React 18 신기능 활용
+    sc:implement "서스펜스 컴포넌트" --c7
+    
+    # Context7이 하는 일:
+    # 1. React 18 공식 문서 검색
+    # 2. Suspense API 사양 확인
+    # 3. 베스트 프랙티스 적용
+    # 4. 실제 코드 생성
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```bash
+    # Express + Prisma API
+    sc:implement "REST API" --c7
+    
+    # Context7이 하는 일:
+    # 1. Express 공식 패턴 확인
+    # 2. Prisma 쿼리 최적화
+    # 3. 에러 핸들링 표준
+    # 4. 보안 베스트 프랙티스
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```bash
+    # 한국어 문서 생성
+    sc:document --c7 --persona-scribe=ko
+    
+    # Context7이 하는 일:
+    # 1. 한국어 문서 템플릿
+    # 2. 기술 용어 번역
+    # 3. 예제 현지화
+    # 4. 문화적 맥락 반영
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## 🎯 SuperClaude sc: 명령어 체계
+
+### sc: 명령어란?
+
+<Callout type="success" emoji="⚡">
+**`sc:` 접두사는 SuperClaude의 고급 기능을 활성화합니다!**  
+일반 명령어에 `sc:`를 붙이면 자동으로 최적의 MCP 서버와 페르소나가 활성화됩니다.
+</Callout>
+
+### 명령어 구조
+```bash
+sc:[명령어] [대상] [--플래그]
+```
+
+### 핵심 sc: 명령어
+
+#### 개발 명령어
+```bash
+# 빌드 (자동 최적화)
+sc:build my-app --next --typescript
+
+# 구현 (MCP 자동 활성화)
+sc:implement "사용자 인증" --with-tests
+
+# 설계 (Sequential 활성화)
+sc:design "마이크로서비스"
+```
+
+#### 분석 명령어
+```bash
+# 분석 (Sequential + Context7)
+sc:analyze --ultrathink
+
+# 문제 해결 (Sequential 필수)
+sc:troubleshoot "성능 문제"
+
+# 설명 (Context7 문서 활용)
+sc:explain "React 18 신기능"
+```
+
+#### 품질 명령어
+```bash
+# 개선 (반복 실행)
+sc:improve --loop --iterations 5
+
+# 정리 (체계적 접근)
+sc:cleanup --systematic
+
+# 리팩토링 (패턴 적용)
+sc:refactor --pattern factory
+```
+
+### sc: vs 일반 명령어 비교
+
+| 일반 명령어 | sc: 명령어 | 차이점 |
+|------------|-----------|--------|
+| `/analyze` | `sc:analyze` | Sequential 자동 활성화, 심층 분석 |
+| `/implement` | `sc:implement` | Context7 문서 활용, 베스트 프랙티스 |
+| `/build` | `sc:build` | 프레임워크 최적화, 자동 설정 |
+| `/test` | `sc:test` | 포괄적 테스트, 커버리지 보장 |
+
+## 🚀 추가 MCP 서버들
+
+### Magic (UI 컴포넌트 생성기)
+
+```bash
+# 활성화
+sc:implement "대시보드 UI" --magic
+
+# 기능
+- 모던 UI 컴포넌트 생성
+- Tailwind CSS 통합
+- 반응형 디자인
+- 접근성 준수
+```
+
+### Playwright (E2E 테스트)
+
+```bash
+# 활성화
+sc:test e2e --playwright
+
+# 기능
+- 크로스 브라우저 테스트
+- 시각적 회귀 테스트
+- 성능 모니터링
+- 스크린샷 캡처
+```
+
+## 💡 MCP 서버 조합 전략
+
+### 🏆 최강 조합
+
+#### 1. 풀스택 개발 (Context7 + Magic)
+```bash
+sc:build fullstack-app --c7 --magic
+```
+
+#### 2. 디버깅 마스터 (Sequential + Context7)
+```bash
+sc:troubleshoot --seq --c7
+```
+
+#### 3. 아키텍처 설계 (Sequential + 모든 MCP)
+```bash
+sc:design --all-mcp --ultrathink
+```
+
+### 상황별 MCP 선택 가이드
+
+<Tabs items={['신규 개발', '버그 수정', '성능 최적화', '문서화']}>
+  <Tabs.Tab>
+    **추천 MCP**: Context7 + Magic
+    
+    ```bash
+    # 1. 문서 확인
+    sc:explain "Next.js 14" --c7
+    
+    # 2. UI 생성
+    sc:implement "랜딩 페이지" --magic
+    
+    # 3. API 구현
+    sc:implement "API 라우트" --c7
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **추천 MCP**: Sequential
+    
+    ```bash
+    # 1. 문제 분석
+    sc:troubleshoot "버그 증상" --seq
+    
+    # 2. 원인 파악
+    sc:analyze --seq --think-hard
+    
+    # 3. 수정
+    sc:implement "버그 수정" --seq
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **추천 MCP**: Sequential + Playwright
+    
+    ```bash
+    # 1. 현황 분석
+    sc:analyze --performance --seq
+    
+    # 2. 성능 측정
+    sc:test performance --playwright
+    
+    # 3. 최적화
+    sc:improve --performance --seq
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **추천 MCP**: Context7
+    
+    ```bash
+    # 1. API 문서
+    sc:document api --c7
+    
+    # 2. 사용자 가이드
+    sc:document guide --c7 --persona-scribe=ko
+    
+    # 3. 기술 문서
+    sc:document technical --c7
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## 🎓 프로 팁
+
+<Callout type="success" emoji="💡">
+**MCP 서버 마스터가 되는 법:**
+
+1. **Sequential은 필수**: 복잡한 문제는 무조건 `--seq`
+2. **Context7은 기본**: 라이브러리 사용 시 항상 `--c7`
+3. **조합이 힘**: 여러 MCP 서버를 동시에 활용
+4. **sc: 명령어 습관화**: 일반 명령어보다 sc: 우선 사용
+5. **자동 활성화 활용**: 수동보다 자동 활성화 신뢰
+</Callout>
+
+## 📊 MCP 서버 성능 비교
+
+| MCP 서버 | 속도 | 정확도 | 토큰 사용 | 추천 상황 |
+|----------|------|--------|-----------|-----------|
+| Sequential | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | 높음 | 복잡한 분석 |
+| Context7 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | 낮음 | 문서 참조 |
+| Magic | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | 중간 | UI 생성 |
+| Playwright | ⭐⭐⭐ | ⭐⭐⭐⭐ | 중간 | 테스트 |
+
+## 다음 단계
+
+<LinkCards>
+  <LinkCard 
+    title="Sequential 심화 학습" 
+    description="복잡한 문제 해결의 달인 되기"
+    href="/claude-code/sequential-deep-dive"
+    icon="🧠"
+  />
+  <LinkCard 
+    title="Context7 마스터하기" 
+    description="모든 문서를 내 손안에"
+    href="/claude-code/context7-mastery"
+    icon="📚"
+  />
+</LinkCards>

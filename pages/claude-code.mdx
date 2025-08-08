@@ -113,63 +113,92 @@ SuperClaude는 Claude Code의 능력을 극대화하는 **고급 프레임워크
 
 ## 📚 Chapter 3: 실전! SuperClaude 명령어 마스터하기
 
-### 3.1 필수 명령어 Top 10
+### 3.1 SuperClaude `sc:` 명령어 체계
 
-#### 1️⃣ `/analyze` - 코드 분석의 마법사
+<Callout type="warning" emoji="⚡">
+**중요**: SuperClaude 명령어는 `sc:` 접두사를 사용합니다!  
+`sc:` 명령어는 일반 명령어보다 강력하고 자동 최적화됩니다.
+</Callout>
+
+#### sc: 명령어 vs 일반 명령어
+
+```
+사용자 입력
+    │
+    ├── 일반 명령어 (/analyze)
+    │   └── 기본 분석
+    │
+    └── SuperClaude (sc:analyze)
+        ├── Sequential 활성화
+        ├── Context7 활성화
+        ├── 최적 페르소나
+        └── 심층 분석 결과
+```
+
+### 3.2 필수 명령어 Top 10
+
+#### 1️⃣ `sc:analyze` - 코드 분석의 마법사
 ```bash
-# 기본 사용법
-/analyze
+# SuperClaude 방식 (추천!)
+sc:analyze
 
 # 고급 사용법
-/analyze --think-hard --focus performance
+sc:analyze --think-hard --focus performance
+sc:analyze --seq --c7  # Sequential + Context7
+
+# 일반 명령어 (기본)
+/analyze
 ```
 
 **실제 사용 예시:**
 ```
-User: /analyze 우리 프로젝트의 성능 병목 지점을 찾아줘
-Claude: 프로젝트를 분석하겠습니다...
+User: sc:analyze 우리 프로젝트의 성능 병목 지점을 찾아줘
+Claude: [Sequential 활성화] 체계적으로 분석하겠습니다...
   ✅ 메모리 누수 발견: UserService.js:142
   ✅ N+1 쿼리 문제: ProductRepository.js:87
   ✅ 불필요한 리렌더링: Dashboard.tsx:234
 ```
 
-#### 2️⃣ `/implement` - 구현의 달인
+#### 2️⃣ `sc:implement` - 구현의 달인
 ```bash
-# React 컴포넌트 구현
-/implement 대시보드 컴포넌트 --type component --framework react
+# SuperClaude 방식 (Context7 자동 활성화)
+sc:implement 대시보드 컴포넌트 --type component --framework react
+sc:implement 사용자 인증 API --type api --with-tests
 
-# API 엔드포인트 구현
-/implement 사용자 인증 API --type api --with-tests
+# 일반 명령어
+/implement 대시보드 컴포넌트
 ```
 
-#### 3️⃣ `/improve` - 코드 개선 전문가
+#### 3️⃣ `sc:improve` - 코드 개선 전문가
 ```bash
-# 성능 최적화
-/improve --focus performance
+# SuperClaude 방식
+sc:improve --focus performance  # Sequential로 체계적 개선
+sc:improve --focus security --validate
 
-# 보안 강화
-/improve --focus security --validate
+# 일반 명령어
+/improve
 ```
 
-#### 4️⃣ `/build` - 빌더
+#### 4️⃣ `sc:build` - 빌더
 ```bash
-# 프로젝트 빌드
+# SuperClaude 방식
+sc:build  # 자동 최적화 + Context7 문서 참조
+sc:build frontend --optimization
+
+# 일반 명령어
 /build
-
-# 특정 타겟 빌드
-/build frontend --optimization
 ```
 
-#### 5️⃣ `/test` - 테스트 마스터
+#### 5️⃣ `sc:test` - 테스트 마스터
 ```bash
-# 단위 테스트 작성
-/test unit
+# SuperClaude 방식
+sc:test unit  # 포괄적 테스트 + 커버리지 보장
+sc:test e2e --playwright  # Playwright MCP 활성화
 
-# E2E 테스트
-/test e2e --coverage
-```
+# 일반 명령어
+/test
 
-### 3.2 고급 플래그 활용법
+### 3.3 고급 플래그 활용법
 
 #### 🧠 사고 깊이 제어
 ```bash
@@ -195,7 +224,7 @@ Claude: 프로젝트를 분석하겠습니다...
 /analyze --delegate --concurrency 7
 ```
 
-### 3.3 페르소나 활용 전략
+### 3.4 페르소나 활용 전략
 
 <Tabs items={['Frontend 개발', 'Backend 개발', '보안 감사', '성능 최적화']}>
   <Tabs.Tab>
@@ -376,26 +405,44 @@ Claude: 프로젝트를 분석하겠습니다...
 
 Model Context Protocol 서버는 Claude Code의 능력을 확장하는 외부 도구입니다.
 
-#### 사용 가능한 MCP 서버들:
-- **Context7**: 라이브러리 문서 검색
-- **Sequential**: 복잡한 분석 처리
-- **Magic**: UI 컴포넌트 생성
-- **Playwright**: E2E 테스트 자동화
+```
+Claude Code
+    │
+    └── MCP 서버들
+        ├── Sequential (체계적 사고)
+        │   └── 복잡한 문제 해결
+        ├── Context7 (문서 검색)
+        │   └── 공식 문서 활용
+        ├── Magic (UI 생성)
+        │   └── 모던 UI 컴포넌트
+        └── Playwright (테스트 자동화)
+            └── E2E 테스트
+```
+
+#### 🌟 필수 MCP 서버 TOP 2
+
+##### 1. Sequential Thinking (최강 추천 ⭐⭐⭐⭐⭐)
+- **역할**: 복잡한 문제를 체계적으로 분해하고 분석
+- **강점**: 논리적 사고, 단계별 접근, 심층 분석
+- **사용법**: `sc:analyze --seq` 또는 자동 활성화
+
+##### 2. Context7 (문서의 신 ⭐⭐⭐⭐⭐)
+- **역할**: 1000+ 라이브러리의 공식 문서 즉시 검색
+- **강점**: 최신 문서, 베스트 프랙티스, 한국어 지원
+- **사용법**: `sc:implement --c7` 또는 자동 활성화
 
 ### 6.2 MCP 서버 활용 예시
 
 ```bash
-# Context7으로 문서 검색
-/explain React hooks --c7
+# SuperClaude 방식 (추천!)
+sc:explain React hooks --c7  # Context7로 공식 문서 참조
+sc:analyze --seq --think-hard  # Sequential로 체계적 분석
+sc:implement 대시보드 --magic  # Magic으로 UI 생성
+sc:test e2e --playwright  # Playwright로 E2E 테스트
 
-# Sequential로 복잡한 분석
-/analyze --seq --think-hard
-
-# Magic으로 UI 생성
-/implement 대시보드 --magic
-
-# Playwright로 테스트
-/test e2e --play
+# 일반 명령어
+/explain React hooks
+/analyze
 ```
 
 ## 📚 Chapter 7: 실전 케이스 스터디
