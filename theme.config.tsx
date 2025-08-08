@@ -2,10 +2,16 @@ import React from 'react'
 
 const config = {
   logo: <span>DevDocs</span>,
-  project: {
-    link: 'https://github.com/yourusername/devdocs',
+  useNextSeoProps() {
+    return {
+      titleTemplate: '%s – DevDocs',
+      defaultTitle: 'DevDocs'
+    }
   },
-  docsRepositoryBase: 'https://github.com/yourusername/devdocs',
+  project: {
+    link: 'https://github.com/luidinkim/devdocs',
+  },
+  docsRepositoryBase: 'https://github.com/luidinkim/devdocs',
   footer: {
     text: 'DevDocs © 2025',
   },

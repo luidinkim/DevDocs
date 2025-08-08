@@ -23,7 +23,7 @@ A modern documentation platform built with Nextra and deployed on AWS Amplify.
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/devdocs.git
+git clone https://github.com/luidinkim/devdocs.git
 cd devdocs
 
 # Install dependencies
