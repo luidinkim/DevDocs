@@ -1,0 +1,495 @@
+import { Callout, Cards, Tabs, Steps, FileTree } from 'nextra/components'
+
+# 📝 Claude Code 명령어 완벽 가이드
+
+## 명령어 체계 이해하기
+
+<Callout type="info" emoji="🎯">
+Claude Code의 명령어는 **직관적**이고 **일관된** 패턴을 따릅니다.  
+`/명령어 [대상] [--플래그]` 형식으로 구성됩니다.
+</Callout>
+
+## 핵심 명령어 카테고리
+
+### 📊 명령어 구조
+- **개발**: `/build`, `/implement`, `/design`
+- **분석**: `/analyze`, `/troubleshoot`, `/explain`
+- **품질**: `/improve`, `/cleanup`, `/refactor`
+- **테스트**: `/test`
+- **문서화**: `/document`
+- **버전관리**: `/git`
+
+## 🛠️ 개발 명령어
+
+### `/build` - 프로젝트 빌더
+
+**목적**: 새 프로젝트나 기능을 빌드합니다.
+
+<Tabs items={['기본 사용법', '고급 옵션', '실전 예제']}>
+  <Tabs.Tab>
+    ```bash
+    # 기본 빌드
+    /build
+    
+    # 특정 타입 빌드
+    /build frontend
+    /build backend
+    /build fullstack
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```bash
+    # 프레임워크 지정
+    /build --framework react
+    /build --framework express
+    
+    # 기술 스택 조합
+    /build --react --typescript --tailwind
+    /build --next --prisma --trpc
+    
+    # 최적화 옵션
+    /build --optimization
+    /build --production
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```bash
+    # Next.js 풀스택 앱
+    /build my-saas --next --prisma --tailwind --typescript
+    
+    # Express API 서버
+    /build api-server --express --mongodb --jwt
+    
+    # React Native 앱
+    /build mobile-app --react-native --expo
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+### `/implement` - 기능 구현
+
+**목적**: 특정 기능이나 컴포넌트를 구현합니다.
+
+```bash
+# 기본 구현
+/implement 로그인 기능
+
+# 타입 지정
+/implement 대시보드 --type component
+/implement 사용자 API --type api
+/implement 결제 시스템 --type feature
+
+# 옵션 조합
+/implement 채팅 기능 --type feature --with-tests --documentation
+```
+
+**구현 타입**:
+- `component`: UI 컴포넌트
+- `api`: API 엔드포인트
+- `service`: 비즈니스 로직
+- `feature`: 전체 기능
+- `module`: 독립 모듈
+
+### `/design` - 설계 및 아키텍처
+
+**목적**: 시스템 설계와 아키텍처를 수립합니다.
+
+```bash
+# 시스템 설계
+/design 마이크로서비스 아키텍처
+
+# 데이터베이스 설계
+/design database --entities user,product,order
+
+# API 설계
+/design REST API --openapi
+
+# UI/UX 설계
+/design 대시보드 UI --wireframe
+```
+
+## 🔍 분석 명령어
+
+### `/analyze` - 코드 분석
+
+**목적**: 코드베이스를 분석하고 인사이트를 제공합니다.
+
+<Tabs items={['범위별', '초점별', '깊이별']}>
+  <Tabs.Tab>
+    ```bash
+    # 범위 지정
+    /analyze --scope file      # 단일 파일
+    /analyze --scope module     # 모듈 단위
+    /analyze --scope project    # 전체 프로젝트
+    /analyze --scope system     # 시스템 전체
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```bash
+    # 초점 영역
+    /analyze --focus performance    # 성능 분석
+    /analyze --focus security       # 보안 분석
+    /analyze --focus quality        # 품질 분석
+    /analyze --focus architecture   # 구조 분석
+    /analyze --focus dependencies   # 의존성 분석
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```bash
+    # 분석 깊이
+    /analyze --think              # 기본 분석 (4K 토큰)
+    /analyze --think-hard         # 심층 분석 (10K 토큰)
+    /analyze --ultrathink         # 극한 분석 (32K 토큰)
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+### `/troubleshoot` - 문제 해결
+
+**목적**: 버그나 문제를 진단하고 해결합니다.
+
+```bash
+# 증상 기반 진단
+/troubleshoot "로그인이 안 됩니다"
+
+# 에러 메시지 분석
+/troubleshoot "TypeError: Cannot read property 'x' of undefined"
+
+# 성능 문제
+/troubleshoot "페이지 로딩이 느립니다" --performance
+
+# 보안 문제
+/troubleshoot "SQL injection 가능성" --security
+```
+
+### `/explain` - 설명 및 교육
+
+**목적**: 코드나 개념을 설명합니다.
+
+```bash
+# 코드 설명
+/explain 이 함수가 뭐하는지
+
+# 개념 설명
+/explain React hooks --detailed
+
+# 아키텍처 설명
+/explain 우리 프로젝트 구조
+
+# 초보자용 설명
+/explain --eli5  # Explain Like I'm 5
+```
+
+## ✨ 품질 개선 명령어
+
+### `/improve` - 코드 개선
+
+**목적**: 기존 코드를 개선합니다.
+
+```bash
+# 전반적 개선
+/improve
+
+# 특정 측면 개선
+/improve --focus performance   # 성능 최적화
+/improve --focus readability   # 가독성 개선
+/improve --focus security      # 보안 강화
+/improve --focus accessibility # 접근성 개선
+
+# 반복 개선
+/improve --loop --iterations 5
+```
+
+### `/cleanup` - 코드 정리
+
+**목적**: 기술 부채를 제거하고 코드를 정리합니다.
+
+```bash
+# 일반 정리
+/cleanup
+
+# 특정 정리
+/cleanup --unused        # 미사용 코드 제거
+/cleanup --duplicates    # 중복 제거
+/cleanup --dependencies  # 의존성 정리
+/cleanup --formatting    # 포맷팅 정리
+```
+
+### `/refactor` - 리팩토링
+
+**목적**: 코드 구조를 개선합니다.
+
+```bash
+# 기본 리팩토링
+/refactor
+
+# 패턴 적용
+/refactor --pattern singleton
+/refactor --pattern factory
+/refactor --pattern observer
+
+# 대규모 리팩토링
+/refactor --architectural
+```
+
+## 🧪 테스트 명령어
+
+### `/test` - 테스트 작성 및 실행
+
+**목적**: 테스트를 작성하고 실행합니다.
+
+<Tabs items={['테스트 타입', '커버리지', '특수 테스트']}>
+  <Tabs.Tab>
+    ```bash
+    # 테스트 타입
+    /test unit          # 단위 테스트
+    /test integration   # 통합 테스트
+    /test e2e          # E2E 테스트
+    /test api          # API 테스트
+    /test performance  # 성능 테스트
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```bash
+    # 커버리지 목표
+    /test --coverage 80      # 80% 커버리지
+    /test --coverage 100     # 100% 커버리지
+    
+    # 커버리지 리포트
+    /test --coverage-report
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```bash
+    # 스냅샷 테스트
+    /test --snapshot
+    
+    # 회귀 테스트
+    /test regression
+    
+    # 부하 테스트
+    /test load --users 1000
+    
+    # 보안 테스트
+    /test security --owasp
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## 📚 문서화 명령어
+
+### `/document` - 문서 생성
+
+**목적**: 프로젝트 문서를 생성합니다.
+
+```bash
+# 기본 문서화
+/document
+
+# 문서 타입
+/document --type readme      # README 생성
+/document --type api         # API 문서
+/document --type guide       # 사용자 가이드
+/document --type technical   # 기술 문서
+
+# 문서 형식
+/document --format markdown
+/document --format jsdoc
+/document --format swagger
+```
+
+## 🔄 버전 관리 명령어
+
+### `/git` - Git 작업
+
+**목적**: Git 관련 작업을 수행합니다.
+
+```bash
+# 커밋
+/git commit "기능 추가"
+
+# PR 생성
+/git create-pr --title "새 기능" --description "상세 설명"
+
+# 브랜치 관리
+/git branch feature/new-feature
+/git merge develop
+
+# 히스토리 분석
+/git analyze-history
+```
+
+## 🚀 고급 플래그
+
+### 성능 플래그
+
+| 플래그 | 설명 | 사용 예시 |
+|--------|------|-----------|
+| `--uc` | 토큰 압축 (30-50% 절약) | `/analyze --uc` |
+| `--delegate` | 병렬 처리 | `/analyze --delegate` |
+| `--concurrency N` | 동시 작업 수 | `/build --concurrency 5` |
+| `--cache` | 캐싱 활성화 | `/analyze --cache` |
+
+### 사고 깊이 플래그
+
+| 플래그 | 토큰 사용 | 적합한 경우 |
+|--------|-----------|-------------|
+| `--think` | ~4K | 간단한 분석 |
+| `--think-hard` | ~10K | 복잡한 문제 |
+| `--ultrathink` | ~32K | 시스템 재설계 |
+
+### 안전성 플래그
+
+| 플래그 | 설명 | 사용 시기 |
+|--------|------|-----------|
+| `--safe-mode` | 보수적 실행 | 프로덕션 코드 |
+| `--validate` | 사전 검증 | 중요한 변경 |
+| `--dry-run` | 시뮬레이션 | 실행 전 확인 |
+
+## 🎭 페르소나 플래그
+
+### 전문가 페르소나 활성화
+
+```bash
+# 개별 페르소나
+--persona-frontend      # 프론트엔드 전문가
+--persona-backend       # 백엔드 전문가
+--persona-security      # 보안 전문가
+--persona-performance   # 성능 전문가
+--persona-architect     # 아키텍트
+--persona-qa           # QA 전문가
+--persona-devops       # DevOps 전문가
+--persona-analyzer     # 분석가
+--persona-mentor       # 멘토
+--persona-refactorer   # 리팩토링 전문가
+--persona-scribe       # 문서 작성자
+
+# 복합 페르소나
+/implement API --persona-backend --persona-security
+/analyze --persona-architect --persona-performance
+```
+
+## 🌊 Wave 모드
+
+### 대규모 작업을 위한 Wave 오케스트레이션
+
+```bash
+# Wave 모드 활성화
+/implement 대규모 기능 --wave-mode
+
+# Wave 전략 선택
+--wave-strategy progressive  # 점진적 개선
+--wave-strategy systematic   # 체계적 접근
+--wave-strategy adaptive     # 적응형 실행
+--wave-strategy enterprise   # 엔터프라이즈급
+
+# Wave 검증
+--wave-validation            # 각 단계 검증
+--wave-checkpoint           # 체크포인트 생성
+```
+
+## 📊 명령어 조합 예시
+
+### 시나리오별 최적 조합
+
+<Tabs items={['새 프로젝트', '버그 수정', '성능 최적화', '보안 강화']}>
+  <Tabs.Tab>
+    ```bash
+    # 1. 프로젝트 생성
+    /build my-app --react --typescript --tailwind
+    
+    # 2. 아키텍처 설계
+    /design --ultrathink
+    
+    # 3. 핵심 기능 구현
+    /implement 사용자 시스템 --wave-mode
+    
+    # 4. 테스트
+    /test --comprehensive --coverage 80
+    
+    # 5. 문서화
+    /document --complete
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```bash
+    # 1. 문제 진단
+    /troubleshoot "버그 증상"
+    
+    # 2. 원인 분석
+    /analyze --think-hard --focus bug
+    
+    # 3. 수정 구현
+    /implement 버그 수정 --safe-mode
+    
+    # 4. 테스트
+    /test regression
+    
+    # 5. 검증
+    /analyze --validate
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```bash
+    # 1. 성능 분석
+    /analyze --focus performance --measure-first
+    
+    # 2. 병목 지점 파악
+    /troubleshoot "성능 문제" --performance
+    
+    # 3. 최적화
+    /improve --performance --persona-performance
+    
+    # 4. 벤치마크
+    /test performance --benchmark
+    
+    # 5. 모니터링
+    /implement 성능 모니터링
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```bash
+    # 1. 보안 감사
+    /analyze --focus security --ultrathink
+    
+    # 2. 취약점 스캔
+    /test security --owasp
+    
+    # 3. 보안 강화
+    /improve --security --persona-security
+    
+    # 4. 검증
+    /test security --comprehensive
+    
+    # 5. 문서화
+    /document --type security-report
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## 💡 프로 팁
+
+<Callout type="success" emoji="🏆">
+**명령어 마스터가 되는 방법:**
+
+1. **작게 시작**: 기본 명령어부터 익히기
+2. **조합 연습**: 플래그 조합으로 강력한 기능 구현
+3. **페르소나 활용**: 상황에 맞는 전문가 활성화
+4. **자동화**: 반복 작업은 스크립트로
+5. **문서화**: 자주 쓰는 명령어 정리
+</Callout>
+
+## 🔗 관련 문서
+
+- [페르소나 가이드](/claude-code/personas) - 11개 전문가 활용법
+- [베스트 프랙티스](/claude-code/best-practices) - 효율적인 사용법
+- [문제 해결](/claude-code/troubleshooting) - 일반적인 문제 해결
