@@ -1,12 +1,26 @@
 import React from 'react'
+import { useRouter } from 'next/router'
+import { useConfig } from 'nextra-theme-docs'
 
 const config = {
   logo: <span>DevDocs</span>,
-  useNextSeoProps() {
-    return {
-      titleTemplate: '%s – DevDocs',
-      defaultTitle: 'DevDocs'
-    }
+  head: () => {
+    const { asPath } = useRouter()
+    const { frontMatter, title } = useConfig()
+    
+    const pageTitle = asPath === '/' 
+      ? 'DevDocs' 
+      : `${title || frontMatter?.title || 'DevDocs'} – DevDocs`
+    
+    return (
+      <>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{pageTitle}</title>
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={frontMatter?.description || "Luidin's DevDocs - 게임 개발 문서"} />
+        <link rel="icon" href="/favicon.ico" />
+      </>
+    )
   },
   project: {
     link: 'https://github.com/luidinkim/devdocs',
