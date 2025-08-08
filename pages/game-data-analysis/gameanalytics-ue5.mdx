@@ -150,9 +150,28 @@ void OnMatchStart()
 
 ## 이벤트 구현
 
+<Callout type="info">
+  **GameAnalytics는 8가지 주요 이벤트 타입을 제공합니다:**
+  - **Progression**: 플레이어 진행도 추적
+  - **Business**: 실제 구매 및 IAP 추적
+  - **Resource**: 가상 화폐 흐름 추적
+  - **Design**: 커스텀 게임플레이 이벤트
+  - **Error**: 에러 및 예외 추적
+  - **Ad**: 광고 노출 및 수익 추적
+  - **Health**: 앱 상태 모니터링 (자동)
+  - **Impression**: 노출 추적 (자동)
+</Callout>
+
+### 이벤트 트래킹 베스트 프랙티스
+
+1. **일관된 네이밍 규칙 사용**: `Category:Action:Label` 형식 권장
+2. **과도한 추적 방지**: 특히 Resource 이벤트는 주요 시점에만 호출
+3. **계층 구조 활용**: 3단계 계층으로 이벤트 구성 (최대 5단계)
+4. **커스텀 필드 활용**: Raw Export용 추가 데이터 전송 가능
+
 ### 📊 진행도 이벤트 (Progression Events)
 
-레벨 시작, 완료, 실패 추적
+플레이어의 게임 진행 상황을 추적하는 핵심 이벤트입니다. 3단계 계층 구조(progression01, 02, 03)를 지원하며, 점수를 선택적으로 포함할 수 있습니다.
 
 <Tabs items={['C++', 'Blueprint']}>
   <Tabs.Tab>
@@ -216,7 +235,12 @@ void OnMatchStart()
 
 ### 💰 비즈니스 이벤트 (Business Events)
 
-인앱 구매 추적
+실제 돈이 관련된 모든 거래를 추적합니다. 통화는 ISO 4217 형식을 사용하고, 금액은 최소 단위(센트)로 전송해야 합니다.
+
+<Callout type="warning">
+  **중요**: 금액은 센트 단위로 변환하여 전송 (예: $1.99 = 199)
+  통화 코드는 반드시 ISO 4217 형식 사용 (USD, EUR, KRW 등)
+</Callout>
 
 ```cpp
 // IAP 구매 완료
@@ -236,7 +260,12 @@ void UMyStoreManager::OnPurchaseComplete(const FString& ProductId, float Price)
 
 ### 💎 리소스 이벤트 (Resource Events)
 
-가상 화폐 획득/사용 추적
+게임 내 가상 경제 흐름을 추적합니다. Source(획득)와 Sink(사용)로 구분하여 재화의 흐름을 모니터링합니다.
+
+<Callout type="warning">
+  **성능 주의**: Resource 이벤트를 너무 자주 호출하지 마세요!
+  주요 거래 시점에만 호출하여 성능 영향을 최소화하세요.
+</Callout>
 
 <Tabs items={['화폐 획득', '화폐 사용', '아이템 획득']}>
   <Tabs.Tab>
@@ -296,7 +325,16 @@ void UMyStoreManager::OnPurchaseComplete(const FString& ProductId, float Price)
 
 ### 🎨 디자인 이벤트 (Design Events)
 
-커스텀 게임플레이 이벤트
+게임플레이의 모든 커스텀 이벤트를 추적합니다. 최대 5단계 계층 구조를 지원하며, 선택적으로 숫자 값을 포함할 수 있습니다.
+
+<Callout type="info">
+  **계층 구조 예시**:
+  - `Kill:Enemy:Zombie` - 좀비 처치
+  - `PowerUp:Collected:SpeedBoost` - 스피드 부스트 획득
+  - `UI:MainMenu:SettingsOpened` - 설정 메뉴 열기
+  
+  콜론(:)으로 구분하여 최대 5단계까지 구성 가능
+</Callout>
 
 ```cpp
 // 커스텀 이벤트 예제
@@ -333,7 +371,14 @@ void AMyCharacter::OnEnemyKilled(AEnemy* Enemy)
 
 ### ❌ 에러 이벤트 (Error Events)
 
-에러 및 예외 추적
+게임 로직 에러와 예외를 추적합니다. 5가지 심각도 레벨을 제공하며, 디버깅과 품질 모니터링에 필수적입니다.
+
+**심각도 레벨**:
+- `Debug`: 개발 중 디버그 정보
+- `Info`: 일반 정보성 메시지
+- `Warning`: 주의가 필요한 상황
+- `Error`: 에러 발생 (복구 가능)
+- `Critical`: 심각한 에러 (크래시 위험)
 
 ```cpp
 // 에러 로깅
@@ -351,6 +396,78 @@ void UMyNetworkManager::OnConnectionFailed(const FString& Reason)
     );
 }
 ```
+
+### 📺 광고 이벤트 (Ad Events)
+
+광고 노출, 클릭, 실패 등을 추적합니다. 광고 수익화 최적화에 필수적인 데이터를 수집합니다.
+
+```cpp
+// 광고 표시
+void UMyAdManager::ShowRewardedAd()
+{
+    UGameAnalytics::addAdEvent(
+        EGAAdAction::Show,
+        EGAAdType::RewardedVideo,
+        "admob",           // SDK 이름
+        "main_menu",       // 광고 위치
+        EGAAdError::Unknown,
+        0                  // 광고 시청 시간 (선택)
+    );
+}
+
+// 광고 클릭
+void UMyAdManager::OnAdClicked()
+{
+    UGameAnalytics::addAdEvent(
+        EGAAdAction::Clicked,
+        EGAAdType::RewardedVideo,
+        "admob",
+        "main_menu"
+    );
+}
+
+// 광고 로드 실패
+void UMyAdManager::OnAdFailedToLoad(const FString& Error)
+{
+    UGameAnalytics::addAdEvent(
+        EGAAdAction::FailedShow,
+        EGAAdType::RewardedVideo,
+        "admob",
+        "main_menu",
+        EGAAdError::NoFill  // 또는 다른 에러 타입
+    );
+}
+```
+
+### 🔧 커스텀 필드 (Custom Fields)
+
+Raw Export를 위한 추가 데이터를 전송할 수 있습니다. 모든 이벤트 타입에서 사용 가능합니다.
+
+```cpp
+// 커스텀 필드와 함께 이벤트 전송
+TSharedRef<FJsonObject> CustomFields = MakeShareable(new FJsonObject());
+CustomFields->SetNumberField(TEXT("player_level"), PlayerLevel);
+CustomFields->SetStringField(TEXT("weapon_type"), TEXT("sword"));
+CustomFields->SetBoolField(TEXT("is_premium"), bIsPremiumUser);
+
+// 진행도 이벤트에 커스텀 필드 추가
+UGameAnalytics::addProgressionEvent(
+    EGAProgressionStatus::Complete,
+    "World_01",
+    "Level_05",
+    "",
+    1000,  // 점수
+    CustomFields  // 커스텀 필드
+);
+```
+
+<Callout type="info">
+  **커스텀 필드 제한사항**:
+  - 최대 50개의 커스텀 필드
+  - 키 이름: 최대 64자
+  - 문자열 값: 최대 256자
+  - Raw Export 구독 시에만 활용 가능
+</Callout>
 
 ## 사용자 속성 설정
 
@@ -403,6 +520,32 @@ void UMyGameManager::OnRemoteConfigsReady()
     }
 }
 ```
+
+## 이벤트 제한사항 및 검증
+
+### 파라미터 제한사항
+
+| 파라미터 | 최대 길이 | 제한사항 |
+|---------|----------|----------|
+| **Event ID** | 64자 | 영문, 숫자, 언더스코어(_), 콜론(:) |
+| **Progression** | 64자 | progression01, 02, 03 각각 |
+| **Currency** | 64자 | 영문자만 |
+| **Item Type** | 64자 | 영문, 숫자, 언더스코어 |
+| **Item ID** | 64자 | 영문, 숫자, 언더스코어 |
+| **Custom Dimension** | 32자 | 사전 정의된 값만 |
+| **Error Message** | 8192자 | 모든 문자 허용 |
+
+### 이벤트 빈도 제한
+
+<Callout type="warning">
+  **과도한 이벤트 호출 주의**:
+  - Resource 이벤트: 초당 최대 10회
+  - Design 이벤트: 초당 최대 100회
+  - Error 이벤트: 초당 최대 10회
+  - 전체 이벤트: 초당 최대 500회
+  
+  제한을 초과하면 이벤트가 드롭될 수 있습니다.
+</Callout>
 
 ## 디버깅 및 검증
 
@@ -492,6 +635,20 @@ UGameAnalytics::addProgressionEvent(...);
 - [ ] GDPR 동의 구현
 - [ ] 개인정보 제외 확인
 </Steps>
+
+## 공식 문서 및 리소스
+
+### 📚 추가 학습 자료
+- [GameAnalytics 공식 문서](https://docs.gameanalytics.com/integrations/sdk/unreal/)
+- [이벤트 트래킹 상세 가이드](https://docs.gameanalytics.com/integrations/sdk/unreal/event-tracking/)
+- [SDK 기능 문서](https://docs.gameanalytics.com/integrations/sdk/unreal/sdk-features/)
+- [GitHub 저장소](https://github.com/GameAnalytics/GA-SDK-UNREAL)
+
+### 주요 참고사항
+- **C++ 프로젝트 필수**: Pure Blueprint 프로젝트는 지원하지 않음
+- **플랫폼 지원**: Windows, Mac, iOS, Android, Linux
+- **최소 엔진 버전**: UE 4.15+ (UE5 완벽 지원)
+- **네트워크 요구사항**: HTTPS 아웃바운드 연결 필요
 
 ## 다음 단계
 
