@@ -11,6 +11,11 @@ import { Callout, Cards, Tabs, Steps, FileTree } from 'nextra/components'
 
 ## 사전 준비사항
 
+<Callout type="warning">
+  **API 참고사항**: GameAnalytics UE5 SDK의 모든 메서드는 소문자로 시작합니다.
+  예: `initialize()`, `addProgressionEvent()`, `setCustomDimension01()`
+</Callout>
+
 <Steps>
 ### GameAnalytics 계정 생성
 [GameAnalytics.com](https://gameanalytics.com)에서 무료 계정 생성
@@ -85,15 +90,15 @@ public class YourProject : ModuleRules
         Super::Init();
         
         // GameAnalytics 초기화
-        UGameAnalytics::Initialize(
+        UGameAnalytics::initialize(
             "YOUR_GAME_KEY",
             "YOUR_SECRET_KEY"
         );
         
         // 디버그 로그 활성화 (개발 중에만)
         #if WITH_EDITOR
-            UGameAnalytics::SetEnabledInfoLog(true);
-            UGameAnalytics::SetEnabledVerboseLog(true);
+            UGameAnalytics::setEnabledInfoLog(true);
+            UGameAnalytics::setEnabledVerboseLog(true);
         #endif
         
         // 세션 추적은 자동으로 처리됨 (기본 활성화)
@@ -158,12 +163,11 @@ void OnMatchStart()
         FString Progression01 = FString::Printf(TEXT("World_%02d"), CurrentWorld);
         FString Progression02 = FString::Printf(TEXT("Level_%02d"), LevelNumber);
         
-        UGameAnalytics::AddProgressionEventWithScore(
+        UGameAnalytics::addProgressionEvent(
             EGAProgressionStatus::Start,
             Progression01,
             Progression02,
-            "",
-            0  // 시작 시 점수는 0
+            ""  // Progression03 (선택사항)
         );
     }
     
@@ -173,19 +177,20 @@ void OnMatchStart()
         FString Progression01 = FString::Printf(TEXT("World_%02d"), CurrentWorld);
         FString Progression02 = FString::Printf(TEXT("Level_%02d"), CurrentLevel);
         
-        UGameAnalytics::AddProgressionEventWithScore(
+        // 점수와 함께 전송
+        UGameAnalytics::addProgressionEvent(
             EGAProgressionStatus::Complete,
             Progression01,
             Progression02,
             "",
-            Score
+            Score  // 점수 포함
         );
     }
     
     // 레벨 실패
     void AMyGameMode::OnLevelFail()
     {
-        UGameAnalytics::AddProgressionEvent(
+        UGameAnalytics::addProgressionEvent(
             EGAProgressionStatus::Fail,
             FString::Printf(TEXT("World_%02d"), CurrentWorld),
             FString::Printf(TEXT("Level_%02d"), CurrentLevel),
@@ -203,9 +208,9 @@ void OnMatchStart()
     4. Progression02 = "Level_05"
     
     **레벨 완료 이벤트:**
-    1. `Add Progression Event with Score` 노드 추가
+    1. `Add Progression Event` 노드 추가
     2. Status = `Complete`
-    3. Score = 플레이어 점수 변수 연결
+    3. Score = 플레이어 점수 변수 연결 (선택사항)
   </Tabs.Tab>
 </Tabs>
 
@@ -217,7 +222,7 @@ void OnMatchStart()
 // IAP 구매 완료
 void UMyStoreManager::OnPurchaseComplete(const FString& ProductId, float Price)
 {
-    UGameAnalytics::AddBusinessEvent(
+    UGameAnalytics::addBusinessEvent(
         "USD",           // 통화
         Price * 100,     // 센트 단위로 변환
         "IAP",           // 아이템 타입
@@ -239,7 +244,7 @@ void UMyStoreManager::OnPurchaseComplete(const FString& ProductId, float Price)
     // 재화 획득
     void UMyEconomyManager::AddCurrency(const FString& Currency, int32 Amount, const FString& Source)
     {
-        UGameAnalytics::AddResourceEvent(
+        UGameAnalytics::addResourceEvent(
             EGAResourceFlowType::Source,  // 획득
             Currency,                      // "Gems", "Gold" 등
             Amount,
@@ -258,7 +263,7 @@ void UMyStoreManager::OnPurchaseComplete(const FString& ProductId, float Price)
     // 재화 사용
     void UMyEconomyManager::SpendCurrency(const FString& Currency, int32 Amount, const FString& Item)
     {
-        UGameAnalytics::AddResourceEvent(
+        UGameAnalytics::addResourceEvent(
             EGAResourceFlowType::Sink,    // 사용
             Currency,
             Amount,
@@ -298,17 +303,17 @@ void UMyStoreManager::OnPurchaseComplete(const FString& ProductId, float Price)
 void UMyGameAnalytics::TrackCustomEvent(const FString& EventName, float Value)
 {
     // 단순 이벤트
-    UGameAnalytics::AddDesignEvent(EventName);
+    UGameAnalytics::addDesignEvent(EventName);
     
     // 값이 있는 이벤트
-    UGameAnalytics::AddDesignEventWithValue(EventName, Value);
+    UGameAnalytics::addDesignEvent(EventName, Value);
     
     // 계층적 이벤트
     FString HierarchicalEvent = FString::Printf(
         TEXT("Kill:Enemy:%s"), 
         *EnemyType
     );
-    UGameAnalytics::AddDesignEventWithValue(HierarchicalEvent, DamageDealt);
+    UGameAnalytics::addDesignEvent(HierarchicalEvent, DamageDealt);
 }
 
 // 실제 사용 예제
@@ -319,7 +324,7 @@ void AMyCharacter::OnEnemyKilled(AEnemy* Enemy)
         *Enemy->GetEnemyType()
     );
     
-    UGameAnalytics::AddDesignEventWithValue(
+    UGameAnalytics::addDesignEvent(
         EventName, 
         Enemy->GetExpReward()
     );
@@ -334,13 +339,13 @@ void AMyCharacter::OnEnemyKilled(AEnemy* Enemy)
 // 에러 로깅
 void UMyErrorHandler::LogError(const FString& Message, EGAErrorSeverity Severity)
 {
-    UGameAnalytics::AddErrorEvent(Severity, Message);
+    UGameAnalytics::addErrorEvent(Severity, Message);
 }
 
 // 사용 예제
 void UMyNetworkManager::OnConnectionFailed(const FString& Reason)
 {
-    UGameAnalytics::AddErrorEvent(
+    UGameAnalytics::addErrorEvent(
         EGAErrorSeverity::Error,
         FString::Printf(TEXT("Network:ConnectionFailed:%s"), *Reason)
     );
@@ -354,17 +359,16 @@ void UMyNetworkManager::OnConnectionFailed(const FString& Reason)
 ```cpp
 void UMyAnalytics::SetUserProperties()
 {
-    // 사용자 ID 설정 (선택사항)
-    UGameAnalytics::SetCustomUserId("player_12345");
+    // 사용자 ID 설정 (초기화 전에 설정해야 함)
+    UGameAnalytics::configureUserId("player_12345");
     
-    // 사용자 속성
-    UGameAnalytics::SetGender(EGAGender::Male);
-    UGameAnalytics::SetBirthYear(1990);
+    // 사용자 속성 (선택사항)
+    // 참고: 성별과 생년 설정은 현재 SDK에서 제한적 지원
     
     // 커스텀 차원 (최대 3개)
-    UGameAnalytics::SetCustomDimension01("Premium");  // 유저 타입
-    UGameAnalytics::SetCustomDimension02("Guild_A");  // 길드
-    UGameAnalytics::SetCustomDimension03("Server_1"); // 서버
+    UGameAnalytics::setCustomDimension01("Premium");  // 유저 타입
+    UGameAnalytics::setCustomDimension02("Guild_A");  // 길드
+    UGameAnalytics::setCustomDimension03("Server_1"); // 서버
 }
 ```
 
@@ -375,13 +379,13 @@ void UMyAnalytics::SetUserProperties()
 ```cpp
 void UMyGameManager::InitializeRemoteConfig()
 {
-    // Remote Config 초기화
-    UGameAnalytics::ConfigureAvailableCustomDimensions01(
+    // 커스텀 차원 설정 (초기화 전에 호출)
+    UGameAnalytics::configureAvailableCustomDimensions01(
         {"Standard", "Premium", "VIP"}
     );
     
-    // 설정값 가져오기
-    FString ConfigValue = UGameAnalytics::GetRemoteConfigsValueAsString(
+    // Remote Config 값 가져오기
+    FString ConfigValue = UGameAnalytics::getRemoteConfigsValueAsString(
         "difficulty_multiplier", 
         "1.0"  // 기본값
     );
@@ -392,7 +396,7 @@ void UMyGameManager::InitializeRemoteConfig()
 // Remote Config 준비 확인
 void UMyGameManager::OnRemoteConfigsReady()
 {
-    if (UGameAnalytics::IsRemoteConfigsReady())
+    if (UGameAnalytics::isRemoteConfigsReady())
     {
         // 설정값 적용
         ApplyRemoteConfigs();
@@ -407,13 +411,14 @@ void UMyGameManager::OnRemoteConfigsReady()
 ```cpp
 #if WITH_EDITOR
     // 개발 중 디버그 로그 활성화
-    UGameAnalytics::SetEnabledInfoLog(true);
-    UGameAnalytics::SetEnabledVerboseLog(true);
-    UGameAnalytics::SetEnabledManualSessionHandling(false);
+    UGameAnalytics::setEnabledInfoLog(true);
+    UGameAnalytics::setEnabledVerboseLog(true);
+    // 수동 세션 핸들링 (필요시)
+    UGameAnalytics::setEnabledManualSessionHandling(false);
 #else
     // 릴리즈 빌드에서는 로그 비활성화
-    UGameAnalytics::SetEnabledInfoLog(false);
-    UGameAnalytics::SetEnabledVerboseLog(false);
+    UGameAnalytics::setEnabledInfoLog(false);
+    UGameAnalytics::setEnabledVerboseLog(false);
 #endif
 ```
 
@@ -457,11 +462,9 @@ GameAnalytics 대시보드에서 실시간 데이터 확인
 
 ```cpp
 // 안전한 초기화 패턴
-if (UGameAnalytics::IsInitialized())
-{
-    // 이벤트 전송
-    UGameAnalytics::AddProgressionEvent(...);
-}
+// 참고: SDK는 자동으로 초기화 상태를 확인함
+// 이벤트는 초기화 후에만 전송됨
+UGameAnalytics::addProgressionEvent(...);
 ```
 
 ### 메모리 누수
