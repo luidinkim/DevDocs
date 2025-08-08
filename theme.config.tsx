@@ -17,7 +17,7 @@ const config = {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{pageTitle}</title>
         <meta property="og:title" content={pageTitle} />
-        <meta property="og:description" content={frontMatter?.description || "Luidin's DevDocs - 게임 개발 문서"} />
+        <meta property="og:description" content={frontMatter?.description || "DevDocs - 게임 개발 문서"} />
         <link rel="icon" href="/favicon.ico" />
       </>
     )
