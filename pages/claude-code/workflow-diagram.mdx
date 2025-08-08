@@ -104,9 +104,9 @@ sequenceDiagram
 graph LR
     A[작업 입력] --> B{복잡도 평가}
     
-    B -->|낮음 0-0.3| C[기본 실행]
-    B -->|중간 0.3-0.7| D[페르소나 활성화]
-    B -->|높음 0.7-1.0| E[Wave 모드]
+    B -->|"낮음 0-0.3"| C[기본 실행]
+    B -->|"중간 0.3-0.7"| D[페르소나 활성화]
+    B -->|"높음 0.7-1.0"| E[Wave 모드]
     
     C --> F[단일 도구]
     D --> G[MCP 서버 활성화]
@@ -126,23 +126,23 @@ graph LR
 graph TD
     A[작업 유형] --> B{도메인 분석}
     
-    B -->|UI/UX| C[Frontend]
-    B -->|서버/API| D[Backend]
-    B -->|보안| E[Security]
-    B -->|성능| F[Performance]
-    B -->|설계| G[Architect]
-    B -->|디버깅| H[Analyzer]
-    B -->|테스트| I[QA]
-    B -->|문서| J[Scribe]
+    B -->|"UI/UX"| C[Frontend]
+    B -->|"서버/API"| D[Backend]
+    B -->|"보안"| E[Security]
+    B -->|"성능"| F[Performance]
+    B -->|"설계"| G[Architect]
+    B -->|"디버깅"| H[Analyzer]
+    B -->|"테스트"| I[QA]
+    B -->|"문서"| J[Scribe]
     
-    C --> K[React/Vue/CSS]
-    D --> L[Node/Python/DB]
-    E --> M[OWASP/암호화]
-    F --> N[최적화/프로파일링]
-    G --> O[시스템설계/패턴]
-    H --> P[근본원인/로그분석]
-    I --> Q[E2E/단위테스트]
-    J --> R[API문서/가이드]
+    C --> K["React/Vue/CSS"]
+    D --> L["Node/Python/DB"]
+    E --> M["OWASP/암호화"]
+    F --> N["최적화/프로파일링"]
+    G --> O["시스템설계/패턴"]
+    H --> P["근본원인/로그분석"]
+    I --> Q["E2E/단위테스트"]
+    J --> R["API문서/가이드"]
 `} />
 
 ## MCP 서버 협업 패턴
@@ -227,13 +227,13 @@ graph LR
 graph TD
     Start[시작] --> Input{입력 분석}
     
-    Input -->|sc: 명령어| Super[SuperClaude 모드]
-    Input -->|일반 명령어| Normal[일반 모드]
+    Input -->|"sc: 명령어"| Super[SuperClaude 모드]
+    Input -->|"일반 명령어"| Normal[일반 모드]
     
     Super --> Complex{복잡도?}
-    Complex -->|높음| Wave[Wave 모드 활성화]
-    Complex -->|중간| Smart[스마트 모드]
-    Complex -->|낮음| Fast[빠른 실행]
+    Complex -->|"높음"| Wave[Wave 모드 활성화]
+    Complex -->|"중간"| Smart[스마트 모드]
+    Complex -->|"낮음"| Fast[빠른 실행]
     
     Wave --> AllMCP[모든 MCP 활성화]
     Wave --> AllPersona[모든 페르소나]
