@@ -1,7 +1,16 @@
 import { Callout } from 'nextra/components'
 import Mermaid from '../../components/Mermaid'
-import EnhancedMermaid from '../../components/EnhancedMermaid'
-import InteractiveDiagram from '../../components/InteractiveDiagram'
+import dynamic from 'next/dynamic'
+
+const EnhancedMermaid = dynamic(() => import('../../components/EnhancedMermaid'), { 
+  ssr: false,
+  loading: () => <p>Loading diagram...</p>
+})
+
+const InteractiveDiagram = dynamic(() => import('../../components/InteractiveDiagram'), { 
+  ssr: false,
+  loading: () => <p>Loading diagram...</p>
+})
 
 # 🔄 Claude Code 워크플로우 다이어그램
 

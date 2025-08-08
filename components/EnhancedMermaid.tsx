@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react'
 import mermaid from 'mermaid'
-import { useTheme } from 'nextra-theme-docs'
 
 interface EnhancedMermaidProps {
   chart: string
@@ -14,7 +13,7 @@ interface EnhancedMermaidProps {
 
 // Modern theme configuration
 const modernTheme = {
-  theme: 'base',
+  theme: 'default' as const,
   themeVariables: {
     // Primary colors - Gradient effect
     primaryColor: '#667eea',
@@ -84,7 +83,7 @@ const modernTheme = {
 }
 
 const darkTheme = {
-  theme: 'dark',
+  theme: 'dark' as const,
   themeVariables: {
     primaryColor: '#818cf8',
     primaryTextColor: '#1e1e2e',
@@ -151,8 +150,26 @@ const EnhancedMermaid: React.FC<EnhancedMermaidProps> = ({
   const [scale, setScale] = useState(1)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const { theme: appTheme } = useTheme()
-  const isDark = appTheme === 'dark'
+  const [isDark, setIsDark] = useState(false)
+  
+  // Check for dark mode
+  useEffect(() => {
+    const checkDarkMode = () => {
+      const htmlElement = document.documentElement
+      setIsDark(htmlElement.classList.contains('dark'))
+    }
+    
+    checkDarkMode()
+    
+    // Watch for theme changes
+    const observer = new MutationObserver(checkDarkMode)
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    })
+    
+    return () => observer.disconnect()
+  }, [])
 
   // Initialize mermaid with the selected theme
   useEffect(() => {
@@ -182,8 +199,7 @@ const EnhancedMermaid: React.FC<EnhancedMermaidProps> = ({
       gantt: {
         numberSectionStyles: 4,
         axisFormat: '%m/%d',
-        fontSize: 14,
-        fontFamily: '"Inter", sans-serif'
+        fontSize: 14
       }
     })
   }, [isDark, theme])

@@ -1,5 +1,20 @@
-import { Tabs, Tab, Callout } from 'nextra/components'
-import { CardGrid, ProcessFlow, MindMap } from '../../components/VisualDocumentation'
+import { Tabs, Callout } from 'nextra/components'
+import dynamic from 'next/dynamic'
+
+const CardGrid = dynamic(() => import('../../components/VisualDocumentation').then(mod => mod.CardGrid), {
+  ssr: false,
+  loading: () => <p>Loading cards...</p>
+})
+
+const ProcessFlow = dynamic(() => import('../../components/VisualDocumentation').then(mod => mod.ProcessFlow), {
+  ssr: false,
+  loading: () => <p>Loading process flow...</p>
+})
+
+const MindMap = dynamic(() => import('../../components/VisualDocumentation').then(mod => mod.MindMap), {
+  ssr: false,
+  loading: () => <p>Loading mind map...</p>
+})
 
 # 🎨 Claude Code SuperClaude 시각적 가이드
 
@@ -10,7 +25,7 @@ import { CardGrid, ProcessFlow, MindMap } from '../../components/VisualDocumenta
 ## 🏗️ 시스템 아키텍처
 
 <Tabs items={['개요', '구성요소', '작동방식']}>
-  <Tab>
+  <Tabs.Tab>
     <CardGrid data={{
       title: "SuperClaude 핵심 시스템",
       cards: [
@@ -97,9 +112,9 @@ import { CardGrid, ProcessFlow, MindMap } from '../../components/VisualDocumenta
         }
       ]
     }} />
-  </Tab>
+  </Tabs.Tab>
   
-  <Tab>
+  <Tabs.Tab>
     <MindMap data={{
       id: "root",
       title: "SuperClaude 구성요소",
@@ -189,9 +204,9 @@ import { CardGrid, ProcessFlow, MindMap } from '../../components/VisualDocumenta
         }
       ]
     }} />
-  </Tab>
+  </Tabs.Tab>
   
-  <Tab>
+  <Tabs.Tab>
     <ProcessFlow steps={[
       {
         label: "입력",
@@ -322,13 +337,13 @@ import { CardGrid, ProcessFlow, MindMap } from '../../components/VisualDocumenta
         ]
       }
     ]} />
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ## 🎯 주요 기능별 가이드
 
 <Tabs items={['분석 기능', '구축 기능', '개선 기능', '자동화']}>
-  <Tab>
+  <Tabs.Tab>
     ### 🔍 분석 기능 (sc:analyze)
     
     <CardGrid data={{
@@ -387,9 +402,9 @@ import { CardGrid, ProcessFlow, MindMap } from '../../components/VisualDocumenta
         }
       ]
     }} />
-  </Tab>
+  </Tabs.Tab>
   
-  <Tab>
+  <Tabs.Tab>
     ### 🔨 구축 기능 (sc:build)
     
     <ProcessFlow steps={[
@@ -489,9 +504,9 @@ import { CardGrid, ProcessFlow, MindMap } from '../../components/VisualDocumenta
         ]
       }
     ]} />
-  </Tab>
+  </Tabs.Tab>
   
-  <Tab>
+  <Tabs.Tab>
     ### ✨ 개선 기능 (sc:improve)
     
     <CardGrid data={{
@@ -551,9 +566,9 @@ import { CardGrid, ProcessFlow, MindMap } from '../../components/VisualDocumenta
         }
       ]
     }} />
-  </Tab>
+  </Tabs.Tab>
   
-  <Tab>
+  <Tabs.Tab>
     ### 🤖 자동화 기능
     
     <MindMap data={{
@@ -603,7 +618,7 @@ import { CardGrid, ProcessFlow, MindMap } from '../../components/VisualDocumenta
         }
       ]
     }} />
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ## 💡 사용 팁
