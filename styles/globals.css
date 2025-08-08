@@ -40,3 +40,6 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+/* Import custom link card styles */
+@import './link-card.css';
