@@ -96,8 +96,8 @@ public class YourProject : ModuleRules
             UGameAnalytics::SetEnabledVerboseLog(true);
         #endif
         
-        // 자동 세션 처리 활성화
-        UGameAnalytics::SetEnabledAutomaticSessionHandling(true);
+        // 세션 추적은 자동으로 처리됨 (기본 활성화)
+        // 필요시 수동 세션 관리: UGameAnalytics::endSession(), UGameAnalytics::newSession()
     }
     ```
   </Tabs.Tab>
@@ -110,11 +110,38 @@ public class YourProject : ModuleRules
     - Game Key와 Secret Key 입력
     - Build Version 설정 (예: "1.0.0")
     
-    **3. 자동 세션 처리:**
-    - `Set Enabled Automatic Session Handling` 노드 추가
-    - Enabled = True 설정
+    **3. 세션 처리:**
+    - 세션은 자동으로 추적됨 (게임 시작/종료 시)
+    - 수동 제어가 필요한 경우: `End Session`, `New Session` 노드 사용
   </Tabs.Tab>
 </Tabs>
+
+## 세션 관리
+
+<Callout type="info">
+  **자동 세션 추적**: GameAnalytics는 기본적으로 세션을 자동 관리합니다.
+  - 게임 시작 시 새 세션 시작
+  - 게임 종료/백그라운드 진입 시 세션 종료
+  - 백그라운드에서 복귀 시 새 세션 생성 (기본 10초 이상 비활성 시)
+</Callout>
+
+### 수동 세션 관리 (특별한 경우)
+
+```cpp
+// 유저 전환 시
+void OnUserSwitch()
+{
+    UGameAnalytics::endSession();  // 현재 세션 종료
+    // 유저 정보 업데이트
+    UGameAnalytics::newSession();   // 새 세션 시작
+}
+
+// 멀티플레이어 매치 시작/종료
+void OnMatchStart()
+{
+    UGameAnalytics::newSession();   // 매치별 세션 구분
+}
+```
 
 ## 이벤트 구현
 
