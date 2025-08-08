@@ -1,0 +1,87 @@
+/* Mermaid Diagram Styles */
+.mermaid {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #f6f8fb 0%, #ffffff 100%);
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  overflow-x: auto;
+}
+
+/* Dark mode */
+html.dark .mermaid {
+  background: linear-gradient(135deg, #1a1b26 0%, #24283b 100%);
+  border-color: #414868;
+}
+
+/* Mermaid specific overrides */
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon,
+.mermaid .node path {
+  fill: #6366f1 !important;
+  stroke: #4f46e5 !important;
+  stroke-width: 2px;
+}
+
+.mermaid .node .label {
+  color: #ffffff !important;
+}
+
+.mermaid .edgePath .path {
+  stroke: #6b7280 !important;
+  stroke-width: 2px;
+}
+
+.mermaid .edgeLabel {
+  background-color: #ffffff;
+  border-radius: 4px;
+  padding: 2px 4px;
+}
+
+html.dark .mermaid .edgeLabel {
+  background-color: #1a1b26;
+  color: #e5e7eb;
+}
+
+/* Sequence diagram styles */
+.mermaid .actor {
+  fill: #e0e7ff !important;
+  stroke: #6366f1 !important;
+}
+
+.mermaid .messageLine0,
+.mermaid .messageLine1 {
+  stroke: #6b7280 !important;
+}
+
+/* Flowchart styles */
+.mermaid .flowchart-link {
+  stroke: #6b7280 !important;
+}
+
+.mermaid .subgraph {
+  fill: #f3f4f6 !important;
+  stroke: #d1d5db !important;
+}
+
+html.dark .mermaid .subgraph {
+  fill: #374151 !important;
+  stroke: #4b5563 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .mermaid {
+    padding: 1rem;
+    overflow-x: scroll;
+  }
+}

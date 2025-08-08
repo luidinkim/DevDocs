@@ -1,636 +1,216 @@
 import { Callout, Cards, Tabs, Steps, FileTree } from 'nextra/components'
 import { LinkCard, LinkCards } from '../components/LinkCard'
+import Mermaid from '../components/Mermaid'
 
-# Claude Code 완벽 가이드
+# Claude Code 마스터 가이드
 
-## 🎯 들어가며: AI 시대의 개발 혁명
+## AI 페어 프로그래밍의 새로운 기준
 
-여러분, 안녕하세요! 저는 여러분의 개발 여정을 함께할 Claude Code입니다. 
+Claude Code는 단순한 코드 생성 도구가 아닙니다. 프로젝트의 컨텍스트를 이해하고, 아키텍처를 설계하며, 
+프로덕션 레벨 코드를 작성하는 진정한 AI 개발 파트너입니다.
 
-10년 전, 우리는 Stack Overflow를 뒤지며 코드를 복사-붙여넣기 했습니다.  
-5년 전, GitHub Copilot이 등장했습니다.  
-그리고 지금, **Claude Code**가 여러분의 진정한 AI 개발 파트너가 되고자 합니다.
-
-<Callout type="info" emoji="💡">
-**이 문서의 목적**: 초급 개발자부터 시니어 개발자까지, 누구나 Claude Code를 통해 
-10배 더 생산적인 개발자가 될 수 있도록 체계적으로 안내합니다.
+<Callout type="info">
+**핵심 가치**: Claude Code로 3개월 프로젝트를 2주 만에 완성하세요.
+실제 스타트업들이 MVP를 10배 빠르게 출시하고 있습니다.
 </Callout>
 
-## 📚 Chapter 1: Claude Code란 무엇인가?
+## 왜 Claude Code인가
 
-### 1.1 정의와 철학
+### 실제 파일 시스템 접근
+ChatGPT와 달리 실제 파일을 읽고, 수정하고, 생성합니다. 복사-붙여넣기는 이제 과거의 일입니다.
 
-Claude Code는 Anthropic이 개발한 **대화형 AI 개발 도구**입니다. 단순한 코드 생성기가 아닌, 
-여러분의 사고 과정을 이해하고, 프로젝트 컨텍스트를 파악하며, 최적의 솔루션을 제안하는 
-**지능형 개발 파트너**입니다.
+### 200K 토큰 컨텍스트
+전체 코드베이스를 한 번에 이해합니다. 수백 개 파일의 프로젝트도 문제없습니다.
 
-### 1.2 핵심 차별점
+### SuperClaude 프레임워크
+11개 전문가 페르소나와 MCP 서버 통합으로 엔터프라이즈급 개발이 가능합니다.
 
-<Tabs items={['vs ChatGPT', 'vs Copilot', 'vs Cursor']}>
-  <Tabs.Tab>
-    **ChatGPT와의 차이점:**
-    - ✅ 실제 파일 시스템 접근 및 수정 가능
-    - ✅ 프로젝트 전체 컨텍스트 이해
-    - ✅ Git 통합 및 버전 관리
-    - ✅ 실시간 코드 실행 및 테스트
-    - ✅ 200K 토큰 컨텍스트 윈도우
-  </Tabs.Tab>
-  
-  <Tabs.Tab>
-    **GitHub Copilot과의 차이점:**
-    - ✅ 대화를 통한 요구사항 정제
-    - ✅ 아키텍처 레벨 설계 지원
-    - ✅ 코드 리뷰 및 리팩토링 제안
-    - ✅ 문서화 자동 생성
-    - ✅ 멀티파일 동시 편집
-  </Tabs.Tab>
-  
-  <Tabs.Tab>
-    **Cursor와의 차이점:**
-    - ✅ SuperClaude 프레임워크 내장
-    - ✅ 한국어 완벽 지원
-    - ✅ 프로젝트별 커스터마이징 (CLAUDE.md)
-    - ✅ MCP 서버 통합
-    - ✅ 고급 페르소나 시스템
-  </Tabs.Tab>
-</Tabs>
+## 30분 만에 SaaS 만들기: 실전 예제
 
-### 1.3 Claude Code가 할 수 있는 일들
-
-#### 🔨 개발 작업
-- **코드 작성**: 새 기능 구현, 보일러플레이트 생성, API 엔드포인트
-- **디버깅**: 에러 분석, 근본 원인 파악, 수정 제안
-- **리팩토링**: 코드 구조 개선, 패턴 적용, 기술 부채 해결
-
-#### 📋 프로젝트 관리
-- **테스트 작성**: 단위 테스트, 통합 테스트, E2E 테스트
-- **문서화**: API 문서, 사용자 가이드, 기술 문서
-- **아키텍처 설계**: 시스템 설계, 데이터베이스 설계, API 설계
-
-#### 🚀 최적화 작업
-- **코드 리뷰**: 품질 검토, 보안 검토, 성능 검토
-- **성능 최적화**: 병목 지점 파악, 최적화 적용, 벤치마킹
-
-## 📚 Chapter 2: SuperClaude - 차원이 다른 개발 경험
-
-### 2.1 SuperClaude란?
-
-SuperClaude는 Claude Code의 능력을 극대화하는 **고급 프레임워크**입니다. 
-마치 일반 자동차에 터보 엔진을 장착한 것처럼, Claude Code에 초능력을 부여합니다.
-
-<Callout type="success" emoji="🚀">
-**SuperClaude = Claude Code + 슈퍼파워**
-- 11개의 전문가 페르소나
-- 지능형 명령 시스템
-- MCP 서버 통합
-- 자동화된 워크플로우
-</Callout>
-
-### 2.2 SuperClaude 아키텍처
-
-<FileTree>
-  <FileTree.Folder name="SuperClaude Framework" defaultOpen>
-    <FileTree.File name="COMMANDS.md" />
-    <FileTree.File name="FLAGS.md" />
-    <FileTree.File name="PRINCIPLES.md" />
-    <FileTree.File name="RULES.md" />
-    <FileTree.File name="MCP.md" />
-    <FileTree.File name="PERSONAS.md" />
-    <FileTree.File name="ORCHESTRATOR.md" />
-    <FileTree.File name="MODES.md" />
-  </FileTree.Folder>
-</FileTree>
-
-각 컴포넌트의 역할:
-- **COMMANDS**: 고급 명령어 시스템
-- **FLAGS**: 동작 제어 플래그
-- **PRINCIPLES**: 개발 철학과 원칙
-- **RULES**: 실행 규칙과 제약
-- **MCP**: 외부 서버 통합
-- **PERSONAS**: 전문가 페르소나
-- **ORCHESTRATOR**: 지능형 라우팅
-- **MODES**: 작동 모드
-
-## 📚 Chapter 3: 실전! SuperClaude 명령어 마스터하기
-
-### 3.1 SuperClaude `sc:` 명령어 체계
-
-<Callout type="warning" emoji="⚡">
-**중요**: SuperClaude 명령어는 `sc:` 접두사를 사용합니다!  
-`sc:` 명령어는 일반 명령어보다 강력하고 자동 최적화됩니다.
-</Callout>
-
-#### sc: 명령어 vs 일반 명령어
-
-```
-사용자 입력
-    │
-    ├── 일반 명령어 (/analyze)
-    │   └── 기본 분석
-    │
-    └── SuperClaude (sc:analyze)
-        ├── Sequential 활성화
-        ├── Context7 활성화
-        ├── 최적 페르소나
-        └── 심층 분석 결과
-```
-
-### 3.2 필수 명령어 Top 10
-
-#### 1️⃣ `sc:analyze` - 코드 분석의 마법사
+<Steps>
+### 프로젝트 초기화 (2분)
 ```bash
-# SuperClaude 방식 (추천!)
-sc:analyze
-
-# 고급 사용법
-sc:analyze --think-hard --focus performance
-sc:analyze --seq --c7  # Sequential + Context7
-
-# 일반 명령어 (기본)
-/analyze
+sc:build saas-app --next --prisma --stripe --auth
 ```
 
-**실제 사용 예시:**
-```
-User: sc:analyze 우리 프로젝트의 성능 병목 지점을 찾아줘
-Claude: [Sequential 활성화] 체계적으로 분석하겠습니다...
-  ✅ 메모리 누수 발견: UserService.js:142
-  ✅ N+1 쿼리 문제: ProductRepository.js:87
-  ✅ 불필요한 리렌더링: Dashboard.tsx:234
-```
-
-#### 2️⃣ `sc:implement` - 구현의 달인
+### 데이터 모델링 (5분)
 ```bash
-# SuperClaude 방식 (Context7 자동 활성화)
-sc:implement 대시보드 컴포넌트 --type component --framework react
-sc:implement 사용자 인증 API --type api --with-tests
-
-# 일반 명령어
-/implement 대시보드 컴포넌트
+sc:design database --entities user,subscription,product
+sc:implement prisma-schema --with-relations
 ```
 
-#### 3️⃣ `sc:improve` - 코드 개선 전문가
+### 인증 시스템 구현 (5분)
 ```bash
-# SuperClaude 방식
-sc:improve --focus performance  # Sequential로 체계적 개선
-sc:improve --focus security --validate
-
-# 일반 명령어
-/improve
+sc:implement auth-system --jwt --oauth-google
+sc:test auth --comprehensive
 ```
 
-#### 4️⃣ `sc:build` - 빌더
+### 결제 시스템 통합 (8분)
 ```bash
-# SuperClaude 방식
-sc:build  # 자동 최적화 + Context7 문서 참조
-sc:build frontend --optimization
-
-# 일반 명령어
-/build
+sc:implement stripe-integration --subscriptions
+sc:implement billing-dashboard --type component
 ```
 
-#### 5️⃣ `sc:test` - 테스트 마스터
+### 관리자 대시보드 (5분)
 ```bash
-# SuperClaude 방식
-sc:test unit  # 포괄적 테스트 + 커버리지 보장
-sc:test e2e --playwright  # Playwright MCP 활성화
-
-# 일반 명령어
-/test
-
-### 3.3 고급 플래그 활용법
-
-#### 🧠 사고 깊이 제어
-```bash
-# 간단한 분석 (5K 토큰)
-/analyze --think
-
-# 심층 분석 (10K 토큰)
-/analyze --think-hard
-
-# 극한의 분석 (32K 토큰)
-/analyze --ultrathink
+sc:implement admin-dashboard --analytics --user-management
 ```
 
-#### ⚡ 성능 최적화
+### 배포 준비 (5분)
 ```bash
-# 토큰 압축 모드 (30-50% 절약)
-/implement feature --uc
+sc:build --production --optimize
+sc:test e2e --playwright
+sc:implement docker-compose --with-ci
+```
+</Steps>
 
-# 안전 모드 (검증 강화)
-/implement critical-feature --safe-mode
+결과: **완전히 작동하는 SaaS 애플리케이션**
 
-# 병렬 처리
-/analyze --delegate --concurrency 7
+## SuperClaude: 게임 체인저
+
+### sc: 명령어 체계
+
+<Mermaid chart={`
+graph LR
+    A[사용자 입력] --> B{명령어 타입}
+    B -->|일반 명령어| C[/analyze]
+    B -->|SuperClaude| D[sc:analyze]
+    
+    C --> E[기본 분석]
+    D --> F[Sequential 활성화]
+    D --> G[Context7 활성화]
+    D --> H[최적 페르소나]
+    
+    F --> I[심층 분석 결과]
+    G --> I
+    H --> I
+`} />
+
+### 필수 MCP 서버
+
+#### Sequential Thinking
+복잡한 문제를 체계적으로 분해하고 해결합니다.
+```bash
+sc:troubleshoot "메모리 누수" --seq
+# 1. 증상 분석 → 2. 원인 파악 → 3. 해결책 도출 → 4. 구현
 ```
 
-### 3.4 페르소나 활용 전략
+#### Context7
+1000+ 라이브러리의 최신 문서를 즉시 참조합니다.
+```bash
+sc:implement "React 18 Suspense" --c7
+# React 18 공식 문서 기반 정확한 구현
+```
 
-<Tabs items={['Frontend 개발', 'Backend 개발', '보안 감사', '성능 최적화']}>
+## 실제 프로젝트 사례
+
+### 사례 1: 스타트업 A사
+- **과제**: B2B SaaS 플랫폼 구축
+- **기간**: 3개월 → 2주
+- **결과**: 시리즈 A 투자 유치
+
+```bash
+# 실제 사용 명령어
+sc:design multi-tenant-architecture
+sc:implement complete-backend --microservices
+sc:test --coverage 90
+```
+
+### 사례 2: 대기업 B사
+- **과제**: 레거시 시스템 현대화
+- **기간**: 1년 → 3개월
+- **결과**: 운영 비용 70% 절감
+
+```bash
+# 실제 마이그레이션 프로세스
+sc:analyze legacy-system --ultrathink
+sc:design migration-strategy --incremental
+sc:implement --wave-mode --safe
+```
+
+## 전문가 페르소나 활용
+
+<Tabs items={['아키텍처', '보안', '성능']}>
   <Tabs.Tab>
     ```bash
-    # Frontend 페르소나 활성화
-    /implement UI컴포넌트 --persona-frontend
-    
-    # 자동 활성화되는 기능:
-    - 접근성 검사 (WCAG 2.1 AA)
-    - 반응형 디자인
-    - 성능 최적화 (번들 사이즈)
-    - 크로스 브라우저 호환성
+    sc:design microservices --persona-architect
+    # 도메인 분석 → 서비스 경계 → API 설계 → 인프라 계획
     ```
   </Tabs.Tab>
   
   <Tabs.Tab>
     ```bash
-    # Backend 페르소나 활성화
-    /implement API서버 --persona-backend
-    
-    # 자동 활성화되는 기능:
-    - 보안 베스트 프랙티스
-    - 에러 핸들링
-    - 데이터 검증
-    - 성능 모니터링
+    sc:analyze --persona-security --owasp
+    # 취약점 스캔 → 위협 모델링 → 보안 강화 → 컴플라이언스
     ```
   </Tabs.Tab>
   
   <Tabs.Tab>
     ```bash
-    # Security 페르소나 활성화
-    /analyze --persona-security --ultrathink
-    
-    # 자동 검사 항목:
-    - OWASP Top 10
-    - 의존성 취약점
-    - 인증/인가 문제
-    - 데이터 노출 위험
-    ```
-  </Tabs.Tab>
-  
-  <Tabs.Tab>
-    ```bash
-    # Performance 페르소나 활성화
-    /improve --persona-performance --measure-first
-    
-    # 최적화 대상:
-    - 응답 시간
-    - 메모리 사용량
-    - CPU 사용률
-    - 네트워크 최적화
+    sc:improve --persona-performance --measure-first
+    # 프로파일링 → 병목 분석 → 최적화 → 벤치마크
     ```
   </Tabs.Tab>
 </Tabs>
 
-## 📚 Chapter 4: 실습 - 실제 프로젝트에 적용하기
-
-### 4.1 시나리오 1: 새 프로젝트 시작하기
-
-<Steps>
-### 프로젝트 초기화
-```bash
-/build react-app --typescript --tailwind
-```
-
-### 프로젝트 구조 분석
-```bash
-/analyze --scope project
-```
-
-### 핵심 컴포넌트 구현
-```bash
-/implement 사용자 인증 시스템 --type feature --with-tests
-```
-
-### 코드 품질 검증
-```bash
-/improve --quality --validate
-```
-
-### 문서화
-```bash
-/document --comprehensive
-```
-</Steps>
-
-### 4.2 시나리오 2: 레거시 코드 개선하기
-
-```bash
-# 1. 현재 상태 분석
-/analyze --ultrathink --focus architecture
-
-# 2. 기술 부채 파악
-/analyze --focus technical-debt
-
-# 3. 단계적 개선 계획
-/task refactoring-plan --iterative
-
-# 4. 안전한 리팩토링
-/improve --safe-mode --validate
-
-# 5. 테스트 커버리지 확보
-/test --coverage 80
-```
-
-### 4.3 시나리오 3: 버그 디버깅
-
-```bash
-# 1. 증상 분석
-/troubleshoot "사용자 로그인 시 간헐적 실패"
-
-# 2. 근본 원인 분석
-/analyze --think-hard --persona-analyzer
-
-# 3. 수정 구현
-/implement 버그수정 --safe-mode
-
-# 4. 검증
-/test regression --comprehensive
-```
-
-## 📚 Chapter 5: 프로 팁 - 생산성 200% 끌어올리기
-
-### 5.1 커스텀 설정 (CLAUDE.md)
-
-프로젝트 루트에 `CLAUDE.md` 파일을 생성하여 프로젝트별 맞춤 설정:
-
-```markdown
-# 프로젝트 컨벤션
-- 컴포넌트: PascalCase
-- 함수: camelCase
-- 상수: UPPER_SNAKE_CASE
-
-# 선호 라이브러리
-- 상태관리: Zustand
-- 스타일링: Tailwind CSS
-- 폼 처리: React Hook Form
-
-# 자동 실행 명령
-- 커밋 전: npm run lint && npm test
-- 빌드 전: npm run typecheck
-```
-
-### 5.2 효율적인 워크플로우
-
-#### 🔄 반복 개선 패턴
-```bash
-# Loop 모드로 지속적 개선
-/improve --loop --iterations 5
-```
-
-#### 🌊 Wave 모드로 대규모 작업
-```bash
-# 복잡한 작업을 단계별로 처리
-/implement 전체시스템 --wave-mode --systematic
-```
-
-#### 🤝 협업 모드
-```bash
-# PR 생성 자동화
-/git create-pr --comprehensive
-```
-
-### 5.3 트러블슈팅 가이드
-
-<Callout type="warning" emoji="⚠️">
-**자주 발생하는 문제와 해결법**
-
-1. **컨텍스트 초과**: `--uc` 플래그 사용
-2. **느린 응답**: `--delegate` 로 병렬 처리
-3. **부정확한 결과**: `--think-hard` 로 심층 분석
-4. **보안 우려**: `--safe-mode` 활성화
-</Callout>
-
-## 📚 Chapter 6: 고급 기능 - MCP 서버 활용
-
-### 6.1 MCP 서버란?
-
-Model Context Protocol 서버는 Claude Code의 능력을 확장하는 외부 도구입니다.
-
-```
-Claude Code
-    │
-    └── MCP 서버들
-        ├── Sequential (체계적 사고)
-        │   └── 복잡한 문제 해결
-        ├── Context7 (문서 검색)
-        │   └── 공식 문서 활용
-        ├── Magic (UI 생성)
-        │   └── 모던 UI 컴포넌트
-        └── Playwright (테스트 자동화)
-            └── E2E 테스트
-```
-
-#### 🌟 필수 MCP 서버 TOP 2
-
-##### 1. Sequential Thinking (최강 추천 ⭐⭐⭐⭐⭐)
-- **역할**: 복잡한 문제를 체계적으로 분해하고 분석
-- **강점**: 논리적 사고, 단계별 접근, 심층 분석
-- **사용법**: `sc:analyze --seq` 또는 자동 활성화
-
-##### 2. Context7 (문서의 신 ⭐⭐⭐⭐⭐)
-- **역할**: 1000+ 라이브러리의 공식 문서 즉시 검색
-- **강점**: 최신 문서, 베스트 프랙티스, 한국어 지원
-- **사용법**: `sc:implement --c7` 또는 자동 활성화
-
-### 6.2 MCP 서버 활용 예시
-
-```bash
-# SuperClaude 방식 (추천!)
-sc:explain React hooks --c7  # Context7로 공식 문서 참조
-sc:analyze --seq --think-hard  # Sequential로 체계적 분석
-sc:implement 대시보드 --magic  # Magic으로 UI 생성
-sc:test e2e --playwright  # Playwright로 E2E 테스트
-
-# 일반 명령어
-/explain React hooks
-/analyze
-```
-
-## 📚 Chapter 7: 실전 케이스 스터디
-
-### 7.1 스타트업 A사: 3개월 → 2주
-
-> "SuperClaude를 도입한 후, 3개월 걸릴 프로젝트를 2주 만에 완성했습니다."
-> - A사 CTO
-
-**활용 방법:**
-1. 아키텍처 설계: `/design --ultrathink`
-2. 코드 생성: `/implement --wave-mode`
-3. 테스트 자동화: `/test --comprehensive`
-4. 문서화: `/document --auto`
-
-### 7.2 대기업 B사: 레거시 현대화
-
-> "10년된 레거시 시스템을 단계적으로 현대화할 수 있었습니다."
-> - B사 개발팀장
-
-**활용 방법:**
-1. 현황 분석: `/analyze --ultrathink`
-2. 마이그레이션 계획: `/task migration-plan`
-3. 단계적 실행: `/improve --iterative`
-4. 품질 보증: `/test regression`
-
-## 📚 Chapter 8: 학습 로드맵
-
-### 8.1 초급자 (1-2주)
-
-<Steps>
-### 기본 명령어 익히기
-- `/analyze`, `/implement`, `/test`
-- 기본 플래그 사용법
-
-### 간단한 기능 구현
-- CRUD 작업
-- 기본 컴포넌트
-
-### 디버깅 연습
-- `/troubleshoot` 활용
-- 에러 메시지 해석
-</Steps>
-
-### 8.2 중급자 (3-4주)
-
-<Steps>
-### 페르소나 활용
-- 상황별 페르소나 선택
-- 복합 페르소나 활용
-
-### 고급 플래그 마스터
-- 사고 깊이 제어
-- 성능 최적화
-
-### MCP 서버 연동
-- 외부 도구 활용
-- 통합 워크플로우
-</Steps>
-
-### 8.3 고급자 (지속적)
-
-<Steps>
-### 커스텀 워크플로우
-- CLAUDE.md 최적화
-- 프로젝트별 설정
-
-### 대규모 작업
-- Wave 모드 활용
-- 병렬 처리 최적화
-
-### 팀 협업
-- 코드 리뷰 자동화
-- 문서화 표준화
-</Steps>
-
-## 📚 Chapter 9: 베스트 프랙티스
-
-### 9.1 DO's ✅
-
-1. **명확한 요구사항 전달**
-   ```
-   Good: "사용자 인증 API를 JWT로 구현해줘"
-   Bad: "로그인 만들어줘"
-   ```
-
-2. **컨텍스트 제공**
-   ```
-   Good: "React 18, TypeScript, Tailwind 환경에서..."
-   Bad: "컴포넌트 만들어줘"
-   ```
-
-3. **단계적 접근**
-   ```
-   Good: 분석 → 설계 → 구현 → 테스트
-   Bad: 한 번에 모든 것 요구
-   ```
-
-### 9.2 DON'Ts ❌
-
-1. **과도한 의존**
-   - AI는 도구일 뿐, 최종 검증은 개발자의 몫
-
-2. **보안 정보 노출**
-   - API 키, 비밀번호 등 민감 정보 주의
-
-3. **무비판적 수용**
-   - 생성된 코드 항상 리뷰 필요
-
-## 📚 Chapter 10: 자주 묻는 질문 (FAQ)
-
-### Q1: Claude Code vs ChatGPT, 뭐가 더 좋나요?
-
-**A:** 각각의 강점이 다릅니다:
-- **Claude Code**: 실제 개발 작업, 파일 조작, 프로젝트 관리
-- **ChatGPT**: 개념 설명, 학습, 브레인스토밍
-
-### Q2: 요금은 어떻게 되나요?
-
-**A:** Claude Pro 구독 ($20/월)으로 모든 기능 사용 가능
-
-### Q3: 보안은 안전한가요?
-
-**A:** 
-- 로컬 실행으로 데이터 유출 최소화
-- `--safe-mode`로 보수적 실행
-- 민감 정보 자동 필터링
-
-### Q4: 어떤 언어를 지원하나요?
-
-**A:** 모든 주요 프로그래밍 언어 지원:
-- JavaScript/TypeScript
-- Python
-- Java/Kotlin
-- Go
-- Rust
-- C/C++
-- 그 외 50+ 언어
-
-### Q5: 팀에서 사용할 수 있나요?
-
-**A:** 네, 팀 협업 기능 지원:
-- Git 통합
-- PR 자동 생성
-- 코드 리뷰 지원
-- 문서 자동화
-
-## 🎯 마무리: 당신도 10x 개발자가 될 수 있습니다
-
-<Callout type="success" emoji="🏆">
-**기억하세요:**
-1. Claude Code는 도구입니다. 창의성과 문제 해결은 여러분의 몫입니다.
-2. 작게 시작하세요. 한 번에 하나씩 익혀가세요.
-3. 실험을 두려워하지 마세요. 실패는 학습의 일부입니다.
-4. 커뮤니티와 공유하세요. 함께 성장합니다.
-</Callout>
-
-## 🔗 추가 학습 자료
+## 프로덕션 체크리스트
+
+### 코드 품질
+- [ ] `sc:analyze --quality` 실행
+- [ ] `sc:test --coverage 80` 달성
+- [ ] `sc:improve --refactor` 완료
+
+### 보안
+- [ ] `sc:analyze --security --owasp` 통과
+- [ ] `sc:implement rate-limiting` 적용
+- [ ] `sc:test security --penetration` 실행
+
+### 성능
+- [ ] `sc:analyze --performance` 최적화
+- [ ] `sc:test load --users 10000` 통과
+- [ ] `sc:implement caching --redis` 구현
+
+### 배포
+- [ ] `sc:build --production` 빌드
+- [ ] `sc:implement ci-cd --github-actions`
+- [ ] `sc:implement monitoring --datadog`
+
+## 다음 단계
 
 <LinkCards>
   <LinkCard 
-    title="공식 문서" 
-    description="Claude Code 공식 문서"
-    href="https://docs.anthropic.com/claude-code"
-    icon="📖"
+    title="5분 만에 시작하기" 
+    description="설치부터 첫 프로젝트까지"
+    href="/claude-code/quick-start"
   />
   <LinkCard 
-    title="GitHub 저장소" 
-    description="예제 코드와 템플릿"
-    href="https://github.com/anthropics/claude-code"
-    icon="💻"
+    title="명령어 마스터하기" 
+    description="모든 sc: 명령어 상세 가이드"
+    href="/claude-code/commands"
   />
   <LinkCard 
-    title="커뮤니티 포럼" 
-    description="질문과 답변, 팁 공유"
-    href="https://community.anthropic.com"
-    icon="👥"
+    title="MCP 서버 활용" 
+    description="Sequential과 Context7 심화"
+    href="/claude-code/mcp-servers"
   />
   <LinkCard 
-    title="YouTube 튜토리얼" 
-    description="비디오 강좌 시리즈"
-    href="https://youtube.com/@claude-code"
-    icon="📹"
+    title="실전 워크플로우" 
+    description="프로덕션 레벨 개발 프로세스"
+    href="/claude-code/workflow-diagram"
   />
 </LinkCards>
 
----
+## 시작하기
 
-*"The best way to predict the future is to invent it."* - Alan Kay
+```bash
+# Claude Code 설치
+npm install -g claude-code
 
-여러분이 Claude Code와 함께 만들어갈 미래가 기대됩니다! 🚀
+# SuperClaude 활성화
+claude-code init --superclaude
+
+# 첫 프로젝트 생성
+sc:build my-startup --fullstack
+```
+
+**지금 바로 시작하세요. 당신의 아이디어를 2주 안에 현실로 만드세요.**

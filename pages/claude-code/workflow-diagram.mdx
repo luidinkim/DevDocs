@@ -1,0 +1,261 @@
+import { Callout } from 'nextra/components'
+import Mermaid from '../../components/Mermaid'
+
+# 🔄 Claude Code 워크플로우 다이어그램
+
+## SuperClaude 전체 아키텍처
+
+<Mermaid chart={`
+graph TB
+    subgraph "사용자 인터페이스"
+        A[사용자 입력]
+        B[sc: 명령어]
+        C[일반 명령어]
+    end
+    
+    subgraph "SuperClaude 오케스트레이터"
+        D[명령어 파서]
+        E[컨텍스트 분석기]
+        F[복잡도 평가]
+        G[자동 활성화 엔진]
+    end
+    
+    subgraph "페르소나 시스템"
+        H[Architect]
+        I[Frontend]
+        J[Backend]
+        K[Security]
+        L[Performance]
+        M[기타 6개]
+    end
+    
+    subgraph "MCP 서버"
+        N[Sequential Thinking]
+        O[Context7]
+        P[Magic]
+        Q[Playwright]
+    end
+    
+    subgraph "실행 엔진"
+        R[코드 생성]
+        S[파일 조작]
+        T[테스트 실행]
+        U[문서 생성]
+    end
+    
+    A --> B
+    A --> C
+    B --> D
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    G --> H
+    G --> I
+    G --> J
+    G --> K
+    G --> L
+    G --> M
+    G --> N
+    G --> O
+    G --> P
+    G --> Q
+    H --> R
+    I --> R
+    J --> R
+    K --> S
+    L --> T
+    N --> R
+    O --> R
+    P --> R
+    Q --> T
+    R --> V[결과 출력]
+    S --> V
+    T --> V
+    U --> V
+`} />
+
+## 명령어 처리 플로우
+
+<Mermaid chart={`
+sequenceDiagram
+    participant U as 사용자
+    participant C as Claude Code
+    participant O as Orchestrator
+    participant P as 페르소나
+    participant M as MCP 서버
+    participant E as 실행 엔진
+    
+    U->>C: sc:analyze --ultrathink
+    C->>O: 명령어 파싱
+    O->>O: 복잡도 평가
+    O->>P: Analyzer 페르소나 활성화
+    O->>M: Sequential 활성화
+    P->>E: 분석 실행
+    M->>E: 체계적 사고 적용
+    E->>E: 코드 분석
+    E->>C: 결과 생성
+    C->>U: 분석 결과 출력
+`} />
+
+## 복잡도 기반 자동 활성화
+
+<Mermaid chart={`
+graph LR
+    A[작업 입력] --> B{복잡도 평가}
+    
+    B -->|낮음 0-0.3| C[기본 실행]
+    B -->|중간 0.3-0.7| D[페르소나 활성화]
+    B -->|높음 0.7-1.0| E[Wave 모드]
+    
+    C --> F[단일 도구]
+    D --> G[MCP 서버 활성화]
+    E --> H[전체 시스템 활성화]
+    
+    G --> I[Sequential]
+    G --> J[Context7]
+    
+    H --> K[모든 페르소나]
+    H --> L[모든 MCP]
+    H --> M[병렬 처리]
+`} />
+
+## 페르소나 선택 매트릭스
+
+<Mermaid chart={`
+graph TD
+    A[작업 유형] --> B{도메인 분석}
+    
+    B -->|UI/UX| C[Frontend]
+    B -->|서버/API| D[Backend]
+    B -->|보안| E[Security]
+    B -->|성능| F[Performance]
+    B -->|설계| G[Architect]
+    B -->|디버깅| H[Analyzer]
+    B -->|테스트| I[QA]
+    B -->|문서| J[Scribe]
+    
+    C --> K[React/Vue/CSS]
+    D --> L[Node/Python/DB]
+    E --> M[OWASP/암호화]
+    F --> N[최적화/프로파일링]
+    G --> O[시스템설계/패턴]
+    H --> P[근본원인/로그분석]
+    I --> Q[E2E/단위테스트]
+    J --> R[API문서/가이드]
+`} />
+
+## MCP 서버 협업 패턴
+
+<Mermaid chart={`
+graph TB
+    subgraph "분석 단계"
+        A[Sequential] --> B[문제 분해]
+        B --> C[단계별 분석]
+    end
+    
+    subgraph "조사 단계"
+        D[Context7] --> E[문서 검색]
+        E --> F[베스트 프랙티스]
+    end
+    
+    subgraph "구현 단계"
+        G[Magic] --> H[UI 생성]
+        I[Sequential] --> J[로직 구현]
+    end
+    
+    subgraph "검증 단계"
+        K[Playwright] --> L[테스트 실행]
+        L --> M[결과 검증]
+    end
+    
+    C --> D
+    F --> G
+    F --> I
+    H --> K
+    J --> K
+`} />
+
+## Wave 모드 실행 패턴
+
+<Mermaid chart={`
+graph LR
+    subgraph "Wave 1: 분석"
+        A1[현황 파악]
+        A2[문제 식별]
+        A3[목표 설정]
+    end
+    
+    subgraph "Wave 2: 설계"
+        B1[솔루션 설계]
+        B2[리스크 평가]
+        B3[실행 계획]
+    end
+    
+    subgraph "Wave 3: 구현"
+        C1[코드 작성]
+        C2[테스트 작성]
+        C3[문서 작성]
+    end
+    
+    subgraph "Wave 4: 검증"
+        D1[품질 검사]
+        D2[성능 측정]
+        D3[보안 검증]
+    end
+    
+    subgraph "Wave 5: 최적화"
+        E1[개선 사항]
+        E2[리팩토링]
+        E3[최종 검증]
+    end
+    
+    A1 --> A2 --> A3
+    A3 --> B1
+    B1 --> B2 --> B3
+    B3 --> C1
+    C1 --> C2 --> C3
+    C3 --> D1
+    D1 --> D2 --> D3
+    D3 --> E1
+    E1 --> E2 --> E3
+`} />
+
+## 실시간 의사결정 트리
+
+<Mermaid chart={`
+graph TD
+    Start[시작] --> Input{입력 분석}
+    
+    Input -->|sc: 명령어| Super[SuperClaude 모드]
+    Input -->|일반 명령어| Normal[일반 모드]
+    
+    Super --> Complex{복잡도?}
+    Complex -->|높음| Wave[Wave 모드 활성화]
+    Complex -->|중간| Smart[스마트 모드]
+    Complex -->|낮음| Fast[빠른 실행]
+    
+    Wave --> AllMCP[모든 MCP 활성화]
+    Wave --> AllPersona[모든 페르소나]
+    Wave --> Parallel[병렬 처리]
+    
+    Smart --> SelectMCP[선택적 MCP]
+    Smart --> SelectPersona[최적 페르소나]
+    
+    Fast --> SingleTool[단일 도구]
+    
+    AllMCP --> Execute[실행]
+    AllPersona --> Execute
+    Parallel --> Execute
+    SelectMCP --> Execute
+    SelectPersona --> Execute
+    SingleTool --> Execute
+    Normal --> Execute
+    
+    Execute --> Result[결과]
+`} />
+
+<Callout type="info" emoji="💡">
+이 다이어그램들은 Claude Code와 SuperClaude의 내부 작동 방식을 시각적으로 보여줍니다.
+각 단계별로 어떤 컴포넌트가 활성화되고 어떻게 협업하는지 이해할 수 있습니다.
+</Callout>

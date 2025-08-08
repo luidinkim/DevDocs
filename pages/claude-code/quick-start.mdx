@@ -1,277 +1,259 @@
 import { Callout, Cards, Tabs, Steps, FileTree } from 'nextra/components'
+import Mermaid from '../../components/Mermaid'
 
-# 🚀 Claude Code 빠른 시작 가이드
+# Claude Code 빠른 시작
 
-## 5분 안에 시작하기
+## 5분 안에 첫 서비스 배포하기
 
-<Callout type="success" emoji="⏱️">
-이 가이드를 따라하면 5분 안에 Claude Code로 첫 프로젝트를 시작할 수 있습니다!
+<Callout type="success">
+이 가이드를 따라하면 5분 안에 실제 동작하는 웹 서비스를 만들 수 있습니다.
 </Callout>
 
-## Step 1: 설치 및 설정
-
-### 1.1 Claude Code 설치
+## 설치
 
 <Tabs items={['Windows', 'macOS', 'Linux']}>
   <Tabs.Tab>
     ```powershell
-    # Windows (PowerShell)
     winget install Anthropic.ClaudeCode
-    
-    # 또는 Scoop 사용
-    scoop install claude-code
     ```
   </Tabs.Tab>
   
   <Tabs.Tab>
     ```bash
-    # macOS (Homebrew)
     brew install --cask claude-code
-    
-    # 또는 직접 다운로드
-    curl -L https://claude.ai/download/mac | sh
     ```
   </Tabs.Tab>
   
   <Tabs.Tab>
     ```bash
-    # Ubuntu/Debian
     sudo apt install claude-code
-    
-    # 또는 Snap
-    sudo snap install claude-code
     ```
   </Tabs.Tab>
 </Tabs>
 
-### 1.2 API 키 설정
-
-```bash
-# API 키 설정
-claude-code auth login
-
-# 또는 환경 변수로 설정
-export CLAUDE_API_KEY="your-api-key-here"
-```
-
-## Step 2: 첫 번째 프로젝트
-
-### 2.1 새 프로젝트 생성
-
-```bash
-# React 프로젝트 생성
-claude-code new my-app --template react
-
-# 프로젝트 디렉토리로 이동
-cd my-app
-
-# Claude Code 실행
-claude-code
-```
-
-### 2.2 첫 명령어 실행
-
-```bash
-# 프로젝트 구조 분석
-/analyze
-
-# 간단한 컴포넌트 생성
-/implement Button 컴포넌트를 만들어줘
-```
-
-## Step 3: SuperClaude 활성화
-
-### 3.1 SuperClaude 설치
-
-```bash
-# SuperClaude 프레임워크 다운로드
-git clone https://github.com/anthropics/superclaude ~/.claude
-
-# 자동 활성화
-claude-code config --enable-superclaude
-```
-
-### 3.2 프로젝트별 설정
-
-프로젝트 루트에 `CLAUDE.md` 파일 생성:
-
-```markdown
-# 프로젝트 설정
-
-## 기술 스택
-- Frontend: React 18 + TypeScript
-- Styling: Tailwind CSS
-- State: Zustand
-- Testing: Jest + React Testing Library
-
-## 코딩 컨벤션
-- 컴포넌트: PascalCase
-- 함수: camelCase
-- 파일명: kebab-case
-
-## 자동 실행
-- 커밋 전: npm run lint
-- 푸시 전: npm test
-```
-
-## Step 4: 실전 예제
-
-### 예제 1: TODO 앱 만들기 (3분)
+## 첫 프로젝트: TODO 앱 → 프로덕션 (5분)
 
 <Steps>
-### 프로젝트 초기화
+### 프로젝트 생성 (30초)
 ```bash
-/build todo-app --react --typescript
+sc:build todo-app --next --typescript --tailwind
+cd todo-app
 ```
 
-### 컴포넌트 구현
+### 데이터베이스 설정 (1분)
 ```bash
-/implement TodoList 컴포넌트 with CRUD 기능
+sc:implement prisma-schema --entities todo,user
+sc:implement database-connection --sqlite
+npx prisma migrate dev --name init
 ```
 
-### 스타일링 추가
+### CRUD API 구현 (1분)
 ```bash
-/improve --focus ui --tailwind
+sc:implement api/todos --crud --auth
+sc:implement api/auth --jwt
 ```
 
-### 테스트 작성
+### UI 컴포넌트 구현 (1분 30초)
 ```bash
-/test --comprehensive
+sc:implement TodoList --type component --realtime
+sc:implement TodoForm --type component --validation
+sc:implement Layout --type component --responsive
 ```
 
-### 실행
+### 테스트 및 배포 (1분)
 ```bash
-npm start
+sc:test --quick
+sc:build --production
+sc:implement vercel-config
+vercel deploy
 ```
 </Steps>
 
-### 예제 2: REST API 서버 (5분)
+**결과**: https://your-todo-app.vercel.app 에서 실행 중인 앱
 
-<Steps>
-### Express 서버 생성
+## 실전: 스타트업 MVP 만들기
+
+### 프로젝트: AI 글쓰기 도구 SaaS
+
+<Mermaid chart={`
+graph LR
+    A[아이디어] --> B[sc:build]
+    B --> C[기본 구조<br/>2분]
+    C --> D[sc:implement]
+    D --> E[핵심 기능<br/>10분]
+    E --> F[sc:test]
+    F --> G[테스트<br/>3분]
+    G --> H[sc:deploy]
+    H --> I[배포<br/>2분]
+    I --> J[MVP 완성<br/>총 17분]
+`} />
+
+### 실제 명령어 시퀀스
+
 ```bash
-/build api-server --express --typescript
+# 1. 프로젝트 초기화
+sc:build ai-writer --next --prisma --stripe --openai
+
+# 2. 데이터 모델
+sc:design database --multi-tenant
+sc:implement models/user --with-subscription
+sc:implement models/document --with-versioning
+
+# 3. AI 통합
+sc:implement services/openai --streaming
+sc:implement api/generate --rate-limited
+
+# 4. 결제 시스템
+sc:implement stripe-checkout --subscription
+sc:implement webhook/stripe --secure
+
+# 5. 사용자 인터페이스
+sc:implement editor --markdown --autosave
+sc:implement dashboard --analytics
+
+# 6. 배포
+sc:test e2e --critical-paths
+sc:build --optimize
+sc:deploy --vercel --production
 ```
 
-### 엔드포인트 구현
+## 핵심 명령어 10개
+
+### 1. `sc:build` - 프로젝트 생성
 ```bash
-/implement user CRUD endpoints with validation
+sc:build [name] --next --typescript --tailwind --prisma
 ```
 
-### 데이터베이스 연결
+### 2. `sc:implement` - 기능 구현
 ```bash
-/implement Prisma 설정과 User 모델
+sc:implement [feature] --type component|api|service --with-tests
 ```
 
-### 인증 추가
+### 3. `sc:analyze` - 코드 분석
 ```bash
-/implement JWT 인증 미들웨어
+sc:analyze --performance --security --quality
 ```
 
-### 테스트 및 실행
+### 4. `sc:test` - 테스트
 ```bash
-/test api --coverage
-npm run dev
+sc:test --unit --integration --e2e --coverage 80
 ```
-</Steps>
 
-## Step 5: 생산성 팁
-
-### 🎯 단축키 모음
-
-| 단축키 | 기능 |
-|--------|------|
-| `Ctrl+K` | 명령 팔레트 |
-| `Ctrl+Shift+A` | 분석 모드 |
-| `Ctrl+Shift+I` | 구현 모드 |
-| `Ctrl+Shift+T` | 테스트 실행 |
-| `Ctrl+/` | 주석 토글 |
-
-### 🚀 자주 사용하는 명령어 조합
-
+### 5. `sc:improve` - 코드 개선
 ```bash
-# 풀스택 앱 빠르게 만들기
-/build fullstack-app --next --prisma --tailwind
-/implement 사용자 인증 시스템 --with-tests
-/implement 대시보드 UI --magic
+sc:improve --refactor --optimize --clean
+```
 
-# 버그 빠르게 수정하기
-/troubleshoot "로그인이 안 됨"
-/analyze --think-hard --focus auth
-/implement 버그 수정 --safe-mode
+### 6. `sc:troubleshoot` - 문제 해결
+```bash
+sc:troubleshoot "error message" --debug --fix
+```
+
+### 7. `sc:design` - 아키텍처 설계
+```bash
+sc:design system --scalable --microservices
+```
+
+### 8. `sc:document` - 문서화
+```bash
+sc:document --api --readme --changelog
+```
+
+### 9. `sc:deploy` - 배포
+```bash
+sc:deploy --platform vercel|aws|gcp --production
+```
+
+### 10. `sc:monitor` - 모니터링
+```bash
+sc:monitor --errors --performance --usage
+```
+
+## MCP 서버 활용
+
+### Sequential Thinking - 복잡한 문제 해결
+```bash
+# 성능 문제 체계적 해결
+sc:troubleshoot "slow loading" --seq
+# → 원인 분석 → 병목 지점 → 해결 방안 → 구현
+```
+
+### Context7 - 정확한 구현
+```bash
+# Next.js 14 App Router 정확한 구현
+sc:implement app-router --c7
+# → 공식 문서 기반 최신 패턴 적용
+```
+
+## 프로덕션 준비
+
+### 체크리스트
+```bash
+# 품질 검증
+sc:analyze --comprehensive
+sc:test --coverage 80
+sc:improve --production-ready
+
+# 보안 강화
+sc:analyze --security --owasp
+sc:implement security-headers
+sc:test security --penetration
 
 # 성능 최적화
-/analyze --focus performance
-/improve --performance --measure-first
-/test performance --benchmark
+sc:analyze --performance
+sc:implement caching --redis
+sc:optimize images --webp
+
+# 모니터링 설정
+sc:implement monitoring --sentry
+sc:implement analytics --ga4
 ```
 
-### 💡 프로 팁
+## 팁과 트릭
 
-<Callout type="info" emoji="💡">
-**황금 규칙:**
-1. 작은 단위로 요청하기
-2. 컨텍스트 명확히 제공하기
-3. 생성된 코드 항상 검토하기
-4. 테스트 우선 개발하기
-5. 문서화 습관화하기
-</Callout>
+### 병렬 처리로 속도 향상
+```bash
+sc:implement features/* --parallel --concurrency 5
+```
 
-## Step 6: 다음 단계
+### 자동 수정 모드
+```bash
+sc:analyze --fix-on-find
+```
 
-### 학습 경로
+### 반복 개선
+```bash
+sc:improve --loop --iterations 3
+```
+
+## 다음 단계
 
 <Cards>
-  <Cards.Card title="명령어 마스터하기" href="/claude-code/commands" arrow>
-    모든 명령어와 플래그 학습
+  <Cards.Card title="명령어 마스터" href="/claude-code/commands" arrow>
+    모든 명령어 상세 가이드
   </Cards.Card>
-  <Cards.Card title="페르소나 활용하기" href="/claude-code/personas" arrow>
-    11개 전문가 페르소나 활용법
+  <Cards.Card title="페르소나 활용" href="/claude-code/personas" arrow>
+    11개 전문가 페르소나
   </Cards.Card>
-  <Cards.Card title="MCP 서버 연동" href="/claude-code/mcp-servers" arrow>
-    외부 도구 통합하기
+  <Cards.Card title="MCP 서버" href="/claude-code/mcp-servers" arrow>
+    Sequential & Context7
   </Cards.Card>
-  <Cards.Card title="실전 사례" href="/claude-code/case-studies" arrow>
-    실제 프로젝트 적용 사례
+  <Cards.Card title="워크플로우" href="/claude-code/workflow-diagram" arrow>
+    프로덕션 개발 프로세스
   </Cards.Card>
 </Cards>
 
-## 자주 묻는 질문
-
-### Q: 에러가 발생하면 어떻게 하나요?
+## 도움이 필요하신가요?
 
 ```bash
-# 디버그 모드 활성화
-claude-code --debug
-
-# 로그 확인
-claude-code logs
-
 # 도움말
 claude-code help
+
+# 디버그 모드
+claude-code --debug
+
+# 커뮤니티
+https://discord.gg/claude-code
 ```
 
-### Q: 오프라인에서도 사용 가능한가요?
-
-일부 기능은 오프라인 사용 가능하지만, 전체 기능을 위해서는 인터넷 연결이 필요합니다.
-
-### Q: 팀에서 사용하려면?
-
-팀 라이센스를 구매하고 공유 설정 파일을 사용하세요:
-
-```bash
-# 팀 설정 공유
-claude-code team init
-claude-code team share CLAUDE.md
-```
-
-## 🎉 축하합니다!
-
-이제 Claude Code의 기본을 마스터했습니다. 다음 문서에서 더 고급 기능을 배워보세요!
-
-<Callout type="success" emoji="🚀">
-**다음 추천 문서:**
-- [명령어 레퍼런스](/claude-code/commands) - 모든 명령어 상세 설명
-- [베스트 프랙티스](/claude-code/best-practices) - 전문가의 팁
-- [문제 해결](/claude-code/troubleshooting) - 일반적인 문제 해결
-</Callout>
+**시작할 준비가 되셨나요? 지금 바로 `sc:build my-app` 을 실행하세요!**

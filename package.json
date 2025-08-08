@@ -30,7 +30,8 @@
     "nextra": "^3.3.1",
     "nextra-theme-docs": "^3.3.1",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "rehype-mermaid": "^3.0.0"
   },
   "devDependencies": {
     "@types/node": "^24.2.0",
