@@ -529,26 +529,59 @@ export const UE5SetNode = ({ data, selected }: any) => {
           display: 'flex', 
           justifyContent: 'space-between',
           padding: '0 12px',
-          marginBottom: '8px'
+          marginBottom: '8px',
+          position: 'relative'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', color: '#ccc' }}>
-            <BlueprintPin 
-              type="target" 
-              position={Position.Left} 
+            <Handle
+              type="target"
+              position={Position.Left}
               id="exec-in"
-              isExecution={true}
-              isConnected={data.execInConnected}
+              style={{
+                width: '13px',
+                height: '13px',
+                background: data.execInConnected 
+                  ? `radial-gradient(circle, ${DataTypeColors.exec}, ${DataTypeColors.exec}dd)` 
+                  : 'rgba(0,0,0,0.3)',
+                border: `2px solid ${DataTypeColors.exec}`,
+                borderRadius: '0',
+                clipPath: 'polygon(0% 50%, 50% 0%, 100% 50%, 50% 100%)',
+                position: 'absolute',
+                left: '-8px',
+                top: '50%',
+                transform: 'translateY(-50%) rotate(90deg)',
+                boxShadow: data.execInConnected 
+                  ? `0 0 8px ${DataTypeColors.exec}88, inset 0 1px 2px rgba(255,255,255,0.3)` 
+                  : 'inset 0 1px 2px rgba(0,0,0,0.5)',
+                transition: 'all 0.2s ease'
+              }}
             />
-            <span style={{ marginLeft: '8px', fontSize: '11px' }}>exec</span>
+            <span style={{ marginLeft: '20px', fontSize: '11px' }}>exec</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', color: '#ccc' }}>
-            <span style={{ marginRight: '8px', fontSize: '11px' }}>exec</span>
-            <BlueprintPin 
-              type="source" 
-              position={Position.Right} 
+            <span style={{ marginRight: '20px', fontSize: '11px' }}>exec</span>
+            <Handle
+              type="source"
+              position={Position.Right}
               id="exec-out"
-              isExecution={true}
-              isConnected={data.execOutConnected}
+              style={{
+                width: '13px',
+                height: '13px',
+                background: data.execOutConnected 
+                  ? `radial-gradient(circle, ${DataTypeColors.exec}, ${DataTypeColors.exec}dd)` 
+                  : 'rgba(0,0,0,0.3)',
+                border: `2px solid ${DataTypeColors.exec}`,
+                borderRadius: '0',
+                clipPath: 'polygon(0% 50%, 50% 0%, 100% 50%, 50% 100%)',
+                position: 'absolute',
+                right: '-8px',
+                top: '50%',
+                transform: 'translateY(-50%) rotate(90deg)',
+                boxShadow: data.execOutConnected 
+                  ? `0 0 8px ${DataTypeColors.exec}88, inset 0 1px 2px rgba(255,255,255,0.3)` 
+                  : 'inset 0 1px 2px rgba(0,0,0,0.5)',
+                transition: 'all 0.2s ease'
+              }}
             />
           </div>
         </div>
