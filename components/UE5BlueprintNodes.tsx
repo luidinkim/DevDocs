@@ -553,62 +553,90 @@ export const UE5SetNode = ({ data, selected }: any) => {
           </div>
         </div>
         
-        {/* 값 입력/출력 핀 */}
+        {/* 값 입력 핀 (새 값) */}
         <div style={{ 
           display: 'flex', 
-          justifyContent: 'space-between',
-          padding: '0 12px'
+          alignItems: 'center',
+          padding: '2px 12px',
+          marginBottom: '6px',
+          position: 'relative'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Handle
-              type="target"
-              position={Position.Left}
-              id="value-in"
+          <Handle
+            type="target"
+            position={Position.Left}
+            id="value-in"
+            style={{
+              width: '14px',
+              height: '14px',
+              background: data.valueInConnected ? varColor : 'transparent',
+              border: `2px solid ${varColor}`,
+              borderRadius: '50%',
+              position: 'absolute',
+              left: '-8px',
+              top: '50%',
+              transform: 'translateY(-50%)'
+            }}
+          />
+          <span style={{ 
+            marginLeft: '20px', 
+            color: varColor,
+            fontSize: '11px'
+          }}>
+            {data.label || 'Value'}
+          </span>
+          {!data.valueInConnected && (
+            <input
+              type="text"
+              defaultValue={data.defaultValue || '0'}
               style={{
-                width: '14px',
-                height: '14px',
-                background: data.valueInConnected ? varColor : 'transparent',
-                border: `2px solid ${varColor}`,
-                borderRadius: '50%',
-                position: 'absolute',
-                left: '-8px',
-                top: '50%',
-                transform: 'translateY(-50%)'
+                marginLeft: '8px',
+                background: 'linear-gradient(135deg, #1a1a1a 0%, #252525 100%)',
+                border: '1px solid #3a3a3a',
+                borderRadius: '3px',
+                color: '#e0e0e0',
+                padding: '3px 8px',
+                fontSize: '10px',
+                width: '60px',
+                boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.3)',
+                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                outline: 'none'
               }}
             />
-            <span style={{ 
-              marginLeft: '20px', 
-              color: varColor,
-              fontSize: '11px'
-            }}>
-              {data.label || 'Value'}
-            </span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <span style={{ 
-              marginRight: '20px', 
-              color: varColor,
-              fontSize: '11px'
-            }}>
-              {data.label || 'Value'}
-            </span>
-            <Handle
-              type="source"
-              position={Position.Right}
-              id="value-out"
-              style={{
-                width: '14px',
-                height: '14px',
-                background: data.valueOutConnected ? varColor : 'transparent',
-                border: `2px solid ${varColor}`,
-                borderRadius: '50%',
-                position: 'absolute',
-                right: '-8px',
-                top: '50%',
-                transform: 'translateY(-50%)'
-              }}
-            />
-          </div>
+          )}
+        </div>
+        
+        {/* 값 출력 핀 (패스스루) */}
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          padding: '2px 12px',
+          position: 'relative'
+        }}>
+          <span style={{ 
+            marginRight: '20px', 
+            color: varColor,
+            fontSize: '11px',
+            opacity: 0.7
+          }}>
+            {data.label || 'Value'}
+          </span>
+          <Handle
+            type="source"
+            position={Position.Right}
+            id="value-out"
+            style={{
+              width: '14px',
+              height: '14px',
+              background: data.valueOutConnected ? varColor : 'transparent',
+              border: `2px solid ${varColor}`,
+              borderRadius: '50%',
+              position: 'absolute',
+              right: '-8px',
+              top: '50%',
+              transform: 'translateY(-50%)'
+            }}
+          />
         </div>
       </div>
     </div>
