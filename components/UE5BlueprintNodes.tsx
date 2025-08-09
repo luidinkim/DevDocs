@@ -747,7 +747,8 @@ export const UE5BranchNode = ({ data, selected }: any) => {
           display: 'flex', 
           alignItems: 'center',
           padding: '2px 12px',
-          marginBottom: '8px'
+          marginBottom: '8px',
+          position: 'relative'
         }}>
           <Handle
             type="target"
