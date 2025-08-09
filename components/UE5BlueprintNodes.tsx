@@ -34,47 +34,6 @@ interface PinData {
   connected?: boolean
 }
 
-// UE5 스타일 핀 컴포넌트
-const BlueprintPin = ({ 
-  type, 
-  position, 
-  id, 
-  isConnected = false,
-  isExecution = false 
-}: {
-  type: 'source' | 'target'
-  position: Position
-  id?: string
-  isConnected?: boolean
-  isExecution?: boolean
-}) => {
-  const pinColor = isExecution ? DataTypeColors.exec : DataTypeColors.object
-  const pinShape = isExecution ? 'polygon' : 'circle'
-  
-  return (
-    <Handle
-      type={type}
-      position={position}
-      id={id}
-      style={{
-        width: isExecution ? '13px' : '15px',
-        height: isExecution ? '13px' : '15px',
-        background: isConnected 
-          ? `radial-gradient(circle, ${pinColor}, ${pinColor}dd)` 
-          : 'rgba(0,0,0,0.3)',
-        border: `2px solid ${pinColor}`,
-        borderRadius: isExecution ? '0' : '50%',
-        clipPath: isExecution ? 'polygon(0% 50%, 50% 0%, 100% 50%, 50% 100%)' : 'none',
-        transform: isExecution ? 'rotate(90deg)' : 'none',
-        boxShadow: isConnected 
-          ? `0 0 8px ${pinColor}88, inset 0 1px 2px rgba(255,255,255,0.3)` 
-          : 'inset 0 1px 2px rgba(0,0,0,0.5)',
-        transition: 'all 0.2s ease',
-      }}
-    />
-  )
-}
-
 // UE5 Event Node (빨간색 헤더)
 export const UE5EventNode = ({ data, selected }: any) => {
   return (
@@ -136,15 +95,32 @@ export const UE5EventNode = ({ data, selected }: any) => {
           alignItems: 'center', 
           justifyContent: 'flex-end',
           color: '#ccc',
-          marginBottom: '4px'
+          marginBottom: '4px',
+          position: 'relative'
         }}>
           <span style={{ marginRight: '20px' }}>exec</span>
-          <BlueprintPin 
-            type="source" 
-            position={Position.Right} 
+          <Handle
+            type="source"
+            position={Position.Right}
             id="exec"
-            isExecution={true}
-            isConnected={data.execConnected}
+            style={{
+              width: '13px',
+              height: '13px',
+              background: data.execConnected 
+                ? `radial-gradient(circle, ${DataTypeColors.exec}, ${DataTypeColors.exec}dd)` 
+                : 'rgba(0,0,0,0.3)',
+              border: `2px solid ${DataTypeColors.exec}`,
+              borderRadius: '0',
+              clipPath: 'polygon(0% 50%, 50% 0%, 100% 50%, 50% 100%)',
+              position: 'absolute',
+              right: '-20px',
+              top: '50%',
+              transform: 'translateY(-50%) rotate(90deg)',
+              boxShadow: data.execConnected 
+                ? `0 0 8px ${DataTypeColors.exec}88, inset 0 1px 2px rgba(255,255,255,0.3)` 
+                : 'inset 0 1px 2px rgba(0,0,0,0.5)',
+              transition: 'all 0.2s ease'
+            }}
           />
         </div>
       </div>
@@ -737,14 +713,31 @@ export const UE5BranchNode = ({ data, selected }: any) => {
           display: 'flex', 
           alignItems: 'center',
           padding: '2px 12px',
-          marginBottom: '8px'
+          marginBottom: '8px',
+          position: 'relative'
         }}>
-          <BlueprintPin 
-            type="target" 
-            position={Position.Left} 
+          <Handle
+            type="target"
+            position={Position.Left}
             id="exec-in"
-            isExecution={true}
-            isConnected={data.execInConnected}
+            style={{
+              width: '13px',
+              height: '13px',
+              background: data.execInConnected 
+                ? `radial-gradient(circle, ${DataTypeColors.exec}, ${DataTypeColors.exec}dd)` 
+                : 'rgba(0,0,0,0.3)',
+              border: `2px solid ${DataTypeColors.exec}`,
+              borderRadius: '0',
+              clipPath: 'polygon(0% 50%, 50% 0%, 100% 50%, 50% 100%)',
+              position: 'absolute',
+              left: '-8px',
+              top: '50%',
+              transform: 'translateY(-50%) rotate(90deg)',
+              boxShadow: data.execInConnected 
+                ? `0 0 8px ${DataTypeColors.exec}88, inset 0 1px 2px rgba(255,255,255,0.3)` 
+                : 'inset 0 1px 2px rgba(0,0,0,0.5)',
+              transition: 'all 0.2s ease'
+            }}
           />
           <span style={{ marginLeft: '20px', color: '#ccc', fontSize: '11px' }}>exec</span>
         </div>
@@ -789,24 +782,56 @@ export const UE5BranchNode = ({ data, selected }: any) => {
           alignItems: 'flex-end',
           padding: '0 12px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <span style={{ marginRight: '8px', color: '#4CAF50', fontSize: '11px' }}>True</span>
-            <BlueprintPin 
-              type="source" 
-              position={Position.Right} 
+          <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
+            <span style={{ marginRight: '20px', color: '#4CAF50', fontSize: '11px' }}>True</span>
+            <Handle
+              type="source"
+              position={Position.Right}
               id="true"
-              isExecution={true}
-              isConnected={data.trueConnected}
+              style={{
+                width: '13px',
+                height: '13px',
+                background: data.trueConnected 
+                  ? `radial-gradient(circle, ${DataTypeColors.exec}, ${DataTypeColors.exec}dd)` 
+                  : 'rgba(0,0,0,0.3)',
+                border: `2px solid ${DataTypeColors.exec}`,
+                borderRadius: '0',
+                clipPath: 'polygon(0% 50%, 50% 0%, 100% 50%, 50% 100%)',
+                position: 'absolute',
+                right: '-8px',
+                top: '50%',
+                transform: 'translateY(-50%) rotate(90deg)',
+                boxShadow: data.trueConnected 
+                  ? `0 0 8px ${DataTypeColors.exec}88, inset 0 1px 2px rgba(255,255,255,0.3)` 
+                  : 'inset 0 1px 2px rgba(0,0,0,0.5)',
+                transition: 'all 0.2s ease'
+              }}
             />
           </div>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <span style={{ marginRight: '8px', color: '#f44336', fontSize: '11px' }}>False</span>
-            <BlueprintPin 
-              type="source" 
-              position={Position.Right} 
+          <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
+            <span style={{ marginRight: '20px', color: '#f44336', fontSize: '11px' }}>False</span>
+            <Handle
+              type="source"
+              position={Position.Right}
               id="false"
-              isExecution={true}
-              isConnected={data.falseConnected}
+              style={{
+                width: '13px',
+                height: '13px',
+                background: data.falseConnected 
+                  ? `radial-gradient(circle, ${DataTypeColors.exec}, ${DataTypeColors.exec}dd)` 
+                  : 'rgba(0,0,0,0.3)',
+                border: `2px solid ${DataTypeColors.exec}`,
+                borderRadius: '0',
+                clipPath: 'polygon(0% 50%, 50% 0%, 100% 50%, 50% 100%)',
+                position: 'absolute',
+                right: '-8px',
+                top: '50%',
+                transform: 'translateY(-50%) rotate(90deg)',
+                boxShadow: data.falseConnected 
+                  ? `0 0 8px ${DataTypeColors.exec}88, inset 0 1px 2px rgba(255,255,255,0.3)` 
+                  : 'inset 0 1px 2px rgba(0,0,0,0.5)',
+                transition: 'all 0.2s ease'
+              }}
             />
           </div>
         </div>
