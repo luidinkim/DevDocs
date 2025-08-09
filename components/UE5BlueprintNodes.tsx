@@ -57,13 +57,19 @@ const BlueprintPin = ({
       position={position}
       id={id}
       style={{
-        width: isExecution ? '12px' : '14px',
-        height: isExecution ? '12px' : '14px',
-        background: isConnected ? pinColor : 'transparent',
+        width: isExecution ? '13px' : '15px',
+        height: isExecution ? '13px' : '15px',
+        background: isConnected 
+          ? `radial-gradient(circle, ${pinColor}, ${pinColor}dd)` 
+          : 'rgba(0,0,0,0.3)',
         border: `2px solid ${pinColor}`,
         borderRadius: isExecution ? '0' : '50%',
         clipPath: isExecution ? 'polygon(0% 50%, 50% 0%, 100% 50%, 50% 100%)' : 'none',
         transform: isExecution ? 'rotate(90deg)' : 'none',
+        boxShadow: isConnected 
+          ? `0 0 8px ${pinColor}88, inset 0 1px 2px rgba(255,255,255,0.3)` 
+          : 'inset 0 1px 2px rgba(0,0,0,0.5)',
+        transition: 'all 0.2s ease',
       }}
     />
   )
@@ -73,34 +79,52 @@ const BlueprintPin = ({
 export const UE5EventNode = ({ data, selected }: any) => {
   return (
     <div style={{
-      background: '#1a1a1a',
-      borderRadius: '4px',
-      border: selected ? '2px solid #ffd700' : '1px solid #333',
-      minWidth: '200px',
+      background: 'linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%)',
+      borderRadius: '6px',
+      border: selected ? '2px solid #ffd700' : '1px solid #404040',
+      minWidth: '220px',
       fontSize: '12px',
-      fontFamily: 'Arial, sans-serif',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.5)',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      boxShadow: selected 
+        ? '0 0 20px rgba(255, 215, 0, 0.3), 0 4px 12px rgba(0,0,0,0.8)' 
+        : '0 4px 12px rgba(0,0,0,0.6)',
+      position: 'relative',
     }}>
+      {/* 하이라이트 효과 */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: '1px',
+        background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)',
+        borderRadius: '6px 6px 0 0'
+      }} />
+      
       {/* 헤더 - 빨간색 */}
       <div style={{
-        background: 'linear-gradient(to bottom, #8b0000, #5b0000)',
+        background: 'linear-gradient(135deg, #a61e1e 0%, #7a1515 100%)',
         color: 'white',
-        padding: '4px 8px',
-        borderRadius: '4px 4px 0 0',
-        fontSize: '11px',
-        fontWeight: 'bold',
-        borderBottom: '1px solid #300000'
+        padding: '5px 10px',
+        borderRadius: '5px 5px 0 0',
+        fontSize: '10px',
+        fontWeight: '600',
+        letterSpacing: '0.5px',
+        borderBottom: '1px solid #4a0000',
+        textShadow: '0 1px 2px rgba(0,0,0,0.5)'
       }}>
         EVENT
       </div>
       
       {/* 노드 제목 */}
       <div style={{
-        padding: '6px 12px',
-        color: 'white',
-        fontWeight: 'bold',
+        padding: '8px 12px',
+        color: '#f0f0f0',
+        fontWeight: '600',
         fontSize: '13px',
-        borderBottom: '1px solid #333'
+        borderBottom: '1px solid rgba(255,255,255,0.05)',
+        background: 'rgba(0,0,0,0.2)',
+        textShadow: '0 1px 2px rgba(0,0,0,0.5)'
       }}>
         {data.label || 'Event Begin Play'}
       </div>
@@ -135,36 +159,54 @@ export const UE5FunctionNode = ({ data, selected }: any) => {
   
   return (
     <div style={{
-      background: '#1a1a1a',
-      borderRadius: '4px',
-      border: selected ? '2px solid #ffd700' : '1px solid #333',
-      minWidth: '220px',
+      background: 'linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%)',
+      borderRadius: '6px',
+      border: selected ? '2px solid #ffd700' : '1px solid #404040',
+      minWidth: '240px',
       fontSize: '12px',
-      fontFamily: 'Arial, sans-serif',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.5)',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      boxShadow: selected 
+        ? '0 0 20px rgba(255, 215, 0, 0.3), 0 4px 12px rgba(0,0,0,0.8)' 
+        : '0 4px 12px rgba(0,0,0,0.6)',
+      position: 'relative',
     }}>
+      {/* 하이라이트 효과 */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: '1px',
+        background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)',
+        borderRadius: '6px 6px 0 0'
+      }} />
+      
       {/* 헤더 - 파란색 (Pure Function은 초록색) */}
       <div style={{
         background: data.isPure 
-          ? 'linear-gradient(to bottom, #006b3c, #004d2b)'
-          : 'linear-gradient(to bottom, #003f87, #002654)',
+          ? 'linear-gradient(135deg, #0d7938 0%, #0a5828 100%)'
+          : 'linear-gradient(135deg, #1a5fb4 0%, #134a8e 100%)',
         color: 'white',
-        padding: '4px 8px',
-        borderRadius: '4px 4px 0 0',
-        fontSize: '11px',
-        fontWeight: 'bold',
-        borderBottom: data.isPure ? '1px solid #003020' : '1px solid #001a3a'
+        padding: '5px 10px',
+        borderRadius: '5px 5px 0 0',
+        fontSize: '10px',
+        fontWeight: '600',
+        letterSpacing: '0.5px',
+        borderBottom: data.isPure ? '1px solid #084020' : '1px solid #0a3060',
+        textShadow: '0 1px 2px rgba(0,0,0,0.5)'
       }}>
         {data.category || 'FUNCTION'}
       </div>
       
       {/* 노드 제목 */}
       <div style={{
-        padding: '6px 12px',
-        color: 'white',
-        fontWeight: 'bold',
+        padding: '8px 12px',
+        color: '#f0f0f0',
+        fontWeight: '600',
         fontSize: '13px',
-        borderBottom: '1px solid #333'
+        borderBottom: '1px solid rgba(255,255,255,0.05)',
+        background: 'rgba(0,0,0,0.2)',
+        textShadow: '0 1px 2px rgba(0,0,0,0.5)'
       }}>
         {data.label || 'Print String'}
       </div>
@@ -177,53 +219,90 @@ export const UE5FunctionNode = ({ data, selected }: any) => {
             display: 'flex', 
             justifyContent: 'space-between',
             padding: '0 12px',
-            marginBottom: '8px'
+            marginBottom: '8px',
+            position: 'relative'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', color: '#ccc' }}>
-              <BlueprintPin 
-                type="target" 
-                position={Position.Left} 
+              <Handle
+                type="target"
+                position={Position.Left}
                 id="exec-in"
-                isExecution={true}
-                isConnected={data.execInConnected}
+                style={{
+                  width: '13px',
+                  height: '13px',
+                  background: data.execInConnected 
+                    ? `radial-gradient(circle, ${DataTypeColors.exec}, ${DataTypeColors.exec}dd)` 
+                    : 'rgba(0,0,0,0.3)',
+                  border: `2px solid ${DataTypeColors.exec}`,
+                  borderRadius: '0',
+                  clipPath: 'polygon(0% 50%, 50% 0%, 100% 50%, 50% 100%)',
+                  position: 'absolute',
+                  left: '-8px',
+                  top: '50%',
+                  transform: 'translateY(-50%) rotate(90deg)',
+                  boxShadow: data.execInConnected 
+                    ? `0 0 8px ${DataTypeColors.exec}88, inset 0 1px 2px rgba(255,255,255,0.3)` 
+                    : 'inset 0 1px 2px rgba(0,0,0,0.5)',
+                  transition: 'all 0.2s ease'
+                }}
               />
-              <span style={{ marginLeft: '8px' }}>exec</span>
+              <span style={{ marginLeft: '8px', fontSize: '11px' }}>exec</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', color: '#ccc' }}>
-              <span style={{ marginRight: '8px' }}>then</span>
-              <BlueprintPin 
-                type="source" 
-                position={Position.Right} 
+              <span style={{ marginRight: '8px', fontSize: '11px' }}>then</span>
+              <Handle
+                type="source"
+                position={Position.Right}
                 id="exec-out"
-                isExecution={true}
-                isConnected={data.execOutConnected}
+                style={{
+                  width: '13px',
+                  height: '13px',
+                  background: data.execOutConnected 
+                    ? `radial-gradient(circle, ${DataTypeColors.exec}, ${DataTypeColors.exec}dd)` 
+                    : 'rgba(0,0,0,0.3)',
+                  border: `2px solid ${DataTypeColors.exec}`,
+                  borderRadius: '0',
+                  clipPath: 'polygon(0% 50%, 50% 0%, 100% 50%, 50% 100%)',
+                  position: 'absolute',
+                  right: '-8px',
+                  top: '50%',
+                  transform: 'translateY(-50%) rotate(90deg)',
+                  boxShadow: data.execOutConnected 
+                    ? `0 0 8px ${DataTypeColors.exec}88, inset 0 1px 2px rgba(255,255,255,0.3)` 
+                    : 'inset 0 1px 2px rgba(0,0,0,0.5)',
+                  transition: 'all 0.2s ease'
+                }}
               />
             </div>
           </div>
         )}
         
         {/* 데이터 입력 핀 */}
-        {inputs.map((input: PinData, index: number) => (
-          <div key={`input-${index}`} style={{ 
-            display: 'flex', 
-            alignItems: 'center',
-            padding: '2px 12px',
-            minHeight: '24px'
-          }}>
-            <Handle
-              type="target"
-              position={Position.Left}
-              id={`input-${input.name}`}
-              style={{
-                width: '14px',
-                height: '14px',
-                background: input.connected ? DataTypeColors[input.type] : 'transparent',
-                border: `2px solid ${DataTypeColors[input.type]}`,
-                borderRadius: '50%',
-                position: 'absolute',
-                left: '-7px'
-              }}
-            />
+        {inputs.map((input: PinData, index: number) => {
+          return (
+            <div key={`input-${index}`} style={{ 
+              display: 'flex', 
+              alignItems: 'center',
+              padding: '2px 12px',
+              minHeight: '24px',
+              position: 'relative'
+            }}>
+              <Handle
+                type="target"
+                position={Position.Left}
+                id={`input-${input.name}`}
+                style={{
+                  width: '14px',
+                  height: '14px',
+                  background: input.connected ? DataTypeColors[input.type] : 'transparent',
+                  border: `2px solid ${DataTypeColors[input.type]}`,
+                  borderRadius: '50%',
+                  position: 'absolute',
+                  left: '-8px',
+                  top: '50%',
+                  transform: 'translateY(-50%)'
+                }}
+              />
             <span style={{ 
               marginLeft: '20px', 
               color: DataTypeColors[input.type],
@@ -237,51 +316,69 @@ export const UE5FunctionNode = ({ data, selected }: any) => {
                 defaultValue={input.value}
                 style={{
                   marginLeft: '8px',
-                  background: '#2a2a2a',
-                  border: '1px solid #444',
-                  borderRadius: '2px',
-                  color: '#ccc',
-                  padding: '2px 6px',
+                  background: 'linear-gradient(135deg, #1a1a1a 0%, #252525 100%)',
+                  border: '1px solid #3a3a3a',
+                  borderRadius: '3px',
+                  color: '#e0e0e0',
+                  padding: '3px 8px',
                   fontSize: '10px',
-                  width: '80px'
+                  width: '80px',
+                  boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.3)',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                  transition: 'all 0.2s ease',
+                  outline: 'none'
+                }}
+                onFocus={(e) => {
+                  e.target.style.border = '1px solid #5a5a5a'
+                  e.target.style.boxShadow = 'inset 0 1px 3px rgba(0,0,0,0.3), 0 0 5px rgba(100,100,100,0.3)'
+                }}
+                onBlur={(e) => {
+                  e.target.style.border = '1px solid #3a3a3a'
+                  e.target.style.boxShadow = 'inset 0 1px 3px rgba(0,0,0,0.3)'
                 }}
               />
             )}
-          </div>
-        ))}
+            </div>
+          )
+        })}
         
         {/* 데이터 출력 핀 */}
-        {outputs.map((output: PinData, index: number) => (
-          <div key={`output-${index}`} style={{ 
-            display: 'flex', 
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-            padding: '2px 12px',
-            minHeight: '24px'
-          }}>
-            <span style={{ 
-              marginRight: '20px', 
-              color: DataTypeColors[output.type],
-              fontSize: '11px'
+        {outputs.map((output: PinData, index: number) => {
+          return (
+            <div key={`output-${index}`} style={{ 
+              display: 'flex', 
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              padding: '2px 12px',
+              minHeight: '24px',
+              position: 'relative'
             }}>
-              {output.name}
-            </span>
-            <Handle
-              type="source"
-              position={Position.Right}
-              id={`output-${output.name}`}
-              style={{
-                width: '14px',
-                height: '14px',
-                background: output.connected ? DataTypeColors[output.type] : 'transparent',
-                border: `2px solid ${DataTypeColors[output.type]}`,
-                borderRadius: '50%',
-                position: 'absolute',
-                right: '-7px'
-              }}
-            />
-          </div>
-        ))}
+              <span style={{ 
+                marginRight: '20px', 
+                color: DataTypeColors[output.type],
+                fontSize: '11px'
+              }}>
+                {output.name}
+              </span>
+              <Handle
+                type="source"
+                position={Position.Right}
+                id={`output-${output.name}`}
+                style={{
+                  width: '14px',
+                  height: '14px',
+                  background: output.connected ? DataTypeColors[output.type] : 'transparent',
+                  border: `2px solid ${DataTypeColors[output.type]}`,
+                  borderRadius: '50%',
+                  position: 'absolute',
+                  right: '-8px',
+                  top: '50%',
+                  transform: 'translateY(-50%)'
+                }}
+              />
+            </div>
+          )
+        })}
       </div>
     </div>
   )
@@ -294,45 +391,53 @@ export const UE5GetNode = ({ data, selected }: any) => {
   
   return (
     <div style={{
-      background: '#1a1a1a',
-      borderRadius: '4px',
-      border: selected ? '2px solid #ffd700' : '1px solid #333',
-      minWidth: '150px',
+      background: 'linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%)',
+      borderRadius: '6px',
+      border: selected ? '2px solid #ffd700' : '1px solid #404040',
+      minWidth: '160px',
       fontSize: '12px',
-      fontFamily: 'Arial, sans-serif',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.5)',
-      position: 'relative'
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      boxShadow: selected 
+        ? '0 0 20px rgba(255, 215, 0, 0.3), 0 4px 12px rgba(0,0,0,0.8)' 
+        : '0 4px 12px rgba(0,0,0,0.6)',
+      position: 'relative',
+      overflow: 'hidden'
     }}>
       {/* GET 인디케이터 */}
       <div style={{
         position: 'absolute',
         top: '8px',
         right: '8px',
-        background: varColor,
+        background: `linear-gradient(135deg, ${varColor}dd, ${varColor}99)`,
         color: 'white',
-        padding: '1px 4px',
-        borderRadius: '2px',
+        padding: '2px 6px',
+        borderRadius: '3px',
         fontSize: '9px',
-        fontWeight: 'bold'
+        fontWeight: '600',
+        letterSpacing: '0.5px',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
+        textShadow: '0 1px 2px rgba(0,0,0,0.5)'
       }}>
         GET
       </div>
       
       {/* 변수 이름 */}
       <div style={{
-        padding: '12px',
-        color: 'white',
-        fontWeight: 'bold',
+        padding: '14px',
+        color: '#f0f0f0',
+        fontWeight: '600',
         fontSize: '13px',
         display: 'flex',
-        alignItems: 'center'
+        alignItems: 'center',
+        textShadow: '0 1px 2px rgba(0,0,0,0.5)'
       }}>
         <div style={{
           width: '4px',
-          height: '30px',
-          background: varColor,
-          marginRight: '8px',
-          borderRadius: '2px'
+          height: '32px',
+          background: `linear-gradient(180deg, ${varColor}, ${varColor}88)`,
+          marginRight: '10px',
+          borderRadius: '2px',
+          boxShadow: `0 0 8px ${varColor}44`
         }} />
         {data.label || 'Variable'}
       </div>
@@ -364,46 +469,55 @@ export const UE5SetNode = ({ data, selected }: any) => {
   
   return (
     <div style={{
-      background: '#1a1a1a',
-      borderRadius: '4px',
-      border: selected ? '2px solid #ffd700' : '1px solid #333',
-      minWidth: '180px',
+      background: 'linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%)',
+      borderRadius: '6px',
+      border: selected ? '2px solid #ffd700' : '1px solid #404040',
+      minWidth: '200px',
       fontSize: '12px',
-      fontFamily: 'Arial, sans-serif',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.5)',
-      position: 'relative'
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      boxShadow: selected 
+        ? '0 0 20px rgba(255, 215, 0, 0.3), 0 4px 12px rgba(0,0,0,0.8)' 
+        : '0 4px 12px rgba(0,0,0,0.6)',
+      position: 'relative',
+      overflow: 'hidden'
     }}>
       {/* SET 인디케이터 */}
       <div style={{
         position: 'absolute',
         top: '8px',
         right: '8px',
-        background: varColor,
+        background: `linear-gradient(135deg, ${varColor}dd, ${varColor}99)`,
         color: 'white',
-        padding: '1px 4px',
-        borderRadius: '2px',
+        padding: '2px 6px',
+        borderRadius: '3px',
         fontSize: '9px',
-        fontWeight: 'bold'
+        fontWeight: '600',
+        letterSpacing: '0.5px',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
+        textShadow: '0 1px 2px rgba(0,0,0,0.5)'
       }}>
         SET
       </div>
       
       {/* 변수 이름 */}
       <div style={{
-        padding: '8px 12px',
-        color: 'white',
-        fontWeight: 'bold',
+        padding: '10px 12px',
+        color: '#f0f0f0',
+        fontWeight: '600',
         fontSize: '13px',
-        borderBottom: '1px solid #333',
+        borderBottom: '1px solid rgba(255,255,255,0.05)',
+        background: 'rgba(0,0,0,0.2)',
         display: 'flex',
-        alignItems: 'center'
+        alignItems: 'center',
+        textShadow: '0 1px 2px rgba(0,0,0,0.5)'
       }}>
         <div style={{
           width: '4px',
-          height: '20px',
-          background: varColor,
-          marginRight: '8px',
-          borderRadius: '2px'
+          height: '22px',
+          background: `linear-gradient(180deg, ${varColor}, ${varColor}88)`,
+          marginRight: '10px',
+          borderRadius: '2px',
+          boxShadow: `0 0 8px ${varColor}44`
         }} />
         {data.label || 'Variable'}
       </div>
@@ -457,7 +571,9 @@ export const UE5SetNode = ({ data, selected }: any) => {
                 border: `2px solid ${varColor}`,
                 borderRadius: '50%',
                 position: 'absolute',
-                left: '-7px'
+                left: '-8px',
+                top: '50%',
+                transform: 'translateY(-50%)'
               }}
             />
             <span style={{ 
@@ -487,7 +603,9 @@ export const UE5SetNode = ({ data, selected }: any) => {
                 border: `2px solid ${varColor}`,
                 borderRadius: '50%',
                 position: 'absolute',
-                right: '-7px'
+                right: '-8px',
+                top: '50%',
+                transform: 'translateY(-50%)'
               }}
             />
           </div>
@@ -501,34 +619,52 @@ export const UE5SetNode = ({ data, selected }: any) => {
 export const UE5BranchNode = ({ data, selected }: any) => {
   return (
     <div style={{
-      background: '#1a1a1a',
-      borderRadius: '4px',
-      border: selected ? '2px solid #ffd700' : '1px solid #333',
-      minWidth: '180px',
+      background: 'linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%)',
+      borderRadius: '6px',
+      border: selected ? '2px solid #ffd700' : '1px solid #404040',
+      minWidth: '200px',
       fontSize: '12px',
-      fontFamily: 'Arial, sans-serif',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.5)',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      boxShadow: selected 
+        ? '0 0 20px rgba(255, 215, 0, 0.3), 0 4px 12px rgba(0,0,0,0.8)' 
+        : '0 4px 12px rgba(0,0,0,0.6)',
+      position: 'relative',
     }}>
+      {/* 하이라이트 효과 */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: '1px',
+        background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)',
+        borderRadius: '6px 6px 0 0'
+      }} />
+      
       {/* 헤더 */}
       <div style={{
-        background: 'linear-gradient(to bottom, #4a4a4a, #2a2a2a)',
+        background: 'linear-gradient(135deg, #5a5a5a 0%, #3a3a3a 100%)',
         color: 'white',
-        padding: '4px 8px',
-        borderRadius: '4px 4px 0 0',
-        fontSize: '11px',
-        fontWeight: 'bold',
-        borderBottom: '1px solid #1a1a1a'
+        padding: '5px 10px',
+        borderRadius: '5px 5px 0 0',
+        fontSize: '10px',
+        fontWeight: '600',
+        letterSpacing: '0.5px',
+        borderBottom: '1px solid #2a2a2a',
+        textShadow: '0 1px 2px rgba(0,0,0,0.5)'
       }}>
         FLOW CONTROL
       </div>
       
       {/* 노드 제목 */}
       <div style={{
-        padding: '6px 12px',
-        color: 'white',
-        fontWeight: 'bold',
+        padding: '8px 12px',
+        color: '#f0f0f0',
+        fontWeight: '600',
         fontSize: '13px',
-        borderBottom: '1px solid #333'
+        borderBottom: '1px solid rgba(255,255,255,0.05)',
+        background: 'rgba(0,0,0,0.2)',
+        textShadow: '0 1px 2px rgba(0,0,0,0.5)'
       }}>
         Branch
       </div>
@@ -570,7 +706,9 @@ export const UE5BranchNode = ({ data, selected }: any) => {
               border: `2px solid ${DataTypeColors.boolean}`,
               borderRadius: '50%',
               position: 'absolute',
-              left: '-7px'
+              left: '-8px',
+              top: '50%',
+              transform: 'translateY(-50%)'
             }}
           />
           <span style={{ 

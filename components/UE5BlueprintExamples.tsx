@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState, useLayoutEffect } from 'react'
 import ReactFlow, {
   Node,
   Edge,
@@ -15,34 +15,63 @@ import ReactFlow, {
   Connection,
   ConnectionMode,
   Panel,
-  MarkerType
+  MarkerType,
+  useReactFlow,
+  ReactFlowProvider
 } from 'reactflow'
 import 'reactflow/dist/style.css'
 import { ue5NodeTypes, DataTypeColors } from './UE5BlueprintNodes'
+import { getLayoutedElements, getSmartLayout, getHierarchicalLayout } from './UE5BlueprintLayout'
 
 // UE5 스타일 엣지
 const defaultEdgeOptions = {
   animated: false,
+  type: 'smoothstep',
   style: {
-    strokeWidth: 3,
-    stroke: '#ffffff'
+    strokeWidth: 4,
+    stroke: '#ffffff',
+    strokeDasharray: '0',
+    filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))'
   },
   markerEnd: {
     type: MarkerType.ArrowClosed,
-    width: 15,
-    height: 15,
-    color: '#ffffff'
+    width: 18,
+    height: 18,
+    color: '#ffffff',
+    strokeWidth: 0
+  },
+  labelStyle: {
+    fill: '#ffffff',
+    fontWeight: 600,
+    fontSize: 10
+  },
+  labelBgStyle: {
+    fill: 'rgba(0,0,0,0.7)',
+    fillOpacity: 0.7
   }
 }
 
 // 데이터 타입별 엣지 스타일
-const getEdgeStyle = (dataType: string) => ({
-  animated: false,
-  style: {
-    strokeWidth: 2,
-    stroke: DataTypeColors[dataType as keyof typeof DataTypeColors] || '#0088ff'
+const getEdgeStyle = (dataType: string) => {
+  const color = DataTypeColors[dataType as keyof typeof DataTypeColors] || '#0088ff'
+  return {
+    animated: false,
+    type: 'smoothstep',
+    style: {
+      strokeWidth: 3,
+      stroke: color,
+      strokeDasharray: '0',
+      filter: `drop-shadow(0 0 3px ${color}44)`
+    },
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      width: 12,
+      height: 12,
+      color: color,
+      strokeWidth: 0
+    }
   }
-})
+}
 
 // 1. 기본 Print String 예제 (Hello World)
 export function UE5PrintString() {
@@ -59,7 +88,7 @@ export function UE5PrintString() {
     {
       id: '2',
       type: 'ue5Function',
-      position: { x: 350, y: 130 },
+      position: { x: 450, y: 130 },
       data: { 
         label: 'Print String',
         category: 'DEVELOPMENT',
@@ -116,7 +145,14 @@ export function UE5PrintString() {
   )
 
   return (
-    <div style={{ width: '100%', height: '400px', background: '#0f0f0f', borderRadius: '4px', border: '1px solid #333' }}>
+    <div style={{ 
+      width: '100%', 
+      height: '400px', 
+      background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)', 
+      borderRadius: '8px', 
+      border: '1px solid #2a2a2a',
+      boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.5)'
+    }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -130,20 +166,27 @@ export function UE5PrintString() {
           type: 'smoothstep'
         }}
       >
-        <Background color="#1a1a1a" gap={20} size={1} />
-        <Controls style={{ button: { background: '#2a2a2a', color: '#fff' } }} />
+        <Background 
+          color="#1a1a1a" 
+          gap={20} 
+          size={1}
+          style={{ opacity: 0.5 }}
+        />
+        <Controls />
       </ReactFlow>
     </div>
   )
 }
 
-// 2. 변수 Get/Set 예제
-export function UE5VariableFlow() {
+// 2. 변수 Get/Set 예제 - 자동 레이아웃 적용
+function UE5VariableFlowInner() {
+  const reactFlowInstance = useReactFlow()
+  
   const nodes: Node[] = [
     {
       id: '1',
       type: 'ue5Event',
-      position: { x: 50, y: 200 },
+      position: { x: 50, y: 250 },
       data: { 
         label: 'Event Tick',
         execConnected: true
@@ -152,7 +195,7 @@ export function UE5VariableFlow() {
     {
       id: '2',
       type: 'ue5Get',
-      position: { x: 250, y: 100 },
+      position: { x: 300, y: 100 },
       data: { 
         label: 'Player Health',
         varType: 'float',
@@ -162,7 +205,7 @@ export function UE5VariableFlow() {
     {
       id: '3',
       type: 'ue5Function',
-      position: { x: 450, y: 80 },
+      position: { x: 550, y: 80 },
       data: { 
         label: 'Subtract',
         category: 'MATH',
@@ -179,7 +222,7 @@ export function UE5VariableFlow() {
     {
       id: '4',
       type: 'ue5Set',
-      position: { x: 350, y: 220 },
+      position: { x: 450, y: 270 },
       data: { 
         label: 'Player Health',
         varType: 'float',
@@ -192,7 +235,7 @@ export function UE5VariableFlow() {
     {
       id: '5',
       type: 'ue5Branch',
-      position: { x: 600, y: 200 },
+      position: { x: 750, y: 250 },
       data: {
         execInConnected: true,
         conditionConnected: true,
@@ -203,7 +246,7 @@ export function UE5VariableFlow() {
     {
       id: '6',
       type: 'ue5Function',
-      position: { x: 450, y: 350 },
+      position: { x: 550, y: 420 },
       data: { 
         label: 'Less Than',
         category: 'MATH',
@@ -220,7 +263,7 @@ export function UE5VariableFlow() {
     {
       id: '7',
       type: 'ue5Function',
-      position: { x: 850, y: 180 },
+      position: { x: 1050, y: 230 },
       data: { 
         label: 'Destroy Actor',
         category: 'ACTOR',
@@ -295,8 +338,47 @@ export function UE5VariableFlow() {
     }
   ]
 
-  const [nodesState, setNodes] = useState(nodes)
-  const [edgesState, setEdges] = useState(edges)
+  // 초기 노드와 엣지를 자동 레이아웃으로 배치
+  const { nodes: layoutedNodes, edges: layoutedEdges } = getSmartLayout(nodes, edges)
+  
+  const [nodesState, setNodes] = useState(layoutedNodes)
+  const [edgesState, setEdges] = useState(layoutedEdges)
+  const [selectedLayout, setSelectedLayout] = useState('smart')
+  
+  // 레이아웃 변경 함수
+  const onLayout = useCallback(
+    (layoutType: string) => {
+      let newLayout
+      
+      switch(layoutType) {
+        case 'hierarchical':
+          newLayout = getHierarchicalLayout(nodesState, edgesState)
+          break
+        case 'dagre':
+          newLayout = getLayoutedElements(nodesState, edgesState, 'LR')
+          break
+        case 'smart':
+        default:
+          newLayout = getSmartLayout(nodesState, edgesState)
+          break
+      }
+      
+      setNodes(newLayout.nodes)
+      setEdges(newLayout.edges)
+      setSelectedLayout(layoutType)
+      
+      // 레이아웃 후 화면에 맞춤
+      window.requestAnimationFrame(() => {
+        reactFlowInstance.fitView({ padding: 0.2 })
+      })
+    },
+    [nodesState, edgesState, reactFlowInstance]
+  )
+  
+  // 초기 렌더링 시 화면에 맞춤
+  useLayoutEffect(() => {
+    reactFlowInstance.fitView({ padding: 0.2 })
+  }, [])
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -309,7 +391,14 @@ export function UE5VariableFlow() {
   )
 
   return (
-    <div style={{ width: '100%', height: '500px', background: '#0f0f0f', borderRadius: '4px', border: '1px solid #333' }}>
+    <div style={{ 
+      width: '100%', 
+      height: '550px', 
+      background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)', 
+      borderRadius: '8px', 
+      border: '1px solid #2a2a2a',
+      boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.5)'
+    }}>
       <ReactFlow
         nodes={nodesState}
         edges={edgesState}
@@ -322,12 +411,19 @@ export function UE5VariableFlow() {
           type: 'smoothstep'
         }}
       >
-        <Background color="#1a1a1a" gap={20} size={1} />
-        <Controls style={{ button: { background: '#2a2a2a', color: '#fff' } }} />
+        <Background 
+          color="#1a1a1a" 
+          gap={20} 
+          size={1}
+          style={{ opacity: 0.5 }}
+        />
+        <Controls />
         <MiniMap 
           style={{
-            backgroundColor: '#0f0f0f',
-            border: '1px solid #333'
+            backgroundColor: '#151515',
+            border: '1px solid #3a3a3a',
+            borderRadius: '4px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.5)'
           }}
           nodeColor={(node) => {
             if (node.type === 'ue5Event') return '#5b0000'
@@ -336,18 +432,93 @@ export function UE5VariableFlow() {
             return '#1a1a1a'
           }}
         />
+        <Panel position="top-left">
+          <div style={{
+            background: 'linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%)',
+            border: '1px solid #404040',
+            borderRadius: '6px',
+            padding: '8px',
+            display: 'flex',
+            gap: '8px'
+          }}>
+            <button
+              onClick={() => onLayout('smart')}
+              style={{
+                background: selectedLayout === 'smart' 
+                  ? 'linear-gradient(135deg, #1a5fb4, #134a8e)'
+                  : 'linear-gradient(135deg, #2a2a2a, #3a3a3a)',
+                color: 'white',
+                border: '1px solid #404040',
+                borderRadius: '4px',
+                padding: '6px 12px',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: '600',
+                transition: 'all 0.2s'
+              }}
+            >
+              Smart Layout
+            </button>
+            <button
+              onClick={() => onLayout('hierarchical')}
+              style={{
+                background: selectedLayout === 'hierarchical' 
+                  ? 'linear-gradient(135deg, #1a5fb4, #134a8e)'
+                  : 'linear-gradient(135deg, #2a2a2a, #3a3a3a)',
+                color: 'white',
+                border: '1px solid #404040',
+                borderRadius: '4px',
+                padding: '6px 12px',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: '600',
+                transition: 'all 0.2s'
+              }}
+            >
+              Hierarchical
+            </button>
+            <button
+              onClick={() => onLayout('dagre')}
+              style={{
+                background: selectedLayout === 'dagre' 
+                  ? 'linear-gradient(135deg, #1a5fb4, #134a8e)'
+                  : 'linear-gradient(135deg, #2a2a2a, #3a3a3a)',
+                color: 'white',
+                border: '1px solid #404040',
+                borderRadius: '4px',
+                padding: '6px 12px',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: '600',
+                transition: 'all 0.2s'
+              }}
+            >
+              Dagre Auto
+            </button>
+          </div>
+        </Panel>
       </ReactFlow>
     </div>
   )
 }
 
-// 3. 복잡한 게임 로직 예제
-export function UE5ComplexGameLogic() {
+export function UE5VariableFlow() {
+  return (
+    <ReactFlowProvider>
+      <UE5VariableFlowInner />
+    </ReactFlowProvider>
+  )
+}
+
+// 3. 복잡한 게임 로직 예제 - 자동 레이아웃 적용
+function UE5ComplexGameLogicInner() {
+  const reactFlowInstance = useReactFlow()
+  
   const nodes: Node[] = [
     {
       id: '1',
       type: 'ue5Event',
-      position: { x: 50, y: 250 },
+      position: { x: 50, y: 300 },
       data: { 
         label: 'Event OnDamage',
         execConnected: true
@@ -356,7 +527,7 @@ export function UE5ComplexGameLogic() {
     {
       id: '2',
       type: 'ue5Get',
-      position: { x: 200, y: 150 },
+      position: { x: 250, y: 150 },
       data: { 
         label: 'Current Health',
         varType: 'float',
@@ -366,7 +537,7 @@ export function UE5ComplexGameLogic() {
     {
       id: '3',
       type: 'ue5Get',
-      position: { x: 200, y: 350 },
+      position: { x: 250, y: 450 },
       data: { 
         label: 'Damage Amount',
         varType: 'float',
@@ -376,7 +547,7 @@ export function UE5ComplexGameLogic() {
     {
       id: '4',
       type: 'ue5Function',
-      position: { x: 400, y: 200 },
+      position: { x: 500, y: 250 },
       data: { 
         label: 'Subtract',
         category: 'MATH',
@@ -393,7 +564,7 @@ export function UE5ComplexGameLogic() {
     {
       id: '5',
       type: 'ue5Function',
-      position: { x: 600, y: 200 },
+      position: { x: 750, y: 250 },
       data: { 
         label: 'Clamp',
         category: 'MATH',
@@ -411,7 +582,7 @@ export function UE5ComplexGameLogic() {
     {
       id: '6',
       type: 'ue5Set',
-      position: { x: 350, y: 400 },
+      position: { x: 450, y: 500 },
       data: { 
         label: 'Current Health',
         varType: 'float',
@@ -423,7 +594,7 @@ export function UE5ComplexGameLogic() {
     {
       id: '7',
       type: 'ue5Branch',
-      position: { x: 600, y: 400 },
+      position: { x: 750, y: 500 },
       data: {
         execInConnected: true,
         conditionConnected: true,
@@ -434,7 +605,7 @@ export function UE5ComplexGameLogic() {
     {
       id: '8',
       type: 'ue5Function',
-      position: { x: 450, y: 500 },
+      position: { x: 550, y: 650 },
       data: { 
         label: 'Less Equal',
         category: 'MATH',
@@ -451,7 +622,7 @@ export function UE5ComplexGameLogic() {
     {
       id: '9',
       type: 'ue5Function',
-      position: { x: 850, y: 350 },
+      position: { x: 1050, y: 450 },
       data: { 
         label: 'Death Event',
         category: 'CUSTOM',
@@ -464,7 +635,7 @@ export function UE5ComplexGameLogic() {
     {
       id: '10',
       type: 'ue5Function',
-      position: { x: 850, y: 450 },
+      position: { x: 1050, y: 550 },
       data: { 
         label: 'Update Health Bar',
         category: 'UI',
@@ -479,7 +650,7 @@ export function UE5ComplexGameLogic() {
     {
       id: '11',
       type: 'ue5Function',
-      position: { x: 650, y: 550 },
+      position: { x: 800, y: 700 },
       data: { 
         label: 'Divide',
         category: 'MATH',
@@ -596,8 +767,47 @@ export function UE5ComplexGameLogic() {
     }
   ]
 
-  const [nodesState, setNodes] = useState(nodes)
-  const [edgesState, setEdges] = useState(edges)
+  // 초기 노드와 엣지를 자동 레이아웃으로 배치
+  const { nodes: layoutedNodes, edges: layoutedEdges } = getHierarchicalLayout(nodes, edges)
+  
+  const [nodesState, setNodes] = useState(layoutedNodes)
+  const [edgesState, setEdges] = useState(layoutedEdges)
+  const [selectedLayout, setSelectedLayout] = useState('hierarchical')
+  
+  // 레이아웃 변경 함수
+  const onLayout = useCallback(
+    (layoutType: string) => {
+      let newLayout
+      
+      switch(layoutType) {
+        case 'hierarchical':
+          newLayout = getHierarchicalLayout(nodesState, edgesState)
+          break
+        case 'dagre':
+          newLayout = getLayoutedElements(nodesState, edgesState, 'LR')
+          break
+        case 'smart':
+        default:
+          newLayout = getSmartLayout(nodesState, edgesState)
+          break
+      }
+      
+      setNodes(newLayout.nodes)
+      setEdges(newLayout.edges)
+      setSelectedLayout(layoutType)
+      
+      // 레이아웃 후 화면에 맞춤
+      window.requestAnimationFrame(() => {
+        reactFlowInstance.fitView({ padding: 0.2 })
+      })
+    },
+    [nodesState, edgesState, reactFlowInstance]
+  )
+  
+  // 초기 렌더링 시 화면에 맞춤
+  useLayoutEffect(() => {
+    reactFlowInstance.fitView({ padding: 0.2 })
+  }, [])
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -610,7 +820,14 @@ export function UE5ComplexGameLogic() {
   )
 
   return (
-    <div style={{ width: '100%', height: '650px', background: '#0f0f0f', borderRadius: '4px', border: '1px solid #333' }}>
+    <div style={{ 
+      width: '100%', 
+      height: '750px', 
+      background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)', 
+      borderRadius: '8px', 
+      border: '1px solid #2a2a2a',
+      boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.5)'
+    }}>
       <ReactFlow
         nodes={nodesState}
         edges={edgesState}
@@ -623,22 +840,87 @@ export function UE5ComplexGameLogic() {
           type: 'smoothstep'
         }}
       >
-        <Background color="#1a1a1a" gap={20} size={1} />
-        <Controls style={{ button: { background: '#2a2a2a', color: '#fff' } }} />
+        <Background 
+          color="#1a1a1a" 
+          gap={20} 
+          size={1}
+          style={{ opacity: 0.5 }}
+        />
+        <Controls />
         <Panel position="top-left">
           <div style={{
-            background: '#1a1a1a',
-            border: '1px solid #333',
-            borderRadius: '4px',
+            background: 'linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%)',
+            border: '1px solid #404040',
+            borderRadius: '6px',
             padding: '8px',
-            color: '#ccc',
-            fontSize: '11px'
+            display: 'flex',
+            gap: '8px'
           }}>
-            <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>Damage System</div>
-            <div style={{ opacity: 0.7 }}>Health management with death handling</div>
+            <button
+              onClick={() => onLayout('hierarchical')}
+              style={{
+                background: selectedLayout === 'hierarchical' 
+                  ? 'linear-gradient(135deg, #1a5fb4, #134a8e)'
+                  : 'linear-gradient(135deg, #2a2a2a, #3a3a3a)',
+                color: 'white',
+                border: '1px solid #404040',
+                borderRadius: '4px',
+                padding: '6px 12px',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: '600',
+                transition: 'all 0.2s'
+              }}
+            >
+              Hierarchical
+            </button>
+            <button
+              onClick={() => onLayout('smart')}
+              style={{
+                background: selectedLayout === 'smart' 
+                  ? 'linear-gradient(135deg, #1a5fb4, #134a8e)'
+                  : 'linear-gradient(135deg, #2a2a2a, #3a3a3a)',
+                color: 'white',
+                border: '1px solid #404040',
+                borderRadius: '4px',
+                padding: '6px 12px',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: '600',
+                transition: 'all 0.2s'
+              }}
+            >
+              Smart Layout
+            </button>
+            <button
+              onClick={() => onLayout('dagre')}
+              style={{
+                background: selectedLayout === 'dagre' 
+                  ? 'linear-gradient(135deg, #1a5fb4, #134a8e)'
+                  : 'linear-gradient(135deg, #2a2a2a, #3a3a3a)',
+                color: 'white',
+                border: '1px solid #404040',
+                borderRadius: '4px',
+                padding: '6px 12px',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: '600',
+                transition: 'all 0.2s'
+              }}
+            >
+              Dagre Auto
+            </button>
           </div>
         </Panel>
       </ReactFlow>
     </div>
+  )
+}
+
+export function UE5ComplexGameLogic() {
+  return (
+    <ReactFlowProvider>
+      <UE5ComplexGameLogicInner />
+    </ReactFlowProvider>
   )
 }
