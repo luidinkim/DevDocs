@@ -81,8 +81,8 @@ MIT License - see LICENSE file for details
 
 ## 📞 Contact
 
-- GitHub: [github.com/yourusername/devdocs](https://github.com/yourusername/devdocs)
-- Email: devdocs@example.com
+- GitHub: [github.com/luidinkim/devdocs](https://github.com/luidinkim/devdocs)
+- Email: luidinkim@36litters.com
 
 ---
 

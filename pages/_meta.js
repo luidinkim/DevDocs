@@ -1,8 +1,8 @@
 export default {
   index: '홈',
   'getting-started': '시작하기',
+  'react-flow-blueprint': 'React Flow 블루프린트',
   'claude-code': 'Claude Code',
   'unreal-engine-5': '언리얼 엔진 5',
-  'game-data-analysis': '게임 데이터 분석',
-  about: '소개'
+  'game-data-analysis': '게임 데이터 분석'
 }

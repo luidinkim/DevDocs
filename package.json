@@ -31,6 +31,7 @@
     "nextra-theme-docs": "^3.3.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "reactflow": "^11.11.4",
     "rehype-mermaid": "^3.0.0"
   },
   "devDependencies": {

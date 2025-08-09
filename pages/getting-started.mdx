@@ -1,24 +1,26 @@
-import { Callout, Cards, Tabs, Steps, FileTree } from 'nextra/components'
+import { Callout, Steps, Tabs, FileTree } from 'nextra/components'
 
 # 시작하기
 
-DevDocs 문서 플랫폼을 시작하는 방법을 안내합니다.
+**DevDocs 프로젝트를 로컬 환경에서 실행하는 방법**
 
-<Callout type="info">
-  **Nextra v3** 기반으로 구축된 이 문서 사이트는 강력한 검색 기능과 다국어 지원을 제공합니다.
+## 요구사항
+
+<Callout type="warning">
+Node.js 20.0.0 이상이 필요합니다
 </Callout>
 
-## 빠른 시작
+## 설치 및 실행
 
 <Steps>
-### 프로젝트 클론
- 
+### 저장소 클론
+
 ```bash
 git clone https://github.com/luidinkim/DevDocs.git
 cd DevDocs
 ```
 
-### 의존성 설치
+### 패키지 설치
 
 <Tabs items={['npm', 'yarn', 'pnpm']}>
   <Tabs.Tab>
@@ -38,83 +40,72 @@ cd DevDocs
   </Tabs.Tab>
 </Tabs>
 
-### 개발 서버 실행
+### 개발 서버 시작
 
 ```bash
 npm run dev
 ```
 
-### 브라우저에서 확인
+브라우저에서 [http://localhost:3000](http://localhost:3000) 접속
 
-http://localhost:3000 으로 접속하세요.
 </Steps>
-
-## 주요 기능
-
-<Cards>
-  <Cards.Card title="🔍 강력한 검색" href="/documentation">
-    FlexSearch 기반의 빠른 전문 검색을 지원합니다.
-  </Cards.Card>
-  <Cards.Card title="🌐 다국어 지원" href="/documentation">
-    한국어와 영어를 완벽하게 지원합니다.
-  </Cards.Card>
-  <Cards.Card title="🌙 다크 모드" href="/documentation">
-    시스템 설정에 따른 자동 테마 전환을 지원합니다.
-  </Cards.Card>
-  <Cards.Card title="📱 반응형 디자인" href="/documentation">
-    모든 기기에서 최적화된 경험을 제공합니다.
-  </Cards.Card>
-</Cards>
 
 ## 프로젝트 구조
 
 <FileTree>
   <FileTree.Folder name="pages" defaultOpen>
-    <FileTree.File name="_app.tsx" />
     <FileTree.File name="index.mdx" />
-    <FileTree.Folder name="documentation" defaultOpen>
-      <FileTree.File name="frontend.mdx" />
-      <FileTree.File name="backend.mdx" />
-      <FileTree.File name="database.mdx" />
+    <FileTree.File name="getting-started.mdx" />
+    <FileTree.Folder name="claude-code">
+      <FileTree.File name="index.mdx" />
     </FileTree.Folder>
-    <FileTree.Folder name="analytics">
-      <FileTree.File name="game-analytics.mdx" />
-      <FileTree.File name="web-analytics.mdx" />
+    <FileTree.Folder name="unreal-engine-5">
+      <FileTree.File name="index.mdx" />
+    </FileTree.Folder>
+    <FileTree.Folder name="game-data-analysis">
+      <FileTree.File name="index.mdx" />
     </FileTree.Folder>
   </FileTree.Folder>
-  <FileTree.Folder name="public">
-    <FileTree.File name="favicon.ico" />
+  <FileTree.Folder name="components">
+    <FileTree.File name="*.tsx" />
   </FileTree.Folder>
   <FileTree.File name="next.config.mjs" />
   <FileTree.File name="theme.config.tsx" />
+  <FileTree.File name="package.json" />
 </FileTree>
 
-<Callout type="warning">
-  개발 환경에서는 Node.js 20.0.0 이상이 필요합니다.
+## 주요 명령어
+
+### 개발
+```bash
+npm run dev        # 개발 서버 실행
+npm run build      # 프로덕션 빌드
+npm run start      # 프로덕션 서버 실행
+```
+
+### 배포
+```bash
+npm run build      # 빌드
+npm run deploy     # AWS Amplify 배포
+```
+
+## 문서 작성
+
+### MDX 파일 생성
+`pages` 디렉토리에 `.mdx` 파일을 생성하면 자동으로 라우팅됩니다.
+
+### 컴포넌트 사용
+```mdx
+import { Callout, Cards, Steps } from 'nextra/components'
+
+<Callout type="info">
+  정보 메시지
 </Callout>
+```
 
-## 기술 스택
+### 메타데이터 설정
+각 디렉토리의 `_meta.js` 파일로 사이드바 구조를 정의합니다.
 
-- **Framework**: Next.js 15 + Nextra 3
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS v4
-- **Search**: FlexSearch (내장)
-- **Deployment**: AWS Amplify
-
-## 다음 단계
-
-<Cards>
-  <Cards.Card title="문서 작성하기" href="/documentation" arrow>
-    MDX를 사용한 문서 작성 방법을 알아보세요.
-  </Cards.Card>
-  <Cards.Card title="컴포넌트 활용" href="/documentation/frontend" arrow>
-    Nextra의 내장 컴포넌트를 활용하는 방법을 배워보세요.
-  </Cards.Card>
-  <Cards.Card title="배포하기" href="/documentation/devops" arrow>
-    AWS Amplify로 배포하는 방법을 확인하세요.
-  </Cards.Card>
-</Cards>
-
-<Callout type="success" emoji="🎉">
-  이제 DevDocs를 사용할 준비가 완료되었습니다!
+<Callout type="success">
+준비 완료! 이제 문서를 작성하고 배포할 수 있습니다.
 </Callout>

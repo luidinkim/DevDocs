@@ -3,5 +3,7 @@ export default {
   'commands': '명령어 레퍼런스',
   'personas': '페르소나 가이드',
   'mcp-servers': 'MCP 서버',
-  'workflow-diagram': '워크플로우 다이어그램'
+  'workflow-diagram': '워크플로우 다이어그램',
+  'visual-guide': '시각적 가이드',
+  'diagram-alternatives': '다이어그램 도구'
 }

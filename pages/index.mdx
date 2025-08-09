@@ -1,31 +1,60 @@
-# DevDocs - 개발 문서 플랫폼
+import { Callout } from 'nextra/components'
+import { LinkCard, LinkCards } from '../components/LinkCard'
 
-개인 개발 자료와 학생들을 위한 교육 자료를 체계적으로 관리하고 공유하는 문서 플랫폼입니다.
+# DevDocs
 
-## 시작하기
+**개발 지식과 실무 경험을 체계적으로 정리한 기술 문서 플랫폼**
 
-DevDocs는 개발자와 학습자를 위한 종합적인 문서 허브입니다. 최신 기술 스택과 모범 사례를 활용하여 고품질의 기술 문서를 제공합니다.
+<Callout type="default">
+💡 최신 기술 스택과 실무 노하우를 담은 문서들을 제공합니다
+</Callout>
 
-### 주요 특징
+## 주요 콘텐츠
 
-- 📚 **체계적인 문서 구조** - 카테고리별로 정리된 콘텐츠
-- 🔍 **강력한 검색 기능** - 필요한 정보를 빠르게 찾기
-- 🌙 **다크 모드 지원** - 편안한 읽기 경험
-- 📱 **반응형 디자인** - 모든 기기에서 최적화된 경험
+<LinkCards>
+  <LinkCard 
+    title="React Flow 블루프린트" 
+    description="언리얼 엔진 스타일의 비주얼 프로그래밍 구현"
+    href="/react-flow-blueprint"
+    icon="🔷"
+  />
+  <LinkCard 
+    title="Claude Code" 
+    description="AI 코딩 어시스턴트 활용 가이드와 실전 팁"
+    href="/claude-code"
+    icon="🤖"
+  />
+  <LinkCard 
+    title="언리얼 엔진 5" 
+    description="게임 개발을 위한 UE5 핵심 기능과 최적화 기법"
+    href="/unreal-engine-5"
+    icon="🎮"
+  />
+  <LinkCard 
+    title="게임 데이터 분석" 
+    description="주요 분석 플랫폼 비교와 데이터 기반 의사결정"
+    href="/game-data-analysis"
+    icon="📊"
+  />
+</LinkCards>
 
-## 콘텐츠 카테고리
+## 핵심 기능
 
-### 개발 가이드
-프론트엔드, 백엔드, 풀스택 개발에 대한 종합적인 가이드와 튜토리얼
+- **🔍 강력한 검색** - FlexSearch 기반 실시간 문서 검색
+- **🌙 다크 모드** - 시스템 설정 연동 자동 테마 전환
+- **📱 반응형 디자인** - 모바일부터 데스크톱까지 최적화
+- **⚡ 빠른 성능** - Next.js 15 기반 최적화된 렌더링
 
-### 분석 도구
-게임 분석 도구 비교, 성능 모니터링, 데이터 분석 방법론
+## 기술 스택
 
-### 학습 센터
-초급부터 고급까지 단계별 학습 자료와 실습 프로젝트
+- **Framework**: Next.js 15 + Nextra 3
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS v4
+- **Deployment**: AWS Amplify
 
-## 기여하기
+---
 
-이 프로젝트는 오픈소스입니다. 기여를 환영합니다!
-
-[GitHub에서 보기](https://github.com/luidinkim/DevDocs)
+<div className="mt-8 text-center text-sm text-gray-600 dark:text-gray-400">
+  [GitHub Repository](https://github.com/luidinkim/DevDocs) | 
+  Built with ❤️ using Nextra
+</div>

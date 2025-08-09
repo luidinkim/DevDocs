@@ -1,4 +1,4 @@
-import { Tabs, Callout, Cards } from 'nextra/components'
+import { Tabs, Callout } from 'nextra/components'
 
 # 📊 문서용 다이어그램 도구 비교
 
@@ -8,45 +8,35 @@ Mermaid 외에도 MDX/Nextra에서 사용할 수 있는 훌륭한 시각화 도�
 
 ## 🎨 주요 대안들
 
-<Cards>
-  <Cards.Card 
-    title="Excalidraw ✏️"
-  >
-    **손그림 스타일의 협업 다이어그램**
-    - 친근하고 부담없는 스케치 스타일
-    - 실시간 협업 지원
-    - Mermaid → Excalidraw 변환 가능
-  </Cards.Card>
-  
-  <Cards.Card 
-    title="D2 (Declarative Diagramming) 🔷"
-  >
-    **선언적 다이어그램 언어**
-    - 서버사이드 렌더링
-    - 브라우저 의존성 없음
-    - 빠른 SVG 생성
-  </Cards.Card>
-  
-  <Cards.Card 
-    title="Markmap 🧠"
-  >
-    **마크다운 → 마인드맵**
-    - 자동 마인드맵 생성
-    - 인터랙티브 확장/축소
-    - 마크다운 문법 그대로 사용
-  </Cards.Card>
-  
-  <Cards.Card 
-    title="PlantUML 🌱"
-  >
-    **엔터프라이즈급 다이어그램**
-    - UML 다이어그램 전문
-    - 복잡한 시스템 설계
-    - 다양한 다이어그램 타입
-  </Cards.Card>
-</Cards>
+### Excalidraw ✏️
+**손그림 스타일의 협업 다이어그램**
+- 친근하고 부담없는 스케치 스타일
+- 실시간 협업 지원
+- Mermaid → Excalidraw 변환 가능
+- 웹사이트: excalidraw.com
 
-## 🆚 도구별 비교
+### D2 (Declarative Diagramming) 🔷
+**선언적 다이어그램 언어**
+- 서버사이드 렌더링
+- 브라우저 의존성 없음
+- 빠른 SVG 생성
+- 웹사이트: d2lang.com
+
+### Markmap 🧠
+**마크다운 → 마인드맵**
+- 자동 마인드맵 생성
+- 인터랙티브 확장/축소
+- 마크다운 문법 그대로 사용
+- 웹사이트: markmap.js.org
+
+### PlantUML 🌱
+**엔터프라이즈급 다이어그램**
+- UML 다이어그램 전문
+- 복잡한 시스템 설계
+- 다양한 다이어그램 타입
+- 웹사이트: plantuml.com
+
+## 🆚 도구별 상세 비교
 
 <Tabs items={['Excalidraw', 'D2', 'Markmap', 'PlantUML', 'ASCII Art']}>
   <Tabs.Tab>
@@ -126,17 +116,6 @@ Mermaid 외에도 MDX/Nextra에서 사용할 수 있는 훌륭한 시각화 도�
       style.fill: "#48bb78"
     }
     ```
-    
-    **MDX 통합:**
-    ```jsx
-    import D2Diagram from '../components/D2Diagram'
-    
-    <D2Diagram code={`
-      direction: right
-      
-      user -> api -> db
-    `} />
-    ```
   </Tabs.Tab>
   
   <Tabs.Tab>
@@ -173,24 +152,6 @@ Mermaid 외에도 MDX/Nextra에서 사용할 수 있는 훌륭한 시각화 도�
     ### Node.js
     - Express
     - Fastify
-    ### Python
-    - Django
-    - FastAPI
-    ```
-    
-    **MDX 컴포넌트:**
-    ```jsx
-    import { Markmap } from '../components/Markmap'
-    
-    <Markmap markdown={`
-    # SuperClaude
-    ## 페르소나
-    ### Frontend
-    ### Backend
-    ## MCP 서버
-    ### Sequential
-    ### Context7
-    `} />
     ```
   </Tabs.Tab>
   
@@ -208,17 +169,9 @@ Mermaid 외에도 MDX/Nextra에서 사용할 수 있는 훌륭한 시각화 도�
     - 문법 복잡
     - 스타일링 제한
     
-    **설치 방법:**
-    ```bash
-    npm install plantuml
-    # Java 필요
-    ```
-    
     **PlantUML 예시:**
     ```plantuml
     @startuml
-    !theme blueprint
-    
     actor User
     participant "Web App" as Web
     database "Database" as DB
@@ -252,9 +205,9 @@ Mermaid 외에도 MDX/Nextra에서 사용할 수 있는 훌륭한 시각화 도�
     - 인터랙션 없음
     
     **도구들:**
-    - [asciiflow.com](https://asciiflow.com)
-    - [monodraw.helftone.com](https://monodraw.helftone.com)
-    - [textik.com](https://textik.com)
+    - asciiflow.com
+    - monodraw.helftone.com
+    - textik.com
     
     **ASCII 예시:**
     ```
@@ -288,85 +241,25 @@ Mermaid 외에도 MDX/Nextra에서 사용할 수 있는 훌륭한 시각화 도�
 
 ## 🎯 선택 가이드
 
-<Cards>
-  <Cards.Card title="간단한 플로우차트 📊">
-    **추천:** ASCII Art 또는 Markmap
-    - 빠른 작성
-    - 버전 관리 용이
-  </Cards.Card>
-  
-  <Cards.Card title="복잡한 시스템 설계 🏗️">
-    **추천:** D2 또는 PlantUML
-    - 정확한 표현
-    - 전문적인 결과물
-  </Cards.Card>
-  
-  <Cards.Card title="협업 필요 👥">
-    **추천:** Excalidraw
-    - 실시간 공동 작업
-    - 쉬운 수정
-  </Cards.Card>
-  
-  <Cards.Card title="문서 통합 📚">
-    **추천:** D2 또는 Markmap
-    - MDX 친화적
-    - 자동 렌더링
-  </Cards.Card>
-</Cards>
+### 간단한 플로우차트 📊
+**추천:** ASCII Art 또는 Markmap
+- 빠른 작성
+- 버전 관리 용이
 
-## 💻 실제 구현 예시
+### 복잡한 시스템 설계 🏗️
+**추천:** D2 또는 PlantUML
+- 정확한 표현
+- 전문적인 결과물
 
-### D2 Wrapper 컴포넌트
+### 협업 필요 👥
+**추천:** Excalidraw
+- 실시간 공동 작업
+- 쉬운 수정
 
-```tsx filename="components/D2Diagram.tsx"
-import { useEffect, useRef, useState } from 'react'
-
-export default function D2Diagram({ code, theme = 'default' }) {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [svg, setSvg] = useState<string>('')
-
-  useEffect(() => {
-    // D2 CLI를 통해 SVG 생성 (서버사이드)
-    fetch('/api/d2-render', {
-      method: 'POST',
-      body: JSON.stringify({ code, theme })
-    })
-      .then(res => res.text())
-      .then(setSvg)
-  }, [code, theme])
-
-  return (
-    <div 
-      ref={containerRef}
-      className="d2-diagram"
-      dangerouslySetInnerHTML={{ __html: svg }}
-    />
-  )
-}
-```
-
-### Markmap Wrapper 컴포넌트
-
-```tsx filename="components/Markmap.tsx"
-import { useEffect, useRef } from 'react'
-import { Markmap as MarkmapLib } from 'markmap-view'
-import { Transformer } from 'markmap-lib'
-
-export default function Markmap({ markdown }) {
-  const svgRef = useRef<SVGSVGElement>(null)
-  
-  useEffect(() => {
-    if (!svgRef.current) return
-    
-    const transformer = new Transformer()
-    const { root } = transformer.transform(markdown)
-    
-    MarkmapLib.create(svgRef.current, {}, root)
-  }, [markdown])
-  
-  return <svg ref={svgRef} style={{ width: '100%', height: '500px' }} />
-}
-```
+### 문서 통합 📚
+**추천:** D2 또는 Markmap
+- MDX 친화적
+- 자동 렌더링
 
 ## 🚀 추천 조합
 
@@ -378,7 +271,7 @@ export default function Markmap({ markdown }) {
 4. **ASCII**: 간단한 다이어그램, README
 </Callout>
 
-## 📦 올인원 솔루션
+## 📦 설치 가이드
 
 ```bash
 # 추천 패키지 설치

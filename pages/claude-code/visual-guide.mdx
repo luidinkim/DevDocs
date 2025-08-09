@@ -1,342 +1,144 @@
 import { Tabs, Callout } from 'nextra/components'
-import dynamic from 'next/dynamic'
-
-const CardGrid = dynamic(() => import('../../components/VisualDocumentation').then(mod => mod.CardGrid), {
-  ssr: false,
-  loading: () => <p>Loading cards...</p>
-})
-
-const ProcessFlow = dynamic(() => import('../../components/VisualDocumentation').then(mod => mod.ProcessFlow), {
-  ssr: false,
-  loading: () => <p>Loading process flow...</p>
-})
-
-const MindMap = dynamic(() => import('../../components/VisualDocumentation').then(mod => mod.MindMap), {
-  ssr: false,
-  loading: () => <p>Loading mind map...</p>
-})
 
 # 🎨 Claude Code SuperClaude 시각적 가이드
 
 <Callout type="info" emoji="✨">
-복잡한 다이어그램 대신 **인터랙티브 카드**와 **단계별 가이드**로 쉽게 이해할 수 있습니다.
+복잡한 다이어그램 대신 **탭 구성**과 **구조화된 콘텐츠**로 쉽게 이해할 수 있습니다.
 </Callout>
 
 ## 🏗️ 시스템 아키텍처
 
 <Tabs items={['개요', '구성요소', '작동방식']}>
   <Tabs.Tab>
-    <CardGrid data={{
-      title: "SuperClaude 핵심 시스템",
-      cards: [
-        {
-          id: "input",
-          title: "입력 시스템",
-          icon: "🎯",
-          description: "사용자 명령을 받아 분석하는 첫 단계",
-          details: [
-            "sc: 명령어 감지",
-            "일반 명령어 처리",
-            "컨텍스트 파악"
-          ],
-          connections: ["파서", "분석기"],
-          color: "#667eea"
-        },
-        {
-          id: "orchestrator",
-          title: "오케스트레이터",
-          icon: "🎼",
-          description: "전체 시스템을 조율하는 지휘자",
-          details: [
-            "명령어 파싱",
-            "복잡도 평가",
-            "자동 활성화 결정"
-          ],
-          connections: ["페르소나", "MCP 서버"],
-          color: "#48bb78"
-        },
-        {
-          id: "persona",
-          title: "페르소나 시스템",
-          icon: "🎭",
-          description: "11개의 전문가 AI 성격",
-          details: [
-            "Architect - 설계 전문가",
-            "Frontend - UI/UX 전문가",
-            "Backend - 서버 전문가",
-            "Security - 보안 전문가"
-          ],
-          connections: ["실행 엔진"],
-          color: "#ed8936"
-        },
-        {
-          id: "mcp",
-          title: "MCP 서버",
-          icon: "🖥️",
-          description: "외부 도구와 연동하는 서버",
-          details: [
-            "Sequential - 체계적 사고",
-            "Context7 - 문서 검색",
-            "Magic - UI 생성",
-            "Playwright - 테스트"
-          ],
-          connections: ["실행 엔진"],
-          color: "#38b2ac"
-        },
-        {
-          id: "execution",
-          title: "실행 엔진",
-          icon: "⚡",
-          description: "실제 작업을 수행하는 엔진",
-          details: [
-            "코드 생성",
-            "파일 조작",
-            "테스트 실행",
-            "문서 생성"
-          ],
-          connections: ["출력"],
-          color: "#f687b3"
-        },
-        {
-          id: "output",
-          title: "출력 시스템",
-          icon: "✅",
-          description: "결과를 사용자에게 전달",
-          details: [
-            "결과 포맷팅",
-            "에러 처리",
-            "피드백 제공"
-          ],
-          connections: [],
-          color: "#9f7aea"
-        }
-      ]
-    }} />
+    ### SuperClaude 핵심 시스템
+    
+    #### 🎯 입력 시스템
+    **사용자 명령을 받아 분석하는 첫 단계**
+    - sc: 명령어 감지
+    - 일반 명령어 처리
+    - 컨텍스트 파악
+    - 연결: 파서, 분석기
+    
+    #### 🎼 오케스트레이터
+    **전체 시스템을 조율하는 지휘자**
+    - 명령어 파싱
+    - 복잡도 평가
+    - 자동 활성화 결정
+    - 연결: 페르소나, MCP 서버
+    
+    #### 🎭 페르소나 시스템
+    **11개의 전문가 AI 성격**
+    - Architect - 설계 전문가
+    - Frontend - UI/UX 전문가
+    - Backend - 서버 전문가
+    - Security - 보안 전문가
+    - 연결: 실행 엔진
+    
+    #### 🖥️ MCP 서버
+    **외부 도구와 연동하는 서버**
+    - Sequential - 체계적 사고
+    - Context7 - 문서 검색
+    - Magic - UI 생성
+    - Playwright - 테스트
+    - 연결: 실행 엔진
+    
+    #### ⚡ 실행 엔진
+    **실제 작업을 수행하는 엔진**
+    - 코드 생성
+    - 파일 조작
+    - 테스트 실행
+    - 문서 생성
+    - 연결: 출력
   </Tabs.Tab>
   
   <Tabs.Tab>
-    <MindMap data={{
-      id: "root",
-      title: "SuperClaude 구성요소",
-      icon: "🌟",
-      children: [
-        {
-          id: "commands",
-          title: "명령어 시스템",
-          icon: "💬",
-          badge: "20+",
-          badgeColor: "#667eea",
-          children: [
-            {
-              id: "cmd-analyze",
-              title: "sc:analyze",
-              icon: "🔍",
-              children: [
-                { id: "think", title: "--think (4K tokens)", icon: "💭" },
-                { id: "think-hard", title: "--think-hard (10K tokens)", icon: "🧠" },
-                { id: "ultrathink", title: "--ultrathink (32K tokens)", icon: "🌌" }
-              ]
-            },
-            {
-              id: "cmd-build",
-              title: "sc:build",
-              icon: "🔨",
-              children: [
-                { id: "api", title: "--api", icon: "🔌" },
-                { id: "ui", title: "--ui", icon: "🎨" },
-                { id: "full", title: "--full-stack", icon: "📦" }
-              ]
-            },
-            {
-              id: "cmd-improve",
-              title: "sc:improve",
-              icon: "✨",
-              children: [
-                { id: "quality", title: "--quality", icon: "💎" },
-                { id: "perf", title: "--performance", icon: "⚡" },
-                { id: "security", title: "--security", icon: "🔐" }
-              ]
-            }
-          ]
-        },
-        {
-          id: "personas",
-          title: "페르소나",
-          icon: "🎭",
-          badge: "11",
-          badgeColor: "#48bb78",
-          children: [
-            {
-              id: "tech-personas",
-              title: "기술 전문가",
-              icon: "👨‍💻",
-              children: [
-                { id: "architect", title: "Architect", icon: "🏗️" },
-                { id: "frontend", title: "Frontend", icon: "🎨" },
-                { id: "backend", title: "Backend", icon: "⚙️" },
-                { id: "security", title: "Security", icon: "🛡️" }
-              ]
-            },
-            {
-              id: "quality-personas",
-              title: "품질 전문가",
-              icon: "✅",
-              children: [
-                { id: "qa", title: "QA", icon: "🧪" },
-                { id: "performance", title: "Performance", icon: "📊" },
-                { id: "refactorer", title: "Refactorer", icon: "♻️" }
-              ]
-            }
-          ]
-        },
-        {
-          id: "mcp-servers",
-          title: "MCP 서버",
-          icon: "🌐",
-          badge: "4",
-          badgeColor: "#ed8936",
-          children: [
-            { id: "sequential", title: "Sequential", icon: "🔄" },
-            { id: "context7", title: "Context7", icon: "📚" },
-            { id: "magic", title: "Magic", icon: "✨" },
-            { id: "playwright", title: "Playwright", icon: "🎬" }
-          ]
-        }
-      ]
-    }} />
+    ### 구성요소 상세
+    
+    #### 명령어 시스템 (20+ 명령어)
+    
+    **분석 명령어**
+    - `sc:analyze` - 코드 분석
+      - `--think` (4K tokens)
+      - `--think-hard` (10K tokens)
+      - `--ultrathink` (32K tokens)
+    
+    **구축 명령어**
+    - `sc:build` - 프로젝트 구축
+      - `--api`
+      - `--ui`
+      - `--full-stack`
+    
+    **개선 명령어**
+    - `sc:improve` - 코드 개선
+      - `--quality`
+      - `--performance`
+      - `--security`
+    
+    #### 페르소나 (11개)
+    
+    **기술 전문가**
+    - Architect 🏗️
+    - Frontend 🎨
+    - Backend ⚙️
+    - Security 🛡️
+    
+    **품질 전문가**
+    - QA 🧪
+    - Performance 📊
+    - Refactorer ♻️
+    
+    **지원 전문가**
+    - Mentor 📚
+    - Scribe ✍️
+    - DevOps 🚀
+    - Analyzer 🔍
+    
+    #### MCP 서버 (4개)
+    
+    - **Sequential** 🔄 - 체계적 분석
+    - **Context7** 📚 - 문서 검색
+    - **Magic** ✨ - UI 생성
+    - **Playwright** 🎬 - 테스트
   </Tabs.Tab>
   
   <Tabs.Tab>
-    <ProcessFlow steps={[
-      {
-        label: "입력",
-        icon: "📝",
-        title: "사용자 명령 입력",
-        description: "사용자가 sc: 명령어나 일반 명령어를 입력합니다.",
-        details: [
-          {
-            icon: "🎯",
-            title: "명령어 타입 감지",
-            description: "sc: 접두사로 SuperClaude 명령 구분"
-          },
-          {
-            icon: "📊",
-            title: "컨텍스트 수집",
-            description: "현재 프로젝트 상태와 파일 정보 파악"
-          }
-        ]
-      },
-      {
-        label: "분석",
-        icon: "🔍",
-        title: "명령어 분석 및 평가",
-        description: "입력된 명령의 복잡도와 요구사항을 분석합니다.",
-        details: [
-          {
-            icon: "🧮",
-            title: "복잡도 계산",
-            description: "0.0 ~ 1.0 스케일로 작업 복잡도 평가"
-          },
-          {
-            icon: "🎯",
-            title: "도메인 식별",
-            description: "Frontend, Backend, Security 등 작업 영역 파악"
-          },
-          {
-            icon: "📋",
-            title: "요구사항 추출",
-            description: "필요한 기능과 제약사항 파악"
-          }
-        ]
-      },
-      {
-        label: "활성화",
-        icon: "🚀",
-        title: "시스템 구성요소 활성화",
-        description: "필요한 페르소나와 MCP 서버를 자동으로 활성화합니다.",
-        details: [
-          {
-            icon: "🎭",
-            title: "페르소나 선택",
-            description: "작업에 최적화된 AI 전문가 활성화"
-          },
-          {
-            icon: "🖥️",
-            title: "MCP 서버 연결",
-            description: "필요한 외부 도구 서버 연결"
-          },
-          {
-            icon: "⚡",
-            title: "Wave 모드 결정",
-            description: "복잡도 0.7 이상시 Wave 모드 활성화"
-          }
-        ]
-      },
-      {
-        label: "실행",
-        icon: "⚙️",
-        title: "작업 실행",
-        description: "활성화된 시스템으로 실제 작업을 수행합니다.",
-        details: [
-          {
-            icon: "💻",
-            title: "코드 생성/수정",
-            description: "요구사항에 맞는 코드 작성"
-          },
-          {
-            icon: "🧪",
-            title: "테스트 실행",
-            description: "작성된 코드 검증"
-          },
-          {
-            icon: "📝",
-            title: "문서 생성",
-            description: "필요한 문서 자동 생성"
-          }
-        ]
-      },
-      {
-        label: "검증",
-        icon: "✅",
-        title: "품질 검증",
-        description: "8단계 품질 게이트를 통과시킵니다.",
-        details: [
-          {
-            icon: "🔍",
-            title: "문법 검사",
-            description: "코드 문법 오류 확인"
-          },
-          {
-            icon: "🛡️",
-            title: "보안 검사",
-            description: "보안 취약점 스캔"
-          },
-          {
-            icon: "📊",
-            title: "성능 검사",
-            description: "성능 최적화 확인"
-          }
-        ]
-      },
-      {
-        label: "출력",
-        icon: "🎉",
-        title: "결과 전달",
-        description: "작업 결과를 사용자에게 전달합니다.",
-        details: [
-          {
-            icon: "📊",
-            title: "결과 요약",
-            description: "수행된 작업 요약 제공"
-          },
-          {
-            icon: "💡",
-            title: "추가 제안",
-            description: "개선 가능한 부분 제안"
-          }
-        ]
-      }
-    ]} />
+    ### 작동 프로세스
+    
+    #### 1️⃣ 입력 단계
+    **사용자 명령 입력**
+    - 명령어 타입 감지 (sc: 접두사)
+    - 컨텍스트 수집 (프로젝트 상태)
+    - 요구사항 파악
+    
+    #### 2️⃣ 분석 단계
+    **명령어 분석 및 평가**
+    - 복잡도 계산 (0.0 ~ 1.0)
+    - 도메인 식별 (Frontend, Backend 등)
+    - 요구사항 추출
+    
+    #### 3️⃣ 활성화 단계
+    **시스템 구성요소 활성화**
+    - 페르소나 선택 (작업 최적화)
+    - MCP 서버 연결 (필요 도구)
+    - Wave 모드 결정 (복잡도 0.7+)
+    
+    #### 4️⃣ 실행 단계
+    **작업 실행**
+    - 코드 생성/수정
+    - 테스트 실행
+    - 문서 생성
+    
+    #### 5️⃣ 검증 단계
+    **품질 검증**
+    - 문법 검사
+    - 보안 검사
+    - 성능 검사
+    
+    #### 6️⃣ 출력 단계
+    **결과 전달**
+    - 결과 요약
+    - 추가 제안
+    - 다음 단계 안내
   </Tabs.Tab>
 </Tabs>
 
@@ -346,278 +148,117 @@ const MindMap = dynamic(() => import('../../components/VisualDocumentation').the
   <Tabs.Tab>
     ### 🔍 분석 기능 (sc:analyze)
     
-    <CardGrid data={{
-      title: "분석 레벨",
-      cards: [
-        {
-          id: "basic",
-          title: "기본 분석",
-          icon: "🔍",
-          description: "빠른 코드 리뷰와 기본 문제 파악",
-          details: [
-            "실행 시간: 5-10초",
-            "토큰 사용: ~2K",
-            "적합한 경우: 간단한 버그, 문법 오류"
-          ],
-          color: "#48bb78"
-        },
-        {
-          id: "think",
-          title: "--think 모드",
-          icon: "💭",
-          description: "다중 파일 분석과 연관성 파악",
-          details: [
-            "실행 시간: 30-60초",
-            "토큰 사용: ~4K",
-            "Sequential MCP 자동 활성화",
-            "적합한 경우: 복잡한 버그, 성능 문제"
-          ],
-          color: "#667eea"
-        },
-        {
-          id: "think-hard",
-          title: "--think-hard 모드",
-          icon: "🧠",
-          description: "시스템 전체 아키텍처 분석",
-          details: [
-            "실행 시간: 2-5분",
-            "토큰 사용: ~10K",
-            "모든 관련 MCP 서버 활성화",
-            "적합한 경우: 리팩토링, 아키텍처 개선"
-          ],
-          color: "#ed8936"
-        },
-        {
-          id: "ultrathink",
-          title: "--ultrathink 모드",
-          icon: "🌌",
-          description: "엔터프라이즈급 심층 분석",
-          details: [
-            "실행 시간: 5-10분",
-            "토큰 사용: ~32K",
-            "Wave 모드 자동 활성화",
-            "적합한 경우: 레거시 현대화, 대규모 마이그레이션"
-          ],
-          color: "#9f7aea"
-        }
-      ]
-    }} />
+    #### 분석 레벨
+    
+    **🟢 기본 분석**
+    - 실행 시간: 5-10초
+    - 토큰 사용: ~2K
+    - 적합한 경우: 간단한 버그, 문법 오류
+    
+    **🔵 --think 모드**
+    - 실행 시간: 30-60초
+    - 토큰 사용: ~4K
+    - Sequential MCP 자동 활성화
+    - 적합한 경우: 복잡한 버그, 성능 문제
+    
+    **🟣 --think-hard 모드**
+    - 실행 시간: 2-5분
+    - 토큰 사용: ~10K
+    - 모든 관련 MCP 서버 활성화
+    - 적합한 경우: 리팩토링, 아키텍처 개선
+    
+    **🔴 --ultrathink 모드**
+    - 실행 시간: 5-10분
+    - 토큰 사용: ~32K
+    - Wave 모드 자동 활성화
+    - 적합한 경우: 레거시 현대화, 대규모 마이그레이션
   </Tabs.Tab>
   
   <Tabs.Tab>
     ### 🔨 구축 기능 (sc:build)
     
-    <ProcessFlow steps={[
-      {
-        label: "프로젝트 분석",
-        icon: "📂",
-        title: "프로젝트 구조 파악",
-        description: "기존 프로젝트 구조와 프레임워크를 자동으로 감지합니다.",
-        details: [
-          {
-            icon: "🔍",
-            title: "package.json 분석",
-            description: "의존성과 스크립트 확인"
-          },
-          {
-            icon: "📁",
-            title: "디렉토리 구조 파악",
-            description: "프로젝트 레이아웃 이해"
-          }
-        ]
-      },
-      {
-        label: "프레임워크 선택",
-        icon: "🎯",
-        title: "적절한 프레임워크 결정",
-        description: "프로젝트에 맞는 최적의 프레임워크를 선택합니다.",
-        details: [
-          {
-            icon: "⚛️",
-            title: "React/Next.js",
-            description: "모던 웹 애플리케이션"
-          },
-          {
-            icon: "💚",
-            title: "Vue/Nuxt",
-            description: "프로그레시브 프레임워크"
-          },
-          {
-            icon: "🚀",
-            title: "Express/Fastify",
-            description: "백엔드 API 서버"
-          }
-        ]
-      },
-      {
-        label: "컴포넌트 생성",
-        icon: "🧩",
-        title: "필요한 컴포넌트 구축",
-        description: "요구사항에 맞는 컴포넌트를 생성합니다.",
-        details: [
-          {
-            icon: "🎨",
-            title: "UI 컴포넌트",
-            description: "Magic MCP로 UI 생성"
-          },
-          {
-            icon: "🔌",
-            title: "API 엔드포인트",
-            description: "RESTful 또는 GraphQL"
-          }
-        ]
-      },
-      {
-        label: "통합",
-        icon: "🔗",
-        title: "시스템 통합",
-        description: "생성된 컴포넌트를 기존 시스템과 통합합니다.",
-        details: [
-          {
-            icon: "📊",
-            title: "상태 관리 연결",
-            description: "Redux, Zustand 등 연동"
-          },
-          {
-            icon: "🗄️",
-            title: "데이터베이스 연결",
-            description: "ORM 설정 및 마이그레이션"
-          }
-        ]
-      },
-      {
-        label: "테스트",
-        icon: "🧪",
-        title: "자동 테스트",
-        description: "생성된 코드를 자동으로 테스트합니다.",
-        details: [
-          {
-            icon: "✅",
-            title: "단위 테스트",
-            description: "Jest, Vitest로 단위 테스트"
-          },
-          {
-            icon: "🎬",
-            title: "E2E 테스트",
-            description: "Playwright로 통합 테스트"
-          }
-        ]
-      }
-    ]} />
+    #### 구축 프로세스
+    
+    **1. 프로젝트 분석**
+    - package.json 분석
+    - 디렉토리 구조 파악
+    - 프레임워크 감지
+    
+    **2. 프레임워크 선택**
+    - React/Next.js - 모던 웹
+    - Vue/Nuxt - 프로그레시브
+    - Express/Fastify - 백엔드
+    
+    **3. 컴포넌트 생성**
+    - UI 컴포넌트 (Magic MCP)
+    - API 엔드포인트
+    - 데이터 모델
+    
+    **4. 시스템 통합**
+    - 상태 관리 연결
+    - 데이터베이스 연결
+    - 라우팅 설정
+    
+    **5. 테스트**
+    - 단위 테스트
+    - E2E 테스트 (Playwright)
+    - 성능 테스트
   </Tabs.Tab>
   
   <Tabs.Tab>
     ### ✨ 개선 기능 (sc:improve)
     
-    <CardGrid data={{
-      title: "개선 영역",
-      cards: [
-        {
-          id: "quality",
-          title: "코드 품질",
-          icon: "💎",
-          description: "클린 코드 원칙 적용",
-          details: [
-            "SOLID 원칙 적용",
-            "중복 코드 제거",
-            "가독성 향상",
-            "복잡도 감소"
-          ],
-          color: "#667eea"
-        },
-        {
-          id: "performance",
-          title: "성능 최적화",
-          icon: "⚡",
-          description: "속도와 효율성 개선",
-          details: [
-            "알고리즘 최적화",
-            "메모리 사용 감소",
-            "캐싱 전략 구현",
-            "번들 크기 최적화"
-          ],
-          color: "#48bb78"
-        },
-        {
-          id: "security",
-          title: "보안 강화",
-          icon: "🛡️",
-          description: "취약점 제거 및 보안 강화",
-          details: [
-            "OWASP Top 10 대응",
-            "인증/인가 강화",
-            "데이터 암호화",
-            "보안 헤더 설정"
-          ],
-          color: "#e53e3e"
-        },
-        {
-          id: "maintainability",
-          title: "유지보수성",
-          icon: "🔧",
-          description: "장기적 관리 용이성 개선",
-          details: [
-            "모듈화 강화",
-            "문서화 개선",
-            "테스트 커버리지 증가",
-            "의존성 업데이트"
-          ],
-          color: "#ed8936"
-        }
-      ]
-    }} />
+    #### 개선 영역
+    
+    **💎 코드 품질**
+    - SOLID 원칙 적용
+    - 중복 코드 제거
+    - 가독성 향상
+    - 복잡도 감소
+    
+    **⚡ 성능 최적화**
+    - 알고리즘 최적화
+    - 메모리 사용 감소
+    - 캐싱 전략 구현
+    - 번들 크기 최적화
+    
+    **🛡️ 보안 강화**
+    - OWASP Top 10 대응
+    - 인증/인가 강화
+    - 데이터 암호화
+    - 보안 헤더 설정
+    
+    **🔧 유지보수성**
+    - 모듈화 강화
+    - 문서화 개선
+    - 테스트 커버리지 증가
+    - 의존성 업데이트
   </Tabs.Tab>
   
   <Tabs.Tab>
     ### 🤖 자동화 기능
     
-    <MindMap data={{
-      id: "automation",
-      title: "자동화 시스템",
-      icon: "🤖",
-      children: [
-        {
-          id: "auto-detect",
-          title: "자동 감지",
-          icon: "👁️",
-          children: [
-            { id: "framework", title: "프레임워크 감지", icon: "🔍" },
-            { id: "language", title: "언어 감지", icon: "💬" },
-            { id: "patterns", title: "패턴 인식", icon: "🎯" }
-          ]
-        },
-        {
-          id: "auto-activate",
-          title: "자동 활성화",
-          icon: "⚡",
-          children: [
-            { id: "persona-auto", title: "페르소나 자동 선택", icon: "🎭" },
-            { id: "mcp-auto", title: "MCP 서버 자동 연결", icon: "🖥️" },
-            { id: "flag-auto", title: "플래그 자동 설정", icon: "🚩" }
-          ]
-        },
-        {
-          id: "auto-optimize",
-          title: "자동 최적화",
-          icon: "🚀",
-          children: [
-            { id: "token-opt", title: "토큰 최적화", icon: "💰" },
-            { id: "parallel", title: "병렬 처리", icon: "⚡" },
-            { id: "cache", title: "캐싱 전략", icon: "💾" }
-          ]
-        },
-        {
-          id: "auto-validate",
-          title: "자동 검증",
-          icon: "✅",
-          children: [
-            { id: "syntax", title: "문법 검사", icon: "📝" },
-            { id: "type", title: "타입 검사", icon: "🔤" },
-            { id: "security-check", title: "보안 검사", icon: "🔐" }
-          ]
-        }
-      ]
-    }} />
+    #### 자동화 시스템
+    
+    **👁️ 자동 감지**
+    - 프레임워크 감지
+    - 언어 감지
+    - 패턴 인식
+    
+    **⚡ 자동 활성화**
+    - 페르소나 자동 선택
+    - MCP 서버 자동 연결
+    - 플래그 자동 설정
+    
+    **🚀 자동 최적화**
+    - 토큰 최적화
+    - 병렬 처리
+    - 캐싱 전략
+    
+    **✅ 자동 검증**
+    - 문법 검사
+    - 타입 검사
+    - 보안 검사
   </Tabs.Tab>
 </Tabs>
 
@@ -632,5 +273,5 @@ const MindMap = dynamic(() => import('../../components/VisualDocumentation').the
 </Callout>
 
 <Callout type="info" emoji="📚">
-**더 알아보기**: 각 카드를 클릭하면 상세 정보를 볼 수 있습니다!
+**더 알아보기**: [명령어 레퍼런스](/claude-code/commands)와 [페르소나 가이드](/claude-code/personas)를 참고하세요.
 </Callout>
