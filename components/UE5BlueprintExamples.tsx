@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useState, useLayoutEffect } from 'react'
+import React, { useCallback, useState, useLayoutEffect, useMemo } from 'react'
 import ReactFlow, {
   Node,
   Edge,
@@ -927,7 +927,9 @@ export function UE5ComplexGameLogic() {
 
 // Jump Pad Basic Blueprint - 기본 점프패드
 function JumpPadBasicBlueprintInner() {
-  const nodes: Node[] = [
+  const reactFlowInstance = useReactFlow()
+  
+  const initialNodes: Node[] = [
     {
       id: '1',
       type: 'ue5Event',
@@ -1022,6 +1024,11 @@ function JumpPadBasicBlueprintInner() {
       style: { strokeWidth: 3, stroke: DataTypeColors.object }
     }
   ]
+  
+  // 자동 레이아웃 적용
+  const { nodes, edges } = useMemo(() => {
+    return getSmartLayout(initialNodes, initialEdges)
+  }, [])
 
   return (
     <div style={{ width: '100%', height: '400px', background: '#1a1a1a', borderRadius: '8px', border: '1px solid #333' }}>
@@ -1306,6 +1313,11 @@ function JumpPadIntermediateBlueprintInner() {
       markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
     }
   ]
+  
+  // 자동 레이아웃 적용 (계층형)
+  const { nodes, edges } = useMemo(() => {
+    return getHierarchicalLayout(initialNodes, initialEdges)
+  }, [])
 
   return (
     <div style={{ width: '100%', height: '500px', background: '#1a1a1a', borderRadius: '8px', border: '1px solid #333' }}>
@@ -1346,6 +1358,143 @@ export function JumpPadIntermediateBlueprint() {
   return (
     <ReactFlowProvider>
       <JumpPadIntermediateBlueprintInner />
+    </ReactFlowProvider>
+  )
+}
+
+// Handle Reactivation 커스텀 이벤트 블루프린트
+function HandleReactivationBlueprintInner() {
+  const initialNodes: Node[] = [
+    {
+      id: '1',
+      type: 'ue5Event',
+      position: { x: 50, y: 150 },
+      data: { 
+        label: 'Handle Reactivation',
+        subtitle: 'Custom Event',
+        execConnected: true
+      }
+    },
+    {
+      id: '2',
+      type: 'ue5Get',
+      position: { x: 250, y: 50 },
+      data: { 
+        label: 'Can Reactivate',
+        varType: 'boolean',
+        value: 'true',
+        connected: true
+      }
+    },
+    {
+      id: '3',
+      type: 'ue5Branch',
+      position: { x: 350, y: 150 },
+      data: {
+        execInConnected: true,
+        execTrueConnected: true,
+        conditionConnected: true
+      }
+    },
+    {
+      id: '4',
+      type: 'ue5Set',
+      position: { x: 550, y: 100 },
+      data: { 
+        label: 'Is Active',
+        varType: 'boolean',
+        value: 'false',
+        execInConnected: true,
+        execOutConnected: true
+      }
+    },
+    {
+      id: '5',
+      type: 'ue5Function',
+      position: { x: 750, y: 100 },
+      data: { 
+        label: 'Set Timer by Event',
+        category: 'TIME',
+        isPure: false,
+        execInConnected: true,
+        inputs: [
+          { name: 'Time', type: 'float', value: '0.5' },
+          { name: 'Event', type: 'delegate', value: 'ReEnableJumpPad' }
+        ]
+      }
+    }
+  ]
+
+  const initialEdges: Edge[] = [
+    {
+      id: 'e1',
+      source: '1',
+      target: '3',
+      sourceHandle: 'exec-out',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
+    },
+    {
+      id: 'e2',
+      source: '2',
+      target: '3',
+      sourceHandle: 'output',
+      targetHandle: 'condition',
+      type: 'smoothstep',
+      style: { strokeWidth: 3, stroke: DataTypeColors.boolean }
+    },
+    {
+      id: 'e3',
+      source: '3',
+      target: '4',
+      sourceHandle: 'exec-true',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
+    },
+    {
+      id: 'e4',
+      source: '4',
+      target: '5',
+      sourceHandle: 'exec-out',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
+    }
+  ]
+  
+  // 자동 레이아웃 적용
+  const { nodes, edges } = useMemo(() => {
+    return getSmartLayout(initialNodes, initialEdges)
+  }, [])
+
+  return (
+    <div style={{ width: '100%', height: '350px', background: '#1a1a1a', borderRadius: '8px', border: '1px solid #333' }}>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={ue5NodeTypes}
+        defaultEdgeOptions={defaultEdgeOptions}
+        connectionMode={ConnectionMode.Loose}
+        fitView
+        fitViewOptions={{ padding: 0.2 }}
+        minZoom={0.5}
+        maxZoom={1.5}
+      >
+        <Background color="#444" gap={16} />
+      </ReactFlow>
+    </div>
+  )
+}
+
+export function HandleReactivationBlueprint() {
+  return (
+    <ReactFlowProvider>
+      <HandleReactivationBlueprintInner />
     </ReactFlowProvider>
   )
 }

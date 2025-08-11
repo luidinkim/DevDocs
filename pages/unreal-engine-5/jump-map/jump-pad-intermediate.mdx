@@ -6,6 +6,11 @@ export const JumpPadIntermediateBlueprint = dynamic(
   { ssr: false }
 )
 
+export const HandleReactivationBlueprint = dynamic(
+  () => import('../../../components/UE5BlueprintExamples').then(mod => ({ default: mod.HandleReactivationBlueprint })),
+  { ssr: false }
+)
+
 
 # 중급 점프패드 - 변수와 방향 제어
 
@@ -146,53 +151,49 @@ BP_JumpPad_Intermediate (Actor)
 
 <JumpPadIntermediateBlueprint />
 
-### Custom Event: Play Effects
+### Custom Events 구현
 
-효과를 재생하는 커스텀 이벤트를 만듭니다:
+<Callout type="info" emoji="🎯">
+  Custom Event는 블루프린트 내에서 재사용 가능한 함수를 만드는 방법입니다.
+  코드를 모듈화하고 중복을 줄일 수 있습니다.
+</Callout>
 
-<Steps>
-### Play Effects 이벤트 생성
-
-1. 그래프에서 우클릭 → **Add Custom Event**
-2. 이름: `PlayEffects`
-
-### 노드 연결
-
-1. **Activate** (Particle System Component)
-   - Target: `LaunchEffect`
-   
-2. **Play** (Audio Component)
-   - Target: `LaunchSound`
-   
-3. **Spawn Emitter at Location** (옵션)
-   - Emitter Template: 추가 파티클
-   - Location: Actor Location
-</Steps>
-
-### Custom Event: Handle Reactivation
-
-재사용 대기시간을 처리하는 로직:
-
-```plaintext
-Handle Reactivation
-├── Branch (bCanReactivate)
-│   └── True:
-│       ├── SET Is Active (False)
-│       ├── Set Timer by Event
-│       │   ├── Time: ReactivateDelay
-│       │   └── Event: ReEnableJumpPad
-│       └── Change Material (옵션 - 비활성 표시)
-└── False: (아무 작업 없음)
-```
-
-### Custom Event: ReEnable Jump Pad
-
-```plaintext
-ReEnable Jump Pad
-├── SET Is Active (True)
-├── Reset Material (옵션)
-└── Play Ready Sound (옵션)
-```
+<Tabs items={['Play Effects', 'Handle Reactivation', 'ReEnable Jump Pad']}>
+  <Tabs.Tab>
+    **Play Effects 이벤트**
+    
+    효과를 재생하는 커스텀 이벤트:
+    
+    1. **Activate** (Particle System Component)
+       - Target: `LaunchEffect`
+    
+    2. **Play** (Audio Component)
+       - Target: `LaunchSound`
+    
+    3. **Spawn Emitter at Location** (옵션)
+       - Emitter Template: 추가 파티클
+       - Location: Actor Location
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **Handle Reactivation 이벤트**
+    
+    재사용 대기시간 처리:
+    
+    <HandleReactivationBlueprint />
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **ReEnable Jump Pad 이벤트**
+    
+    점프패드 재활성화:
+    
+    - SET Is Active (True)
+    - Reset Material
+    - Play Ready Sound
+    - Spawn Reactivation Particle
+  </Tabs.Tab>
+</Tabs>
 
 ## 고급 기능 추가
 

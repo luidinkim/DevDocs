@@ -1,4 +1,5 @@
 import { Callout, Steps } from 'nextra/components'
+import { LinkCard, LinkCards } from '../../../components/LinkCard'
 import dynamic from 'next/dynamic'
 
 # 점프맵 블루프린트 개발 가이드
@@ -13,13 +14,20 @@ import dynamic from 'next/dynamic'
 이 가이드는 점진적으로 복잡도가 증가하는 구조로 설계되었습니다. 
 각 단계를 순서대로 따라가면서 점프맵의 핵심 메커니즘을 마스터할 수 있습니다.
 
-### 📚 학습 모듈
-
-#### [🎯 기본 점프패드](/unreal-engine-5/jump-map/jump-pad-basic)
-Launch Character를 사용한 가장 단순한 점프패드 구현
-
-#### [⚡ 중급 점프패드](/unreal-engine-5/jump-map/jump-pad-intermediate)
-변수와 Arrow Component를 활용한 커스터마이징 가능한 점프패드
+<LinkCards>
+  <LinkCard 
+    title="기본 점프패드" 
+    description="Launch Character를 사용한 가장 단순한 점프패드 구현"
+    href="/unreal-engine-5/jump-map/jump-pad-basic"
+    icon="🎯"
+  />
+  <LinkCard 
+    title="중급 점프패드" 
+    description="변수와 Arrow Component를 활용한 커스터마이징 가능한 점프패드"
+    href="/unreal-engine-5/jump-map/jump-pad-intermediate"
+    icon="⚡"
+  />
+</LinkCards>
 
 ## 프로젝트 구조
 
