@@ -948,7 +948,7 @@ function JumpPadBasicBlueprintInner() {
       type: 'ue5Cast',
       position: { x: 350, y: 150 },
       data: { 
-        label: 'Cast to Character',
+        targetClass: 'Character',
         execInConnected: true,
         execOutConnected: true,
         objectConnected: true,
@@ -974,7 +974,7 @@ function JumpPadBasicBlueprintInner() {
     }
   ]
 
-  const edges: Edge[] = [
+  const initialEdges: Edge[] = [
     {
       id: 'e1',
       source: '1',
@@ -1026,15 +1026,15 @@ function JumpPadBasicBlueprintInner() {
   ]
   
   // 자동 레이아웃 적용
-  const { nodes, edges } = useMemo(() => {
+  const layoutedElements = useMemo(() => {
     return getSmartLayout(initialNodes, initialEdges)
   }, [])
 
   return (
     <div style={{ width: '100%', height: '400px', background: '#1a1a1a', borderRadius: '8px', border: '1px solid #333' }}>
       <ReactFlow
-        nodes={nodes}
-        edges={edges}
+        nodes={layoutedElements.nodes}
+        edges={layoutedElements.edges}
         nodeTypes={ue5NodeTypes}
         defaultEdgeOptions={defaultEdgeOptions}
         connectionMode={ConnectionMode.Loose}
@@ -1112,7 +1112,7 @@ function JumpPadIntermediateBlueprintInner() {
       type: 'ue5Cast',
       position: { x: 550, y: 200 },
       data: { 
-        label: 'Cast to Character',
+        targetClass: 'Character',
         execInConnected: true,
         execOutConnected: true,
         objectConnected: true,
@@ -1206,7 +1206,7 @@ function JumpPadIntermediateBlueprintInner() {
     }
   ]
 
-  const edges: Edge[] = [
+  const initialEdges: Edge[] = [
     // Execution flow
     {
       id: 'e1',
@@ -1315,15 +1315,15 @@ function JumpPadIntermediateBlueprintInner() {
   ]
   
   // 자동 레이아웃 적용 (계층형)
-  const { nodes, edges } = useMemo(() => {
+  const layoutedElements = useMemo(() => {
     return getHierarchicalLayout(initialNodes, initialEdges)
   }, [])
 
   return (
     <div style={{ width: '100%', height: '500px', background: '#1a1a1a', borderRadius: '8px', border: '1px solid #333' }}>
       <ReactFlow
-        nodes={nodes}
-        edges={edges}
+        nodes={layoutedElements.nodes}
+        edges={layoutedElements.edges}
         nodeTypes={ue5NodeTypes}
         defaultEdgeOptions={defaultEdgeOptions}
         connectionMode={ConnectionMode.Loose}
@@ -1468,15 +1468,15 @@ function HandleReactivationBlueprintInner() {
   ]
   
   // 자동 레이아웃 적용
-  const { nodes, edges } = useMemo(() => {
+  const layoutedElements = useMemo(() => {
     return getSmartLayout(initialNodes, initialEdges)
   }, [])
 
   return (
     <div style={{ width: '100%', height: '350px', background: '#1a1a1a', borderRadius: '8px', border: '1px solid #333' }}>
       <ReactFlow
-        nodes={nodes}
-        edges={edges}
+        nodes={layoutedElements.nodes}
+        edges={layoutedElements.edges}
         nodeTypes={ue5NodeTypes}
         defaultEdgeOptions={defaultEdgeOptions}
         connectionMode={ConnectionMode.Loose}

@@ -652,6 +652,237 @@ export const UE5SetNode = ({ data, selected }: any) => {
   )
 }
 
+// UE5 Cast Node
+export const UE5CastNode = ({ data, selected }: any) => {
+  const targetClass = data.targetClass || 'Character'
+  
+  return (
+    <div style={{
+      background: 'linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%)',
+      borderRadius: '6px',
+      border: selected ? '2px solid #ffd700' : '1px solid #404040',
+      minWidth: '240px',
+      fontSize: '12px',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      boxShadow: selected 
+        ? '0 0 20px rgba(255, 215, 0, 0.3), 0 4px 12px rgba(0,0,0,0.8)' 
+        : '0 4px 12px rgba(0,0,0,0.6)',
+      position: 'relative',
+    }}>
+      {/* 하이라이트 효과 */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: '1px',
+        background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)',
+        borderRadius: '6px 6px 0 0'
+      }} />
+      
+      {/* 헤더 - Cast 노드는 파란색 계열 */}
+      <div style={{
+        background: 'linear-gradient(135deg, #2b3d5f 0%, #1a2840 100%)',
+        color: 'white',
+        padding: '5px 10px',
+        borderRadius: '5px 5px 0 0',
+        fontSize: '10px',
+        fontWeight: '600',
+        letterSpacing: '0.5px',
+        borderBottom: '1px solid #1a2840',
+        textShadow: '0 1px 2px rgba(0,0,0,0.5)'
+      }}>
+        CAST
+      </div>
+      
+      {/* 노드 제목 */}
+      <div style={{
+        padding: '8px 12px',
+        color: '#f0f0f0',
+        fontWeight: 'bold',
+        fontSize: '13px',
+        display: 'flex',
+        alignItems: 'center',
+        borderBottom: '1px solid #333',
+        background: 'rgba(0,0,0,0.2)'
+      }}>
+        <span style={{ opacity: 0.7, fontSize: '11px', marginRight: '6px' }}>Cast To</span>
+        <span style={{ color: '#4db8ff' }}>{targetClass}</span>
+      </div>
+      
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '2px',
+        padding: '4px 0'
+      }}>
+        {/* 실행 입력 핀 */}
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center',
+          padding: '4px 12px',
+          position: 'relative'
+        }}>
+          <Handle
+            type="target"
+            position={Position.Left}
+            id="exec-in"
+            style={{
+              width: '16px',
+              height: '16px',
+              background: data.execInConnected ? '#ffffff' : 'transparent',
+              border: '2px solid #ffffff',
+              borderRadius: '0',
+              clipPath: 'polygon(0% 50%, 30% 0%, 100% 0%, 100% 100%, 30% 100%)',
+              position: 'absolute',
+              left: '-9px',
+              top: '50%',
+              transform: 'translateY(-50%)'
+            }}
+          />
+        </div>
+        
+        {/* Object 입력 핀 */}
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center',
+          padding: '4px 12px',
+          position: 'relative'
+        }}>
+          <Handle
+            type="target"
+            position={Position.Left}
+            id="object-in"
+            style={{
+              width: '14px',
+              height: '14px',
+              background: data.objectConnected ? DataTypeColors.object : 'transparent',
+              border: `2px solid ${DataTypeColors.object}`,
+              borderRadius: '50%',
+              position: 'absolute',
+              left: '-8px',
+              top: '50%',
+              transform: 'translateY(-50%)'
+            }}
+          />
+          <span style={{ 
+            marginLeft: '20px', 
+            color: DataTypeColors.object,
+            fontSize: '11px'
+          }}>
+            Object
+          </span>
+        </div>
+        
+        {/* 성공 실행 출력 핀 */}
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          padding: '4px 12px',
+          position: 'relative'
+        }}>
+          <span style={{ 
+            marginRight: '20px', 
+            color: '#ffffff',
+            fontSize: '11px'
+          }}>
+            
+          </span>
+          <Handle
+            type="source"
+            position={Position.Right}
+            id="exec-out"
+            style={{
+              width: '16px',
+              height: '16px',
+              background: data.execOutConnected ? '#ffffff' : 'transparent',
+              border: '2px solid #ffffff',
+              borderRadius: '0',
+              clipPath: 'polygon(70% 0%, 100% 50%, 70% 100%, 0% 100%, 0% 0%)',
+              position: 'absolute',
+              right: '-9px',
+              top: '50%',
+              transform: 'translateY(-50%)'
+            }}
+          />
+        </div>
+        
+        {/* Cast Failed 실행 출력 핀 */}
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          padding: '4px 12px',
+          position: 'relative'
+        }}>
+          <span style={{ 
+            marginRight: '20px', 
+            color: '#ff6b6b',
+            fontSize: '11px',
+            fontStyle: 'italic'
+          }}>
+            Cast Failed
+          </span>
+          <Handle
+            type="source"
+            position={Position.Right}
+            id="exec-failed"
+            style={{
+              width: '16px',
+              height: '16px',
+              background: data.execFailedConnected ? '#ffffff' : 'transparent',
+              border: '2px solid #ffffff',
+              borderRadius: '0',
+              clipPath: 'polygon(70% 0%, 100% 50%, 70% 100%, 0% 100%, 0% 0%)',
+              position: 'absolute',
+              right: '-9px',
+              top: '50%',
+              transform: 'translateY(-50%)'
+            }}
+          />
+        </div>
+        
+        {/* As [Class] 출력 핀 */}
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          padding: '4px 12px',
+          position: 'relative',
+          borderTop: '1px solid #333',
+          marginTop: '4px'
+        }}>
+          <span style={{ 
+            marginRight: '20px', 
+            color: DataTypeColors.object,
+            fontSize: '11px',
+            fontWeight: '600'
+          }}>
+            As {targetClass}
+          </span>
+          <Handle
+            type="source"
+            position={Position.Right}
+            id="cast-out"
+            style={{
+              width: '14px',
+              height: '14px',
+              background: data.castOutConnected ? DataTypeColors.object : 'transparent',
+              border: `2px solid ${DataTypeColors.object}`,
+              borderRadius: '50%',
+              position: 'absolute',
+              right: '-8px',
+              top: '50%',
+              transform: 'translateY(-50%)'
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // UE5 Branch (If) Node
 export const UE5BranchNode = ({ data, selected }: any) => {
   return (
@@ -848,4 +1079,5 @@ export const ue5NodeTypes = {
   ue5Get: UE5GetNode,
   ue5Set: UE5SetNode,
   ue5Branch: UE5BranchNode,
+  ue5Cast: UE5CastNode,
 }
