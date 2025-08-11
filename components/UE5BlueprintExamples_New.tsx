@@ -16,6 +16,7 @@ import ReactFlow, {
 } from 'reactflow'
 import 'reactflow/dist/style.css'
 import { ue5NodeTypes, DataTypeColors } from './UE5BlueprintNodes'
+import { getLayoutedElements, getSmartLayout, getHierarchicalLayout } from './UE5BlueprintLayout'
 
 // UE5 스타일 엣지
 const defaultEdgeOptions = {
@@ -182,8 +183,13 @@ export function MovingPlatformBlueprint() {
     }
   ]
 
-  const [nodes, setNodes] = useState(initialNodes)
-  const [edges, setEdges] = useState(initialEdges)
+  // Smart Layout 적용
+  const layoutedElements = useMemo(() => {
+    return getSmartLayout(initialNodes, initialEdges)
+  }, [])
+
+  const [nodes, setNodes] = useState(layoutedElements.nodes)
+  const [edges, setEdges] = useState(layoutedElements.edges)
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -343,8 +349,13 @@ export function SplineMovementBlueprint() {
     }
   ]
 
-  const [nodes, setNodes] = useState(initialNodes)
-  const [edges, setEdges] = useState(initialEdges)
+  // Smart Layout 적용
+  const layoutedElements = useMemo(() => {
+    return getSmartLayout(initialNodes, initialEdges)
+  }, [])
+
+  const [nodes, setNodes] = useState(layoutedElements.nodes)
+  const [edges, setEdges] = useState(layoutedElements.edges)
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -521,8 +532,13 @@ export function TeleportPortalBlueprint() {
     }
   ]
 
-  const [nodes, setNodes] = useState(initialNodes)
-  const [edges, setEdges] = useState(initialEdges)
+  // Smart Layout 적용
+  const layoutedElements = useMemo(() => {
+    return getSmartLayout(initialNodes, initialEdges)
+  }, [])
+
+  const [nodes, setNodes] = useState(layoutedElements.nodes)
+  const [edges, setEdges] = useState(layoutedElements.edges)
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -723,8 +739,13 @@ export function PortalOverlapBlueprint() {
     }
   ]
 
-  const [nodes, setNodes] = useState(initialNodes)
-  const [edges, setEdges] = useState(initialEdges)
+  // Smart Layout 적용
+  const layoutedElements = useMemo(() => {
+    return getSmartLayout(initialNodes, initialEdges)
+  }, [])
+
+  const [nodes, setNodes] = useState(layoutedElements.nodes)
+  const [edges, setEdges] = useState(layoutedElements.edges)
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -953,8 +974,13 @@ export function CheckpointBlueprint() {
     }
   ]
 
-  const [nodes, setNodes] = useState(initialNodes)
-  const [edges, setEdges] = useState(initialEdges)
+  // Smart Layout 적용
+  const layoutedElements = useMemo(() => {
+    return getSmartLayout(initialNodes, initialEdges)
+  }, [])
+
+  const [nodes, setNodes] = useState(layoutedElements.nodes)
+  const [edges, setEdges] = useState(layoutedElements.edges)
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -1144,8 +1170,13 @@ export function RespawnSystemBlueprint() {
     }
   ]
 
-  const [nodes, setNodes] = useState(initialNodes)
-  const [edges, setEdges] = useState(initialEdges)
+  // Smart Layout 적용
+  const layoutedElements = useMemo(() => {
+    return getSmartLayout(initialNodes, initialEdges)
+  }, [])
+
+  const [nodes, setNodes] = useState(layoutedElements.nodes)
+  const [edges, setEdges] = useState(layoutedElements.edges)
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)),
