@@ -2,12 +2,12 @@ import { Callout, Steps, Tabs, Code } from 'nextra/components'
 import dynamic from 'next/dynamic'
 
 export const JumpPadIntermediateBlueprint = dynamic(
-  () => import('../../../components/UE5BlueprintExamples').then(mod => ({ default: mod.JumpPadIntermediateBlueprint })),
+  () => import('../../../components/UE5JumpPadComponents').then(mod => ({ default: mod.JumpPadIntermediateBlueprint })),
   { ssr: false }
 )
 
 export const HandleReactivationBlueprint = dynamic(
-  () => import('../../../components/UE5BlueprintExamples').then(mod => ({ default: mod.HandleReactivationBlueprint })),
+  () => import('../../../components/UE5JumpPadComponents').then(mod => ({ default: mod.HandleReactivationBlueprint })),
   { ssr: false }
 )
 
@@ -151,6 +151,18 @@ BP_JumpPad_Intermediate (Actor)
 
 <JumpPadIntermediateBlueprint />
 
+<Callout type="info" emoji="🎮">
+  **인터랙티브 블루프린트 기능**
+  - 🖱️ **노드 드래그**: 모든 노드를 클릭하여 자유롭게 이동
+  - 🔗 **연결 수정**: 핀을 드래그하여 연결 재구성
+  - 📐 **레이아웃 모드**: 우측 상단 버튼으로 다양한 레이아웃 선택
+    - Horizontal: 수평 정렬
+    - Vertical: 수직 정렬
+    - Radial: 방사형 정렬
+  - 🔍 **줌 컨트롤**: 마우스 휠 또는 우측 상단 컨트롤
+  - 🎯 **미니맵**: 전체 그래프 네비게이션
+</Callout>
+
 ### Custom Events 구현
 
 <Callout type="info" emoji="🎯">
@@ -181,6 +193,14 @@ BP_JumpPad_Intermediate (Actor)
     재사용 대기시간 처리:
     
     <HandleReactivationBlueprint />
+    
+    <Callout type="tip" emoji="💡">
+      **블루프린트 조작법**
+      - **Ctrl + C/V**: 노드 복사/붙여넣기
+      - **Alt + 클릭**: 연결선 제거
+      - **Ctrl + 드래그**: 노드 복제
+      - **우클릭 메뉴**: 새 노드 추가
+    </Callout>
   </Tabs.Tab>
   
   <Tabs.Tab>

@@ -6,13 +6,16 @@ import ReactFlow, {
   Edge,
   Controls,
   Background,
+  MiniMap,
+  Panel,
   applyNodeChanges,
   applyEdgeChanges,
   NodeChange,
   EdgeChange,
   ConnectionMode,
   MarkerType,
-  ReactFlowProvider
+  ReactFlowProvider,
+  useReactFlow
 } from 'reactflow'
 import 'reactflow/dist/style.css'
 import { ue5NodeTypes, DataTypeColors } from './UE5BlueprintNodes'
@@ -35,6 +38,164 @@ const defaultEdgeOptions = {
     color: '#ffffff',
     strokeWidth: 0
   }
+}
+
+// 공통 블루프린트 wrapper 컴포넌트
+function BlueprintFlowWrapper({ 
+  initialNodes, 
+  initialEdges,
+  height = '450px' 
+}: { 
+  initialNodes: Node[], 
+  initialEdges: Edge[],
+  height?: string 
+}) {
+  // Smart Layout 적용
+  const layoutedElements = useMemo(() => {
+    return getSmartLayout(initialNodes, initialEdges)
+  }, [initialNodes, initialEdges])
+
+  const [nodes, setNodes] = useState(layoutedElements.nodes)
+  const [edges, setEdges] = useState(layoutedElements.edges)
+  const [selectedLayout, setSelectedLayout] = useState('smart')
+
+  const onNodesChange = useCallback(
+    (changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)),
+    []
+  )
+
+  const onEdgesChange = useCallback(
+    (changes: EdgeChange[]) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+    []
+  )
+
+  // 레이아웃 변경 함수
+  const onLayout = useCallback((layoutType: string) => {
+    let newLayout
+    
+    switch(layoutType) {
+      case 'hierarchical':
+        newLayout = getHierarchicalLayout(nodes, edges)
+        break
+      case 'dagre':
+        newLayout = getLayoutedElements(nodes, edges, 'LR')
+        break
+      case 'smart':
+      default:
+        newLayout = getSmartLayout(nodes, edges)
+        break
+    }
+    
+    setNodes(newLayout.nodes)
+    setEdges(newLayout.edges)
+    setSelectedLayout(layoutType)
+  }, [nodes, edges])
+
+  return (
+    <div style={{ width: '100%', height, background: '#1a1a1a', borderRadius: '8px', border: '1px solid #333' }}>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        nodeTypes={ue5NodeTypes}
+        defaultEdgeOptions={defaultEdgeOptions}
+        connectionMode={ConnectionMode.Loose}
+        fitView
+        fitViewOptions={{ padding: 0.2 }}
+        minZoom={0.5}
+        maxZoom={1.5}
+      >
+        <Background color="#444" gap={16} />
+        <Controls />
+        <MiniMap 
+          style={{
+            backgroundColor: '#151515',
+            border: '1px solid #3a3a3a',
+            borderRadius: '4px'
+          }}
+          nodeColor={(node) => {
+            if (node.type === 'ue5Event') return '#8b0000'
+            if (node.type === 'ue5Get' || node.type === 'ue5Set') return '#2a2a2a'
+            if (node.type === 'ue5Branch') return '#3a3a3a'
+            return '#1a1a1a'
+          }}
+        />
+        <LayoutControls onLayout={onLayout} selectedLayout={selectedLayout} />
+      </ReactFlow>
+    </div>
+  )
+}
+
+// 공통 레이아웃 버튼 컴포넌트
+function LayoutControls({ onLayout, selectedLayout }: { onLayout: (type: string) => void, selectedLayout: string }) {
+  return (
+    <Panel position="top-right">
+      <div style={{
+        background: 'linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%)',
+        border: '1px solid #404040',
+        borderRadius: '6px',
+        padding: '8px',
+        display: 'flex',
+        gap: '8px'
+      }}>
+        <button
+          onClick={() => onLayout('smart')}
+          style={{
+            background: selectedLayout === 'smart' 
+              ? 'linear-gradient(135deg, #1a5fb4, #134a8e)'
+              : 'linear-gradient(135deg, #2a2a2a, #3a3a3a)',
+            color: 'white',
+            border: '1px solid #404040',
+            borderRadius: '4px',
+            padding: '6px 12px',
+            cursor: 'pointer',
+            fontSize: '12px',
+            fontWeight: '600',
+            transition: 'all 0.2s'
+          }}
+        >
+          📐 Smart Layout
+        </button>
+        <button
+          onClick={() => onLayout('hierarchical')}
+          style={{
+            background: selectedLayout === 'hierarchical' 
+              ? 'linear-gradient(135deg, #1a5fb4, #134a8e)'
+              : 'linear-gradient(135deg, #2a2a2a, #3a3a3a)',
+            color: 'white',
+            border: '1px solid #404040',
+            borderRadius: '4px',
+            padding: '6px 12px',
+            cursor: 'pointer',
+            fontSize: '12px',
+            fontWeight: '600',
+            transition: 'all 0.2s'
+          }}
+        >
+          🔀 Hierarchical
+        </button>
+        <button
+          onClick={() => onLayout('dagre')}
+          style={{
+            background: selectedLayout === 'dagre' 
+              ? 'linear-gradient(135deg, #1a5fb4, #134a8e)'
+              : 'linear-gradient(135deg, #2a2a2a, #3a3a3a)',
+            color: 'white',
+            border: '1px solid #404040',
+            borderRadius: '4px',
+            padding: '6px 12px',
+            cursor: 'pointer',
+            fontSize: '12px',
+            fontWeight: '600',
+            transition: 'all 0.2s'
+          }}
+        >
+          ↔️ Horizontal
+        </button>
+      </div>
+    </Panel>
+  )
 }
 
 // Moving Platform Blueprint - 움직이는 플랫폼
@@ -183,43 +344,9 @@ export function MovingPlatformBlueprint() {
     }
   ]
 
-  // Smart Layout 적용
-  const layoutedElements = useMemo(() => {
-    return getSmartLayout(initialNodes, initialEdges)
-  }, [])
-
-  const [nodes, setNodes] = useState(layoutedElements.nodes)
-  const [edges, setEdges] = useState(layoutedElements.edges)
-
-  const onNodesChange = useCallback(
-    (changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)),
-    []
-  )
-
-  const onEdgesChange = useCallback(
-    (changes: EdgeChange[]) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-    []
-  )
-
   return (
     <ReactFlowProvider>
-      <div style={{ width: '100%', height: '450px', background: '#1a1a1a', borderRadius: '8px', border: '1px solid #333' }}>
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          nodeTypes={ue5NodeTypes}
-          defaultEdgeOptions={defaultEdgeOptions}
-          connectionMode={ConnectionMode.Loose}
-          fitView
-          fitViewOptions={{ padding: 0.2 }}
-          minZoom={0.5}
-          maxZoom={1.5}
-        >
-          <Background color="#444" gap={16} />
-        </ReactFlow>
-      </div>
+      <BlueprintFlowWrapper initialNodes={initialNodes} initialEdges={initialEdges} />
     </ReactFlowProvider>
   )
 }
