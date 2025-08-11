@@ -1,0 +1,177 @@
+import { Callout, Cards, Card, Steps } from 'nextra/components'
+import dynamic from 'next/dynamic'
+
+# 점프맵 블루프린트 개발 가이드
+
+<Callout type="info" emoji="🎮">
+  언리얼 엔진 5에서 점프맵을 개발하기 위한 완전한 블루프린트 가이드입니다. 
+  기초부터 고급 기능까지 단계별로 학습할 수 있도록 구성되어 있습니다.
+</Callout>
+
+## 학습 경로
+
+이 가이드는 점진적으로 복잡도가 증가하는 구조로 설계되었습니다. 
+각 단계를 순서대로 따라가면서 점프맵의 핵심 메커니즘을 마스터할 수 있습니다.
+
+<Cards>
+  <Card title="🎯 기본 점프패드" href="/unreal-engine-5/jump-map/jump-pad-basic">
+    Launch Character를 사용한 가장 단순한 점프패드 구현
+  </Card>
+  
+  <Card title="⚡ 중급 점프패드" href="/unreal-engine-5/jump-map/jump-pad-intermediate">
+    변수와 Arrow Component를 활용한 커스터마이징 가능한 점프패드
+  </Card>
+  
+  <Card title="🚀 고급 점프패드" href="/unreal-engine-5/jump-map/jump-pad-advanced">
+    궤적 미리보기와 다양한 발사 모드가 포함된 완성형 점프패드
+  </Card>
+  
+  <Card title="🎢 움직이는 플랫폼" href="/unreal-engine-5/jump-map/moving-platforms">
+    Spline Component를 활용한 복잡한 경로 이동 플랫폼
+  </Card>
+  
+  <Card title="🌀 텔레포트 포털" href="/unreal-engine-5/jump-map/teleport-portals">
+    순간이동과 포털 뷰 렌더링이 포함된 포털 시스템
+  </Card>
+  
+  <Card title="🏁 체크포인트 시스템" href="/unreal-engine-5/jump-map/checkpoint-system">
+    진행 상황 저장과 리스폰을 위한 체크포인트 구현
+  </Card>
+</Cards>
+
+## 프로젝트 구조
+
+점프맵 프로젝트의 권장 폴더 구조입니다:
+
+```plaintext
+Content/
+├── Blueprints/
+│   ├── JumpPads/
+│   │   ├── BP_JumpPad_Basic
+│   │   ├── BP_JumpPad_Intermediate
+│   │   └── BP_JumpPad_Advanced
+│   ├── Platforms/
+│   │   ├── BP_MovingPlatform_Simple
+│   │   └── BP_MovingPlatform_Spline
+│   ├── Portals/
+│   │   └── BP_TeleportPortal
+│   └── System/
+│       ├── BP_Checkpoint
+│       └── GM_JumpMap
+├── Materials/
+│   ├── M_JumpPad
+│   ├── M_Portal
+│   └── M_Platform
+├── Particles/
+│   ├── P_JumpPad_Activate
+│   ├── P_Portal_Effect
+│   └── P_Checkpoint_Activate
+└── Audio/
+    ├── S_JumpPad_Launch
+    ├── S_Portal_Teleport
+    └── S_Checkpoint_Reached
+```
+
+## 학습 순서 권장사항
+
+### 초보자를 위한 학습 경로
+
+<Steps>
+### 기본 점프패드
+블루프린트의 기본 개념과 Launch Character 사용법을 익힙니다.
+
+### 중급 점프패드
+변수를 활용한 커스터마이징과 방향 제어를 배웁니다.
+
+### 체크포인트 시스템
+게임 플로우와 진행 상황 관리를 이해합니다.
+
+### 움직이는 플랫폼
+Timeline과 Spline을 활용한 움직임 제어를 학습합니다.
+
+### 고급 기능들
+포털과 고급 점프패드로 심화 학습을 진행합니다.
+</Steps>
+
+### 실제 맵 제작 순서
+
+<Steps>
+### 기본 레벨 디자인
+지형과 경로를 설계하고 기본 구조를 만듭니다.
+
+### 체크포인트 배치
+진행 구간을 설정하고 체크포인트를 배치합니다.
+
+### 점프패드 설치
+주요 이동 수단으로 점프패드를 설치합니다.
+
+### 움직이는 플랫폼 추가
+도전 요소로 움직이는 플랫폼을 추가합니다.
+
+### 특수 기능 구현
+포털 등 특수 기능을 추가하여 맵을 완성합니다.
+
+### 테스트와 밸런싱
+난이도를 조정하고 버그를 수정합니다.
+</Steps>
+
+## 핵심 개념 미리보기
+
+### 점프패드 메커니즘
+- **Launch Character**: 캐릭터를 지정된 속도로 발사
+- **Arrow Component**: 발사 방향 시각화 및 제어
+- **Box Collision**: 플레이어 감지용 트리거 영역
+
+### 플랫폼 이동 시스템
+- **Timeline**: 부드러운 이동 애니메이션
+- **Spline Component**: 복잡한 3D 경로 정의
+- **Attach/Detach**: 플레이어와 플랫폼 동기화
+
+### 포털 시스템
+- **Transform 계산**: 상대 위치 변환
+- **Scene Capture 2D**: 포털 뷰 렌더링
+- **Velocity 유지**: 물리 기반 이동 보존
+
+## 성능 최적화 팁
+
+<Callout type="warning" emoji="⚡">
+  **Event Tick 사용 최소화**: Timer와 Timeline을 활용하여 성능을 향상시킵니다.
+</Callout>
+
+- **LOD 설정**: 원거리 객체에 대한 디테일 레벨 조정
+- **컬링 최적화**: Cull Distance Volume 활용
+- **라이팅 베이크**: 정적 조명은 미리 계산
+- **리플리케이션**: 멀티플레이어 필수 요소만 동기화
+
+## 자주 발생하는 문제와 해결책
+
+### 충돌이 감지되지 않을 때
+- Collision Presets를 "OverlapAllDynamic"으로 설정
+- Generate Overlap Events 활성화 확인
+
+### 캐릭터가 발사되지 않을 때
+- Character Movement Component 설정 확인
+- Launch Velocity 값이 충분한지 확인 (최소 1000 이상)
+
+### 플랫폼에서 캐릭터가 미끄러질 때
+- Attach 설정을 "Keep World"로 변경
+- Sweep 옵션 활성화
+
+## 다음 단계
+
+기본 과정을 완료한 후 시도해볼 수 있는 확장 기능들:
+
+- 🎨 **비주얼 강화**: Niagara 파티클 시스템 추가
+- 🎮 **게임플레이 확장**: 파워업, 부스터 추가
+- 🌐 **멀티플레이어**: 네트워크 리플리케이션 구현
+- 📱 **모바일 최적화**: 터치 컨트롤 추가
+
+## 추가 리소스
+
+- [언리얼 엔진 공식 문서](https://docs.unrealengine.com)
+- [블루프린트 베스트 프랙티스](https://docs.unrealengine.com/blueprint-best-practices)
+- [언리얼 포럼 점프맵 섹션](https://forums.unrealengine.com)
+
+<Callout type="success" emoji="🚀">
+  **시작하기**: [기본 점프패드](/unreal-engine-5/jump-map/jump-pad-basic)부터 시작하여 단계별로 학습을 진행하세요!
+</Callout>
