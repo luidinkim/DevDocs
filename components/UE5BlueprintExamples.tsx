@@ -1316,7 +1316,7 @@ function JumpPadIntermediateBlueprintInner() {
   
   // 자동 레이아웃 적용 (계층형)
   const layoutedElements = useMemo(() => {
-    return getHierarchicalLayout(initialNodes, initialEdges)
+    return getHierarchicalLayout(nodes, initialEdges)
   }, [])
 
   return (
