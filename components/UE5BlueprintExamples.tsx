@@ -1498,3 +1498,936 @@ export function HandleReactivationBlueprint() {
     </ReactFlowProvider>
   )
 }
+
+// Moving Platform Blueprint Example
+export function MovingPlatformBlueprintInner() {
+  const initialNodes: Node[] = [
+    {
+      id: '1',
+      type: 'ue5Event',
+      position: { x: 50, y: 100 },
+      data: { label: 'BeginPlay' }
+    },
+    {
+      id: '2',
+      type: 'ue5Function',
+      position: { x: 250, y: 100 },
+      data: {
+        label: 'Get Spline Length',
+        category: 'SPLINE',
+        isPure: true,
+        inputs: [],
+        outputs: [
+          { name: 'Length', type: 'float', connected: true }
+        ]
+      }
+    },
+    {
+      id: '3',
+      type: 'ue5Set',
+      position: { x: 450, y: 100 },
+      data: {
+        label: 'SplineLength',
+        type: 'float',
+        execInConnected: true,
+        inputConnected: true
+      }
+    },
+    {
+      id: '4',
+      type: 'ue5Event',
+      position: { x: 50, y: 250 },
+      data: { label: 'Event Tick' }
+    },
+    {
+      id: '5',
+      type: 'ue5Branch',
+      position: { x: 250, y: 250 },
+      data: {
+        conditionConnected: true,
+        trueConnected: true,
+        falseConnected: false
+      }
+    },
+    {
+      id: '6',
+      type: 'ue5Get',
+      position: { x: 100, y: 350 },
+      data: {
+        label: 'bIsMoving',
+        type: 'boolean'
+      }
+    },
+    {
+      id: '7',
+      type: 'ue5Function',
+      position: { x: 450, y: 250 },
+      data: {
+        label: 'Update Platform Position',
+        category: 'MOVEMENT',
+        isPure: false,
+        execInConnected: true,
+        inputs: [
+          { name: 'DeltaTime', type: 'float', connected: true }
+        ],
+        outputs: []
+      }
+    }
+  ]
+
+  const initialEdges: Edge[] = [
+    {
+      id: 'e1',
+      source: '1',
+      target: '3',
+      sourceHandle: 'exec',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
+    },
+    {
+      id: 'e2',
+      source: '2',
+      target: '3',
+      sourceHandle: 'Length',
+      targetHandle: 'value-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 3, stroke: '#94f79f' }
+    },
+    {
+      id: 'e3',
+      source: '4',
+      target: '5',
+      sourceHandle: 'exec',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
+    },
+    {
+      id: 'e4',
+      source: '6',
+      target: '5',
+      sourceHandle: 'value',
+      targetHandle: 'condition',
+      type: 'smoothstep',
+      style: { strokeWidth: 3, stroke: '#ff4444' }
+    },
+    {
+      id: 'e5',
+      source: '5',
+      target: '7',
+      sourceHandle: 'exec-true',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
+    }
+  ]
+
+  const layoutedElements = useMemo(() => {
+    return getSmartLayout(initialNodes, initialEdges)
+  }, [])
+
+  return (
+    <div style={{ width: '100%', height: '400px', background: '#1a1a1a', borderRadius: '8px', border: '1px solid #333' }}>
+      <ReactFlow
+        nodes={layoutedElements.nodes}
+        edges={layoutedElements.edges}
+        nodeTypes={ue5NodeTypes}
+        defaultEdgeOptions={defaultEdgeOptions}
+        connectionMode={ConnectionMode.Loose}
+        fitView
+        fitViewOptions={{ padding: 0.2 }}
+        minZoom={0.5}
+        maxZoom={1.5}
+      >
+        <Background color="#444" gap={16} />
+      </ReactFlow>
+    </div>
+  )
+}
+
+export function MovingPlatformBlueprint() {
+  return (
+    <ReactFlowProvider>
+      <MovingPlatformBlueprintInner />
+    </ReactFlowProvider>
+  )
+}
+
+// Spline Movement Blueprint Example
+export function SplineMovementBlueprintInner() {
+  const initialNodes: Node[] = [
+    {
+      id: '1',
+      type: 'ue5Event',
+      position: { x: 50, y: 100 },
+      data: { label: 'On Component Begin Overlap' }
+    },
+    {
+      id: '2',
+      type: 'ue5CastNode',
+      position: { x: 300, y: 100 },
+      data: {
+        targetClass: 'Character',
+        execInConnected: true,
+        objectConnected: true,
+        execOutConnected: true,
+        failedConnected: false,
+        asConnected: true
+      }
+    },
+    {
+      id: '3',
+      type: 'ue5Function',
+      position: { x: 550, y: 100 },
+      data: {
+        label: 'Add to PlayersOnPlatform',
+        category: 'ARRAY',
+        isPure: false,
+        execInConnected: true,
+        inputs: [
+          { name: 'Character', type: 'object', connected: true }
+        ],
+        outputs: []
+      }
+    },
+    {
+      id: '4',
+      type: 'ue5Function',
+      position: { x: 800, y: 100 },
+      data: {
+        label: 'Attach to Component',
+        category: 'ATTACHMENT',
+        isPure: false,
+        execInConnected: true,
+        execOutConnected: false,
+        inputs: [
+          { name: 'Target', type: 'object', connected: true },
+          { name: 'Parent', type: 'object', connected: false },
+          { name: 'Attach Type', type: 'enum', value: 'Keep World', connected: false }
+        ],
+        outputs: []
+      }
+    }
+  ]
+
+  const initialEdges: Edge[] = [
+    {
+      id: 'e1',
+      source: '1',
+      target: '2',
+      sourceHandle: 'exec',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
+    },
+    {
+      id: 'e2',
+      source: '2',
+      target: '3',
+      sourceHandle: 'exec-out',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
+    },
+    {
+      id: 'e3',
+      source: '2',
+      target: '3',
+      sourceHandle: 'as-character',
+      targetHandle: 'Character',
+      type: 'smoothstep',
+      style: { strokeWidth: 3, stroke: '#5a9fd4' }
+    },
+    {
+      id: 'e4',
+      source: '3',
+      target: '4',
+      sourceHandle: 'exec-out',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
+    },
+    {
+      id: 'e5',
+      source: '2',
+      target: '4',
+      sourceHandle: 'as-character',
+      targetHandle: 'Target',
+      type: 'smoothstep',
+      style: { strokeWidth: 3, stroke: '#5a9fd4' }
+    }
+  ]
+
+  const layoutedElements = useMemo(() => {
+    return getSmartLayout(initialNodes, initialEdges)
+  }, [])
+
+  return (
+    <div style={{ width: '100%', height: '300px', background: '#1a1a1a', borderRadius: '8px', border: '1px solid #333' }}>
+      <ReactFlow
+        nodes={layoutedElements.nodes}
+        edges={layoutedElements.edges}
+        nodeTypes={ue5NodeTypes}
+        defaultEdgeOptions={defaultEdgeOptions}
+        connectionMode={ConnectionMode.Loose}
+        fitView
+        fitViewOptions={{ padding: 0.2 }}
+        minZoom={0.5}
+        maxZoom={1.5}
+      >
+        <Background color="#444" gap={16} />
+      </ReactFlow>
+    </div>
+  )
+}
+
+export function SplineMovementBlueprint() {
+  return (
+    <ReactFlowProvider>
+      <SplineMovementBlueprintInner />
+    </ReactFlowProvider>
+  )
+}
+
+// Teleport Portal Blueprint Example
+export function TeleportPortalBlueprintInner() {
+  const initialNodes: Node[] = [
+    {
+      id: '1',
+      type: 'ue5Event',
+      position: { x: 50, y: 100 },
+      data: { label: 'BeginPlay' }
+    },
+    {
+      id: '2',
+      type: 'ue5Function',
+      position: { x: 250, y: 100 },
+      data: {
+        label: 'Validate Linked Portal',
+        category: 'VALIDATION',
+        isPure: false,
+        execInConnected: true,
+        inputs: [],
+        outputs: [
+          { name: 'Is Valid', type: 'boolean', connected: true }
+        ]
+      }
+    },
+    {
+      id: '3',
+      type: 'ue5Branch',
+      position: { x: 500, y: 100 },
+      data: {
+        conditionConnected: true,
+        trueConnected: true,
+        falseConnected: false
+      }
+    },
+    {
+      id: '4',
+      type: 'ue5Function',
+      position: { x: 750, y: 100 },
+      data: {
+        label: 'Setup Portal Material',
+        category: 'MATERIAL',
+        isPure: false,
+        execInConnected: true,
+        inputs: [
+          { name: 'Portal Color', type: 'vector', connected: false }
+        ],
+        outputs: []
+      }
+    }
+  ]
+
+  const initialEdges: Edge[] = [
+    {
+      id: 'e1',
+      source: '1',
+      target: '2',
+      sourceHandle: 'exec',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
+    },
+    {
+      id: 'e2',
+      source: '2',
+      target: '3',
+      sourceHandle: 'exec-out',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
+    },
+    {
+      id: 'e3',
+      source: '2',
+      target: '3',
+      sourceHandle: 'Is Valid',
+      targetHandle: 'condition',
+      type: 'smoothstep',
+      style: { strokeWidth: 3, stroke: '#ff4444' }
+    },
+    {
+      id: 'e4',
+      source: '3',
+      target: '4',
+      sourceHandle: 'exec-true',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
+    }
+  ]
+
+  const layoutedElements = useMemo(() => {
+    return getSmartLayout(initialNodes, initialEdges)
+  }, [])
+
+  return (
+    <div style={{ width: '100%', height: '300px', background: '#1a1a1a', borderRadius: '8px', border: '1px solid #333' }}>
+      <ReactFlow
+        nodes={layoutedElements.nodes}
+        edges={layoutedElements.edges}
+        nodeTypes={ue5NodeTypes}
+        defaultEdgeOptions={defaultEdgeOptions}
+        connectionMode={ConnectionMode.Loose}
+        fitView
+        fitViewOptions={{ padding: 0.2 }}
+        minZoom={0.5}
+        maxZoom={1.5}
+      >
+        <Background color="#444" gap={16} />
+      </ReactFlow>
+    </div>
+  )
+}
+
+export function TeleportPortalBlueprint() {
+  return (
+    <ReactFlowProvider>
+      <TeleportPortalBlueprintInner />
+    </ReactFlowProvider>
+  )
+}
+
+// Portal Overlap Blueprint Example
+export function PortalOverlapBlueprintInner() {
+  const initialNodes: Node[] = [
+    {
+      id: '1',
+      type: 'ue5Event',
+      position: { x: 50, y: 150 },
+      data: { label: 'On Component Begin Overlap' }
+    },
+    {
+      id: '2',
+      type: 'ue5CastNode',
+      position: { x: 300, y: 150 },
+      data: {
+        targetClass: 'Character',
+        execInConnected: true,
+        objectConnected: true,
+        execOutConnected: true,
+        failedConnected: false,
+        asConnected: true
+      }
+    },
+    {
+      id: '3',
+      type: 'ue5Function',
+      position: { x: 550, y: 150 },
+      data: {
+        label: 'Check Recently Teleported',
+        category: 'ARRAY',
+        isPure: true,
+        inputs: [
+          { name: 'Character', type: 'object', connected: true }
+        ],
+        outputs: [
+          { name: 'Can Teleport', type: 'boolean', connected: true }
+        ]
+      }
+    },
+    {
+      id: '4',
+      type: 'ue5Branch',
+      position: { x: 800, y: 150 },
+      data: {
+        conditionConnected: true,
+        trueConnected: true,
+        falseConnected: false
+      }
+    },
+    {
+      id: '5',
+      type: 'ue5Function',
+      position: { x: 1050, y: 150 },
+      data: {
+        label: 'Teleport Character',
+        category: 'TELEPORT',
+        isPure: false,
+        execInConnected: true,
+        inputs: [
+          { name: 'Character', type: 'object', connected: true },
+          { name: 'Destination', type: 'transform', connected: false }
+        ],
+        outputs: []
+      }
+    }
+  ]
+
+  const initialEdges: Edge[] = [
+    {
+      id: 'e1',
+      source: '1',
+      target: '2',
+      sourceHandle: 'exec',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
+    },
+    {
+      id: 'e2',
+      source: '2',
+      target: '4',
+      sourceHandle: 'exec-out',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
+    },
+    {
+      id: 'e3',
+      source: '2',
+      target: '3',
+      sourceHandle: 'as-character',
+      targetHandle: 'Character',
+      type: 'smoothstep',
+      style: { strokeWidth: 3, stroke: '#5a9fd4' }
+    },
+    {
+      id: 'e4',
+      source: '3',
+      target: '4',
+      sourceHandle: 'Can Teleport',
+      targetHandle: 'condition',
+      type: 'smoothstep',
+      style: { strokeWidth: 3, stroke: '#ff4444' }
+    },
+    {
+      id: 'e5',
+      source: '4',
+      target: '5',
+      sourceHandle: 'exec-true',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
+    },
+    {
+      id: 'e6',
+      source: '2',
+      target: '5',
+      sourceHandle: 'as-character',
+      targetHandle: 'Character',
+      type: 'smoothstep',
+      style: { strokeWidth: 3, stroke: '#5a9fd4' }
+    }
+  ]
+
+  const layoutedElements = useMemo(() => {
+    return getSmartLayout(initialNodes, initialEdges)
+  }, [])
+
+  return (
+    <div style={{ width: '100%', height: '350px', background: '#1a1a1a', borderRadius: '8px', border: '1px solid #333' }}>
+      <ReactFlow
+        nodes={layoutedElements.nodes}
+        edges={layoutedElements.edges}
+        nodeTypes={ue5NodeTypes}
+        defaultEdgeOptions={defaultEdgeOptions}
+        connectionMode={ConnectionMode.Loose}
+        fitView
+        fitViewOptions={{ padding: 0.2 }}
+        minZoom={0.5}
+        maxZoom={1.5}
+      >
+        <Background color="#444" gap={16} />
+      </ReactFlow>
+    </div>
+  )
+}
+
+export function PortalOverlapBlueprint() {
+  return (
+    <ReactFlowProvider>
+      <PortalOverlapBlueprintInner />
+    </ReactFlowProvider>
+  )
+}
+
+// Checkpoint Blueprint Example
+export function CheckpointBlueprintInner() {
+  const initialNodes: Node[] = [
+    {
+      id: '1',
+      type: 'ue5Event',
+      position: { x: 50, y: 150 },
+      data: { label: 'On Component Begin Overlap' }
+    },
+    {
+      id: '2',
+      type: 'ue5CastNode',
+      position: { x: 300, y: 150 },
+      data: {
+        targetClass: 'Character',
+        execInConnected: true,
+        objectConnected: true,
+        execOutConnected: true,
+        failedConnected: false,
+        asConnected: true
+      }
+    },
+    {
+      id: '3',
+      type: 'ue5Get',
+      position: { x: 350, y: 300 },
+      data: {
+        label: 'bIsActivated',
+        type: 'boolean'
+      }
+    },
+    {
+      id: '4',
+      type: 'ue5Branch',
+      position: { x: 550, y: 150 },
+      data: {
+        conditionConnected: true,
+        trueConnected: false,
+        falseConnected: true
+      }
+    },
+    {
+      id: '5',
+      type: 'ue5Function',
+      position: { x: 800, y: 200 },
+      data: {
+        label: 'Set Player Checkpoint',
+        category: 'GAMEMODE',
+        isPure: false,
+        execInConnected: true,
+        inputs: [
+          { name: 'Player', type: 'object', connected: true },
+          { name: 'Checkpoint', type: 'object', value: 'Self', connected: false }
+        ],
+        outputs: []
+      }
+    },
+    {
+      id: '6',
+      type: 'ue5Set',
+      position: { x: 1050, y: 200 },
+      data: {
+        label: 'bIsActivated',
+        type: 'boolean',
+        value: 'True',
+        execInConnected: true,
+        execOutConnected: true
+      }
+    },
+    {
+      id: '7',
+      type: 'ue5Function',
+      position: { x: 1250, y: 200 },
+      data: {
+        label: 'Update Visual State',
+        category: 'VISUAL',
+        isPure: false,
+        execInConnected: true,
+        inputs: [],
+        outputs: []
+      }
+    }
+  ]
+
+  const initialEdges: Edge[] = [
+    {
+      id: 'e1',
+      source: '1',
+      target: '2',
+      sourceHandle: 'exec',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
+    },
+    {
+      id: 'e2',
+      source: '2',
+      target: '4',
+      sourceHandle: 'exec-out',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
+    },
+    {
+      id: 'e3',
+      source: '3',
+      target: '4',
+      sourceHandle: 'value',
+      targetHandle: 'condition',
+      type: 'smoothstep',
+      style: { strokeWidth: 3, stroke: '#ff4444' }
+    },
+    {
+      id: 'e4',
+      source: '4',
+      target: '5',
+      sourceHandle: 'exec-false',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
+    },
+    {
+      id: 'e5',
+      source: '2',
+      target: '5',
+      sourceHandle: 'as-character',
+      targetHandle: 'Player',
+      type: 'smoothstep',
+      style: { strokeWidth: 3, stroke: '#5a9fd4' }
+    },
+    {
+      id: 'e6',
+      source: '5',
+      target: '6',
+      sourceHandle: 'exec-out',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
+    },
+    {
+      id: 'e7',
+      source: '6',
+      target: '7',
+      sourceHandle: 'exec-out',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
+    }
+  ]
+
+  const layoutedElements = useMemo(() => {
+    return getSmartLayout(initialNodes, initialEdges)
+  }, [])
+
+  return (
+    <div style={{ width: '100%', height: '400px', background: '#1a1a1a', borderRadius: '8px', border: '1px solid #333' }}>
+      <ReactFlow
+        nodes={layoutedElements.nodes}
+        edges={layoutedElements.edges}
+        nodeTypes={ue5NodeTypes}
+        defaultEdgeOptions={defaultEdgeOptions}
+        connectionMode={ConnectionMode.Loose}
+        fitView
+        fitViewOptions={{ padding: 0.2 }}
+        minZoom={0.5}
+        maxZoom={1.5}
+      >
+        <Background color="#444" gap={16} />
+      </ReactFlow>
+    </div>
+  )
+}
+
+export function CheckpointBlueprint() {
+  return (
+    <ReactFlowProvider>
+      <CheckpointBlueprintInner />
+    </ReactFlowProvider>
+  )
+}
+
+// Respawn System Blueprint Example
+export function RespawnSystemBlueprintInner() {
+  const initialNodes: Node[] = [
+    {
+      id: '1',
+      type: 'ue5Event',
+      position: { x: 50, y: 150 },
+      data: { label: 'Respawn Player' }
+    },
+    {
+      id: '2',
+      type: 'ue5Function',
+      position: { x: 250, y: 150 },
+      data: {
+        label: 'Get Last Checkpoint',
+        category: 'CHECKPOINT',
+        isPure: true,
+        inputs: [
+          { name: 'Player Controller', type: 'object', connected: true }
+        ],
+        outputs: [
+          { name: 'Checkpoint', type: 'object', connected: true },
+          { name: 'Found', type: 'boolean', connected: true }
+        ]
+      }
+    },
+    {
+      id: '3',
+      type: 'ue5Branch',
+      position: { x: 500, y: 150 },
+      data: {
+        conditionConnected: true,
+        trueConnected: true,
+        falseConnected: true
+      }
+    },
+    {
+      id: '4',
+      type: 'ue5Function',
+      position: { x: 750, y: 100 },
+      data: {
+        label: 'Get Respawn Transform',
+        category: 'TRANSFORM',
+        isPure: true,
+        inputs: [
+          { name: 'Checkpoint', type: 'object', connected: true }
+        ],
+        outputs: [
+          { name: 'Transform', type: 'transform', connected: true }
+        ]
+      }
+    },
+    {
+      id: '5',
+      type: 'ue5Get',
+      position: { x: 750, y: 250 },
+      data: {
+        label: 'DefaultSpawnTransform',
+        type: 'transform'
+      }
+    },
+    {
+      id: '6',
+      type: 'ue5Function',
+      position: { x: 1000, y: 150 },
+      data: {
+        label: 'Teleport Player',
+        category: 'MOVEMENT',
+        isPure: false,
+        execInConnected: true,
+        inputs: [
+          { name: 'Transform', type: 'transform', connected: true }
+        ],
+        outputs: []
+      }
+    }
+  ]
+
+  const initialEdges: Edge[] = [
+    {
+      id: 'e1',
+      source: '1',
+      target: '3',
+      sourceHandle: 'exec',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
+    },
+    {
+      id: 'e2',
+      source: '2',
+      target: '3',
+      sourceHandle: 'Found',
+      targetHandle: 'condition',
+      type: 'smoothstep',
+      style: { strokeWidth: 3, stroke: '#ff4444' }
+    },
+    {
+      id: 'e3',
+      source: '3',
+      target: '6',
+      sourceHandle: 'exec-true',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
+    },
+    {
+      id: 'e4',
+      source: '3',
+      target: '6',
+      sourceHandle: 'exec-false',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
+    },
+    {
+      id: 'e5',
+      source: '2',
+      target: '4',
+      sourceHandle: 'Checkpoint',
+      targetHandle: 'Checkpoint',
+      type: 'smoothstep',
+      style: { strokeWidth: 3, stroke: '#5a9fd4' }
+    },
+    {
+      id: 'e6',
+      source: '4',
+      target: '6',
+      sourceHandle: 'Transform',
+      targetHandle: 'Transform',
+      type: 'smoothstep',
+      style: { strokeWidth: 3, stroke: '#ffd700' }
+    }
+  ]
+
+  const layoutedElements = useMemo(() => {
+    return getSmartLayout(initialNodes, initialEdges)
+  }, [])
+
+  return (
+    <div style={{ width: '100%', height: '350px', background: '#1a1a1a', borderRadius: '8px', border: '1px solid #333' }}>
+      <ReactFlow
+        nodes={layoutedElements.nodes}
+        edges={layoutedElements.edges}
+        nodeTypes={ue5NodeTypes}
+        defaultEdgeOptions={defaultEdgeOptions}
+        connectionMode={ConnectionMode.Loose}
+        fitView
+        fitViewOptions={{ padding: 0.2 }}
+        minZoom={0.5}
+        maxZoom={1.5}
+      >
+        <Background color="#444" gap={16} />
+      </ReactFlow>
+    </div>
+  )
+}
+
+export function RespawnSystemBlueprint() {
+  return (
+    <ReactFlowProvider>
+      <RespawnSystemBlueprintInner />
+    </ReactFlowProvider>
+  )
+}

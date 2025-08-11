@@ -1,0 +1,485 @@
+import { Callout, Steps, Tabs, Code } from 'nextra/components'
+import dynamic from 'next/dynamic'
+
+export const CheckpointBlueprint = dynamic(
+  () => import('../../../components/UE5BlueprintExamples').then(mod => ({ default: mod.CheckpointBlueprint })),
+  { ssr: false }
+)
+
+export const RespawnSystemBlueprint = dynamic(
+  () => import('../../../components/UE5BlueprintExamples').then(mod => ({ default: mod.RespawnSystemBlueprint })),
+  { ssr: false }
+)
+
+# 체크포인트 시스템 구현하기
+
+<Callout type="info" emoji="🏁">
+  이 가이드에서는 플레이어의 진행 상황을 저장하고 리스폰할 수 있는 체크포인트 시스템을 만듭니다.
+  떨어졌을 때 자동으로 마지막 체크포인트에서 리스폰하는 기능을 구현합니다.
+</Callout>
+
+## 학습 목표
+
+- 체크포인트 액터 생성
+- 게임모드와 연동
+- 리스폰 시스템 구현
+- 진행 상황 저장 및 불러오기
+- 시각적 피드백 추가
+
+## 시스템 구조
+
+### 전체 아키텍처
+
+```plaintext
+Jump Map System
+├── BP_Checkpoint (Actor)
+│   ├── 체크포인트 트리거
+│   └── 시각적 상태 표시
+├── GM_JumpMap (Game Mode)
+│   ├── 플레이어 체크포인트 관리
+│   └── 리스폰 로직
+└── BP_KillVolume (Actor)
+    └── 낙하 감지 및 리스폰 트리거
+```
+
+## 체크포인트 액터 생성
+
+<Steps>
+### 새 블루프린트 생성
+
+1. Content Browser에서 우클릭
+2. **Blueprint Class** 선택
+3. **Actor** 클래스 선택
+4. 이름을 `BP_Checkpoint`로 지정
+
+### 폴더 구조
+
+```plaintext
+Content/
+└── Blueprints/
+    └── Checkpoint/
+        ├── BP_Checkpoint
+        ├── BP_KillVolume
+        └── GM_JumpMap
+```
+</Steps>
+
+## 체크포인트 컴포넌트 설정
+
+### 컴포넌트 구조
+
+```plaintext
+BP_Checkpoint (Actor)
+├── DefaultSceneRoot
+├── StaticMesh (체크포인트 플래그/마커)
+│   └── Material: M_Checkpoint
+├── BoxCollision (트리거 영역)
+│   └── BoxExtent: (100, 100, 150)
+├── PointLight (활성화 표시)
+│   ├── Intensity: 5000
+│   └── Light Color: Red (비활성) / Green (활성)
+├── TextRender (체크포인트 번호)
+│   └── Text: "Checkpoint 1"
+├── ParticleSystem (활성화 효과)
+│   └── Auto Activate: False
+└── AudioComponent (활성화 사운드)
+    └── Auto Activate: False
+```
+
+### 컴포넌트 설정
+
+<Tabs items={['메시 컴포넌트', '트리거 설정', '효과 컴포넌트']}>
+  <Tabs.Tab>
+    **Static Mesh 설정**
+    
+    1. **Add Component** → **Static Mesh**
+    2. 이름: `CheckpointFlag`
+    3. Static Mesh: 깃발 또는 마커 메시
+    4. Material: 체크포인트 머티리얼
+    
+    **Text Render 추가**
+    1. **Add Component** → **Text Render**
+    2. 이름: `CheckpointNumber`
+    3. Text: "01"
+    4. 크기 및 색상 조정
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **Box Collision 설정**
+    
+    1. **Add Component** → **Box Collision**
+    2. 이름: `TriggerArea`
+    3. Details 패널:
+       - **Box Extent**: `(100, 100, 150)`
+       - **Collision Presets**: `OverlapOnlyPawn`
+       - **Generate Overlap Events**: ✅
+    
+    <Callout type="tip">
+      트리거 영역은 플레이어가 쉽게 통과할 수 있도록 충분히 크게 설정하세요.
+    </Callout>
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **Point Light 설정**
+    
+    1. **Add Component** → **Point Light**
+    2. 이름: `StatusLight`
+    3. 설정:
+       - **Intensity**: `5000`
+       - **Light Color**: Red (기본값)
+       - **Attenuation Radius**: `500`
+    
+    **Particle System**
+    1. **Add Component** → **Particle System**
+    2. 이름: `ActivationEffect`
+    3. Template: 활성화 이펙트
+    4. Auto Activate: ❌
+  </Tabs.Tab>
+</Tabs>
+
+## 체크포인트 변수 설정
+
+### 변수 목록
+
+| 변수명 | 타입 | 기본값 | 설명 |
+|--------|------|--------|------|
+| `CheckpointID` | Integer | 0 | 고유 ID |
+| `bIsActivated` | Boolean | False | 활성화 상태 |
+| `RespawnTransform` | Transform | Identity | 리스폰 위치 |
+| `ActivatedColor` | LinearColor | Green | 활성화 색상 |
+| `DeactivatedColor` | LinearColor | Red | 비활성화 색상 |
+| `bSaveProgress` | Boolean | True | 진행 저장 여부 |
+| `RequiredCheckpoints` | `Array<Integer>` | Empty | 선행 체크포인트 |
+
+## 체크포인트 이벤트 그래프
+
+### BeginPlay - 초기화
+
+```plaintext
+Event BeginPlay
+├── Set Checkpoint ID (from Details)
+├── Store Respawn Transform
+│   └── Get Actor Transform + Offset
+├── Update Visual State
+│   ├── Set Light Color (Deactivated)
+│   └── Set Material Parameter
+└── Register with Game Mode
+```
+
+### Overlap 이벤트
+
+<CheckpointBlueprint />
+
+### 활성화 로직
+
+<Tabs items={['조건 확인', '활성화 처리', '시각 업데이트']}>
+  <Tabs.Tab>
+    **활성화 조건 확인**
+    
+    ```plaintext
+    Check Activation Conditions
+    ├── Branch (NOT bIsActivated)
+    ├── Check Required Checkpoints
+    │   ├── ForEach (RequiredCheckpoints)
+    │   └── Check if Activated in GameMode
+    └── All Conditions Met → Activate
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **체크포인트 활성화**
+    
+    ```plaintext
+    Activate Checkpoint
+    ├── Set bIsActivated to True
+    ├── Call GameMode.SetPlayerCheckpoint
+    ├── Save Progress (optional)
+    │   └── Save Game Object
+    └── Broadcast Activation Event
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **시각적 피드백**
+    
+    ```plaintext
+    Update Visual State
+    ├── Set Light Color (Green)
+    ├── Play Activation Particle
+    ├── Play Activation Sound
+    ├── Update Material
+    │   └── Set Vector Parameter (EmissiveColor)
+    └── Optional: UI Notification
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## 게임모드 설정
+
+### GM_JumpMap 생성
+
+<Steps>
+### 게임모드 블루프린트 생성
+
+1. **Blueprint Class** → **Game Mode Base**
+2. 이름: `GM_JumpMap`
+3. 더블클릭하여 편집
+
+### 변수 추가
+
+```plaintext
+Variables:
+├── PlayerCheckpoints (`Map<PlayerController, BP_Checkpoint>`)
+├── AllCheckpoints (`Array<BP_Checkpoint>`)
+├── DefaultSpawnTransform (Transform)
+├── RespawnDelay (Float): 1.0
+└── LivesCount (Integer): -1 (무제한)
+```
+</Steps>
+
+### 게임모드 함수들
+
+#### SetPlayerCheckpoint 함수
+
+```plaintext
+Function SetPlayerCheckpoint
+├── Inputs: PlayerController, Checkpoint
+├── Add to PlayerCheckpoints Map
+├── Optional: Save to Save Game
+└── Broadcast OnCheckpointReached
+```
+
+#### RespawnPlayer 함수
+
+<RespawnSystemBlueprint />
+
+#### GetLastCheckpoint 함수
+
+```plaintext
+Function GetLastCheckpoint
+├── Input: PlayerController
+├── Find in PlayerCheckpoints Map
+├── Branch (Found)
+│   ├── True: Return Checkpoint
+│   └── False: Return nullptr
+└── Use Default Spawn if null
+```
+
+## Kill Volume 구현
+
+### BP_KillVolume 생성
+
+<Steps>
+### Kill Volume 액터 생성
+
+1. **Blueprint Class** → **Actor**
+2. 이름: `BP_KillVolume`
+3. 큰 Box Collision 추가
+
+### 컴포넌트 설정
+
+```plaintext
+BP_KillVolume (Actor)
+├── DefaultSceneRoot
+└── BoxCollision
+    ├── BoxExtent: (10000, 10000, 100)
+    ├── Collision: OverlapAllDynamic
+    └── Hidden in Game: True
+```
+</Steps>
+
+### Kill Volume 로직
+
+```plaintext
+On Component Begin Overlap
+├── Cast to Character
+├── Get Player Controller
+├── Get Game Mode
+├── Cast to GM_JumpMap
+├── Call RespawnPlayer
+│   ├── Apply Damage (optional)
+│   ├── Play Death Effect
+│   └── Delay (RespawnDelay)
+└── Teleport to Checkpoint
+```
+
+## 진행 저장 시스템
+
+### Save Game 클래스
+
+<Steps>
+### Save Game 생성
+
+1. **Blueprint Class** → **Save Game**
+2. 이름: `SG_JumpMapProgress`
+
+### 저장 변수
+
+```plaintext
+SG_JumpMapProgress
+├── ActiveCheckpoints (`Array<Integer>`)
+├── CurrentCheckpointID (Integer)
+├── PlayerTransform (Transform)
+├── CompletionTime (Float)
+├── DeathCount (Integer)
+└── CollectedItems (`Array<String>`)
+```
+</Steps>
+
+### 저장/불러오기 함수
+
+<Tabs items={['저장하기', '불러오기', '자동 저장']}>
+  <Tabs.Tab>
+    **진행 상황 저장**
+    
+    ```plaintext
+    Function SaveProgress
+    ├── Create Save Game Object
+    ├── Set Active Checkpoints
+    ├── Set Current Transform
+    ├── Set Statistics
+    └── Save to Slot
+        ├── Slot Name: "JumpMapSave"
+        └── User Index: 0
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **진행 상황 불러오기**
+    
+    ```plaintext
+    Function LoadProgress
+    ├── Load from Slot
+    ├── Cast to SG_JumpMapProgress
+    ├── Restore Checkpoints
+    ├── Teleport Player
+    └── Update UI
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **자동 저장 설정**
+    
+    ```plaintext
+    On Checkpoint Activated
+    ├── Delay (0.5)
+    ├── Call SaveProgress
+    └── Show Save Icon (UI)
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## UI 피드백
+
+### 체크포인트 UI 위젯
+
+<Steps>
+### UI 위젯 생성
+
+1. **User Interface** → **Widget Blueprint**
+2. 이름: `WBP_CheckpointNotification`
+
+### UI 구조
+
+```plaintext
+Canvas Panel
+├── Border (배경)
+├── Horizontal Box
+│   ├── Image (체크포인트 아이콘)
+│   ├── Text Block ("Checkpoint Reached!")
+│   └── Text Block (체크포인트 번호)
+└── Animation (Fade In/Out)
+```
+</Steps>
+
+### UI 표시 로직
+
+```plaintext
+Show Checkpoint UI
+├── Create Widget
+├── Add to Viewport
+├── Play Animation (Fade In)
+├── Delay (3.0)
+├── Play Animation (Fade Out)
+└── Remove from Parent
+```
+
+## 고급 기능
+
+### 체크포인트 순서 강제
+
+```plaintext
+Check Sequential Order
+├── Get Previous Checkpoint ID
+├── Branch (CurrentID = PreviousID + 1)
+│   ├── True: Allow Activation
+│   └── False: Show "Complete Previous First"
+```
+
+### 타임 어택 모드
+
+```plaintext
+Time Attack System
+├── Start Timer on First Checkpoint
+├── Record Split Times
+├── Compare with Best Times
+└── Save Leaderboard
+```
+
+### 체크포인트 간 텔레포트
+
+<Callout type="tip" emoji="🚀">
+  디버그 모드에서 체크포인트 간 빠른 이동을 위한 기능입니다.
+</Callout>
+
+```plaintext
+Debug Teleport (키 입력)
+├── Get All Checkpoints
+├── Find Next/Previous Active
+└── Teleport Player
+```
+
+## 성능 최적화
+
+### 최적화 팁
+
+- **체크포인트 수 제한**: 레벨당 10-15개 권장
+- **Save Game 최적화**: 필수 데이터만 저장
+- **효과 재사용**: 파티클/사운드 풀링
+- **거리 기반 활성화**: LOD 시스템 활용
+
+## 문제 해결
+
+### 체크포인트가 활성화되지 않음
+
+1. Collision 설정 확인
+2. Overlap Events 활성화 확인
+3. 게임모드 연결 확인
+4. 선행 체크포인트 조건 확인
+
+### 리스폰이 작동하지 않음
+
+1. Kill Volume 위치 확인
+2. 게임모드가 올바르게 설정되었는지 확인
+3. 체크포인트 Transform 유효성 확인
+
+### 저장이 되지 않음
+
+1. Save Game 슬롯 이름 확인
+2. 파일 쓰기 권한 확인
+3. Save Game 객체 유효성 확인
+
+## 다음 단계
+
+<Callout type="success" emoji="🏁">
+  체크포인트 시스템을 완성했습니다!
+  이제 완전한 점프맵 게임을 만들 수 있습니다.
+</Callout>
+
+추가 기능 아이디어:
+- 🏆 리더보드 시스템
+- ⏱️ 스피드런 모드
+- 🎮 체크포인트 간 포털
+- 💾 클라우드 저장
+
+[점프맵 개요로 돌아가기 →](/unreal-engine-5/jump-map)

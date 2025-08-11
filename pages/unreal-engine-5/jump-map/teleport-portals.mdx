@@ -1,0 +1,361 @@
+import { Callout, Steps, Tabs, Code } from 'nextra/components'
+import dynamic from 'next/dynamic'
+
+export const TeleportPortalBlueprint = dynamic(
+  () => import('../../../components/UE5BlueprintExamples').then(mod => ({ default: mod.TeleportPortalBlueprint })),
+  { ssr: false }
+)
+
+export const PortalOverlapBlueprint = dynamic(
+  () => import('../../../components/UE5BlueprintExamples').then(mod => ({ default: mod.PortalOverlapBlueprint })),
+  { ssr: false }
+)
+
+# 텔레포트 포털 구현하기
+
+<Callout type="info" emoji="🌀">
+  이 가이드에서는 플레이어를 다른 위치로 순간이동시키는 포털 시스템을 만듭니다.
+  양방향 포털, 시각 효과, 그리고 속도 유지 옵션을 구현합니다.
+</Callout>
+
+## 학습 목표
+
+- 양방향 포털 시스템 구축
+- 텔레포트 로직 및 쿨다운 구현
+- 포털 뷰 렌더링 (고급)
+- 속도 및 회전 유지 옵션
+
+## 블루프린트 생성
+
+<Steps>
+### 새 액터 블루프린트 만들기
+
+1. Content Browser에서 우클릭
+2. **Blueprint Class** 선택
+3. **Actor** 클래스 선택
+4. 이름을 `BP_TeleportPortal`로 지정
+
+### 폴더 구조 정리
+
+```plaintext
+Content/
+└── Blueprints/
+    └── Portals/
+        ├── BP_TeleportPortal
+        └── BP_TeleportPortal_Exit
+```
+</Steps>
+
+## 컴포넌트 설정
+
+### 포털 컴포넌트 구조
+
+```plaintext
+BP_TeleportPortal (Actor)
+├── DefaultSceneRoot
+├── StaticMesh (포털 프레임)
+│   └── Mobility: Static
+├── CapsuleComponent (트리거 영역)
+│   └── Radius: 60, Half Height: 100
+├── StaticMesh (포털 표면)
+│   └── Material: M_Portal
+├── ArrowComponent (텔레포트 방향)
+│   └── Relative Rotation: (0, 0, 0)
+├── ParticleSystem (포털 효과)
+│   └── Template: P_Portal_Active
+└── AudioComponent (앰비언트 사운드)
+    └── Sound: S_Portal_Ambient
+```
+
+### 컴포넌트 추가하기
+
+<Tabs items={['포털 프레임', '트리거 영역', '효과 컴포넌트']}>
+  <Tabs.Tab>
+    **포털 프레임 설정**
+    
+    1. **Add Component** → **Static Mesh** 선택
+    2. 이름: `PortalFrame`
+    3. Details 패널에서:
+       - **Static Mesh**: 포털 프레임 메시 선택
+       - **Material**: 원하는 머티리얼
+       - **Scale**: 크기 조정
+    
+    4. 두 번째 **Static Mesh** 추가
+    5. 이름: `PortalSurface`
+    6. 포털 내부 표면용 메시 설정
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **Capsule Collision 설정**
+    
+    1. **Add Component** → **Capsule Collision** 선택
+    2. Details 패널에서 설정:
+       - **Capsule Radius**: `60`
+       - **Capsule Half Height**: `100`
+       - **Collision Presets**: `OverlapAllDynamic`
+       - **Generate Overlap Events**: ✅ 체크
+    
+    <Callout type="warning">
+      트리거 영역이 포털 표면보다 약간 앞에 위치하도록 조정하세요.
+    </Callout>
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **효과 컴포넌트 설정**
+    
+    **Particle System**
+    1. **Add Component** → **Particle System**
+    2. 이름: `PortalEffect`
+    3. Template: 포털 이펙트 선택
+    4. Auto Activate: ✅
+    
+    **Audio Component**
+    1. **Add Component** → **Audio**
+    2. 이름: `AmbientSound`
+    3. Sound: 포털 앰비언트 사운드
+    4. Auto Activate: ✅
+    5. Attenuation Settings 설정
+    
+    **Arrow Component**
+    1. **Add Component** → **Arrow**
+    2. 이름: `ExitDirection`
+    3. 텔레포트 후 방향 표시
+  </Tabs.Tab>
+</Tabs>
+
+## 변수 설정
+
+### 필수 변수 목록
+
+| 변수명 | 타입 | 기본값 | 설명 |
+|--------|------|--------|------|
+| `LinkedPortal` | BP_TeleportPortal | None | 연결된 포털 |
+| `TeleportOffset` | Vector | (0,0,100) | 텔레포트 위치 오프셋 |
+| `bMaintainVelocity` | Boolean | True | 속도 유지 여부 |
+| `bMaintainRotation` | Boolean | False | 회전 유지 여부 |
+| `CooldownTime` | Float | 1.0 | 재사용 대기시간 |
+| `RecentlyTeleported` | `Array<Character>` | Empty | 최근 텔레포트된 캐릭터 |
+| `PortalColor` | LinearColor | Blue | 포털 색상 |
+| `bIsActive` | Boolean | True | 활성화 상태 |
+| `TeleportDelay` | Float | 0.1 | 텔레포트 지연시간 |
+
+### 변수 카테고리 정리
+
+- **Portal Settings**: LinkedPortal, TeleportOffset, PortalColor
+- **Teleport Options**: bMaintainVelocity, bMaintainRotation, TeleportDelay
+- **Cooldown**: CooldownTime, RecentlyTeleported
+- **Runtime**: bIsActive
+
+## 이벤트 그래프 구현
+
+### BeginPlay - 초기화
+
+<TeleportPortalBlueprint />
+
+### Overlap 이벤트 - 텔레포트 처리
+
+<PortalOverlapBlueprint />
+
+### 텔레포트 로직 상세
+
+<Tabs items={['텔레포트 조건 확인', '위치 계산', '효과 재생']}>
+  <Tabs.Tab>
+    **텔레포트 조건 확인**
+    
+    ```plaintext
+    Check Teleport Conditions
+    ├── Cast to Character
+    ├── Check if LinkedPortal is Valid
+    ├── Check if Character NOT in RecentlyTeleported
+    └── Check if Portal is Active
+    ```
+    
+    모든 조건이 충족되어야 텔레포트가 실행됩니다.
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **텔레포트 위치 계산**
+    
+    ```plaintext
+    Calculate Teleport Transform
+    ├── Get Linked Portal Transform
+    ├── Get Exit Direction from Arrow
+    ├── Add TeleportOffset
+    ├── Calculate Relative Rotation
+    │   ├── Get Character Rotation
+    │   ├── Get Portal Rotation Difference
+    │   └── Apply Rotation (if bMaintainRotation)
+    └── Return: Final Transform
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **텔레포트 효과**
+    
+    입구 효과:
+    - Spawn Emitter at Location (입구)
+    - Play Sound at Location
+    - Camera Fade (옵션)
+    
+    출구 효과:
+    - Spawn Emitter at Location (출구)
+    - Play Sound at Location
+    - Camera Shake (옵션)
+  </Tabs.Tab>
+</Tabs>
+
+## 고급 기능
+
+### 포털 뷰 렌더링 (Scene Capture)
+
+<Callout type="tip" emoji="🎥">
+  Scene Capture 2D를 사용하면 다른 포털의 뷰를 실시간으로 렌더링할 수 있습니다.
+</Callout>
+
+<Steps>
+### Render Target 생성
+
+1. Content Browser에서 우클릭
+2. **Materials & Textures** → **Render Target**
+3. 이름: `RT_PortalView`
+4. 해상도: 1024x1024
+
+### Scene Capture Component 추가
+
+1. **Add Component** → **Scene Capture 2D**
+2. 이름: `PortalCamera`
+3. Texture Target: `RT_PortalView`
+4. Capture Source: Final Color (LDR)
+
+### Material 설정
+
+1. 새 Material 생성: `M_Portal`
+2. Emissive에 Render Target 연결
+3. Portal Surface 메시에 적용
+
+### 카메라 위치 업데이트
+
+```plaintext
+Event Tick (옵션)
+├── Get Player Camera Location
+├── Calculate Relative Position to This Portal
+├── Apply to Linked Portal Camera
+└── Update Scene Capture
+```
+</Steps>
+
+### 속도 유지 및 변환
+
+```plaintext
+Maintain Velocity
+├── Get Character Movement Component
+├── Get Velocity
+├── Transform Vector (Portal Space)
+│   ├── World to Local (Entry Portal)
+│   └── Local to World (Exit Portal)
+├── Launch Character
+│   └── Launch Velocity: Transformed Velocity
+```
+
+### 양방향 포털 설정
+
+<Callout type="warning" emoji="⚠️">
+  양방향 포털을 설정할 때는 반드시 양쪽 포털의 LinkedPortal을 서로 연결해야 합니다.
+</Callout>
+
+<Steps>
+### 포털 쌍 만들기
+
+1. `BP_TeleportPortal`을 레벨에 2개 배치
+2. 첫 번째 포털 선택
+3. Details → **Portal Settings** → **Linked Portal**
+4. 두 번째 포털 선택
+5. 반대로도 설정
+
+### 색상 구분
+
+각 포털 쌍에 다른 색상 설정:
+- 파란색/주황색
+- 초록색/빨간색
+- 보라색/노란색
+</Steps>
+
+## 쿨다운 시스템
+
+### RecentlyTeleported 배열 관리
+
+```plaintext
+After Teleport
+├── Add Character to RecentlyTeleported (This Portal)
+├── Add Character to LinkedPortal.RecentlyTeleported
+├── Set Timer by Function Name
+│   ├── Function: RemoveFromCooldown
+│   ├── Time: CooldownTime
+│   └── Input: Character Reference
+```
+
+### RemoveFromCooldown 함수
+
+```plaintext
+Function RemoveFromCooldown
+├── Input: Character
+├── Remove from RecentlyTeleported Array
+├── Remove from LinkedPortal.RecentlyTeleported
+└── Optional: Play Ready Effect
+```
+
+## 성능 최적화
+
+### 최적화 팁
+
+- **Scene Capture 최적화**:
+  - 낮은 해상도 사용 (512x512)
+  - Update Rate 제한
+  - 플레이어 근처에서만 활성화
+
+- **효과 최적화**:
+  - 파티클 LOD 설정
+  - 사운드 거리 감쇠
+  - 불필요한 Tick 이벤트 제거
+
+### 네트워크 리플리케이션
+
+멀티플레이어 게임의 경우:
+- `LinkedPortal` 변수 Replicated 설정
+- RPC로 텔레포트 이벤트 전송
+- 서버에서만 텔레포트 로직 실행
+
+## 문제 해결
+
+### 무한 텔레포트 발생
+
+1. `RecentlyTeleported` 배열 확인
+2. 쿨다운 타이머 작동 확인
+3. 양쪽 포털에 캐릭터 추가되는지 확인
+
+### 포털 뷰가 검은색
+
+1. Render Target 할당 확인
+2. Scene Capture 활성화 확인
+3. Material의 Emissive 연결 확인
+
+### 속도가 유지되지 않음
+
+1. `bMaintainVelocity` 변수 확인
+2. Launch Character 노드 연결 확인
+3. Transform Vector 계산 확인
+
+## 다음 단계
+
+<Callout type="success" emoji="🌀">
+  텔레포트 포털 시스템을 완성했습니다!
+  이제 더 복잡한 포털 메커니즘을 추가해봅시다.
+</Callout>
+
+다음에 시도해볼 기능들:
+- 🎨 다양한 포털 이펙트
+- 📐 포털 크기 변경 시스템
+- 🔄 회전하는 포털
+- 🎮 포털건 아이템
+
+[체크포인트 시스템으로 계속하기 →](/unreal-engine-5/jump-map/checkpoint-system)

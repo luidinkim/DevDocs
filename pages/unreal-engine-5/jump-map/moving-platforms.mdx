@@ -1,0 +1,333 @@
+import { Callout, Steps, Tabs } from 'nextra/components'
+import dynamic from 'next/dynamic'
+
+export const MovingPlatformBlueprint = dynamic(
+  () => import('../../../components/UE5BlueprintExamples').then(mod => ({ default: mod.MovingPlatformBlueprint })),
+  { ssr: false }
+)
+
+export const SplineMovementBlueprint = dynamic(
+  () => import('../../../components/UE5BlueprintExamples').then(mod => ({ default: mod.SplineMovementBlueprint })),
+  { ssr: false }
+)
+
+# 움직이는 플랫폼 만들기
+
+<Callout type="info" emoji="🎢">
+  이 가이드에서는 Spline Component를 활용한 움직이는 플랫폼을 만드는 방법을 배웁니다.
+  복잡한 경로를 따라 이동하며 플레이어를 운반하는 플랫폼을 구현합니다.
+</Callout>
+
+## 학습 목표
+
+- Spline Component를 사용한 경로 설정
+- Timeline을 활용한 부드러운 이동
+- 플레이어 Attach/Detach 처리
+- 왕복 및 순환 이동 구현
+
+## 블루프린트 생성
+
+<Steps>
+### 새 액터 블루프린트 만들기
+
+1. Content Browser에서 우클릭
+2. **Blueprint Class** 선택
+3. **Actor** 클래스 선택
+4. 이름을 `BP_MovingPlatform`으로 지정
+
+### 폴더 구조 정리
+
+```plaintext
+Content/
+└── Blueprints/
+    └── Platforms/
+        └── BP_MovingPlatform
+```
+</Steps>
+
+## 컴포넌트 설정
+
+### 필수 컴포넌트 구조
+
+```plaintext
+BP_MovingPlatform (Actor)
+├── DefaultSceneRoot
+├── StaticMesh (플랫폼 메시)
+│   └── Mobility: Movable
+├── BoxCollision (플레이어 감지)
+│   └── BoxExtent: (200, 100, 20)
+├── SplineComponent (이동 경로)
+│   └── Points: 최소 2개 이상
+├── ArrowComponent (현재 방향)
+└── NiagaraSystem (옵션: 트레일 효과)
+```
+
+### 컴포넌트 추가하기
+
+<Tabs items={['Static Mesh', 'Spline Component', 'Box Collision']}>
+  <Tabs.Tab>
+    **Static Mesh 설정**
+    
+    1. **Add Component** → **Static Mesh** 선택
+    2. Details 패널에서 설정:
+       - **Static Mesh**: 원하는 플랫폼 메시 선택
+       - **Mobility**: `Movable` (중요!)
+       - **Scale**: 플랫폼 크기에 맞게 조정
+    
+    <Callout type="warning">
+      Mobility를 반드시 Movable로 설정해야 런타임에 이동할 수 있습니다.
+    </Callout>
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **Spline Component 설정**
+    
+    1. **Add Component** → **Spline** 선택
+    2. 뷰포트에서 Spline 포인트 편집:
+       - Alt + 드래그: 새 포인트 추가
+       - 포인트 선택 후 이동: 경로 수정
+       - 우클릭: 포인트 삭제
+    
+    3. Details 패널에서:
+       - **Closed Loop**: 순환 경로면 체크
+       - **Duration**: 전체 이동 시간
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **Box Collision 설정**
+    
+    1. **Add Component** → **Box Collision** 선택
+    2. Details 패널에서 설정:
+       - **Box Extent**: `(200, 100, 20)`
+       - **Relative Location**: `(0, 0, 20)` - 플랫폼 위에 위치
+       - **Collision Presets**: `OverlapAllDynamic`
+       - **Generate Overlap Events**: ✅ 체크
+  </Tabs.Tab>
+</Tabs>
+
+## 변수 설정
+
+### 변수 목록
+
+| 변수명 | 타입 | 기본값 | 설명 |
+|--------|------|--------|------|
+| `MoveSpeed` | Float | 300.0 | 이동 속도 |
+| `WaitTimeAtPoints` | Float | 2.0 | 각 포인트 대기시간 |
+| `bLoop` | Boolean | True | 순환 여부 |
+| `bReverse` | Boolean | False | 역방향 이동 |
+| `CurrentSplineDistance` | Float | 0.0 | 현재 스플라인 위치 |
+| `CurrentDirection` | Float | 1.0 | 이동 방향 (1=정방향, -1=역방향) |
+| `PlayersOnPlatform` | `Array<Character>` | Empty | 플랫폼 위 플레이어들 |
+| `bIsMoving` | Boolean | True | 이동 중 여부 |
+| `SplineLength` | Float | 0.0 | 스플라인 전체 길이 |
+
+### 변수 카테고리 정리
+
+- **Movement Settings**: MoveSpeed, WaitTimeAtPoints
+- **Path Settings**: bLoop, bReverse
+- **Runtime**: CurrentSplineDistance, CurrentDirection, bIsMoving
+
+## 이벤트 그래프 구현
+
+### BeginPlay - 초기화
+
+<MovingPlatformBlueprint />
+
+### Event Tick - 이동 로직
+
+플랫폼의 실제 이동을 처리하는 핵심 로직입니다.
+
+<Tabs items={['이동 계산', '플레이어 업데이트', '경로 끝 처리']}>
+  <Tabs.Tab>
+    **이동 계산**
+    
+    ```plaintext
+    Event Tick
+    ├── Branch (bIsMoving)
+    │   └── True:
+    │       ├── Calculate Delta Distance
+    │       │   ├── Delta Time * MoveSpeed * CurrentDirection
+    │       │   └── Add to CurrentSplineDistance
+    │       ├── Get Location at Distance Along Spline
+    │       │   └── Distance: CurrentSplineDistance
+    │       └── Set Actor Location
+    │           └── Sweep: True
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **플레이어 업데이트**
+    
+    플랫폼과 함께 이동하도록 처리:
+    
+    ```plaintext
+    Update Players on Platform
+    ├── ForEach (PlayersOnPlatform)
+    │   ├── Get Delta Movement
+    │   └── Add World Offset to Character
+    │       └── Sweep: True
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **경로 끝 처리**
+    
+    ```plaintext
+    Check End Points
+    ├── Branch (CurrentSplineDistance >= SplineLength)
+    │   └── True:
+    │       ├── Branch (bLoop)
+    │       │   ├── True: Set CurrentSplineDistance to 0
+    │       │   └── False:
+    │       │       └── Branch (bReverse)
+    │       │           ├── True: Set CurrentDirection to -1
+    │       │           └── False: Set bIsMoving to False
+    │       └── Delay (WaitTimeAtPoints)
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+### Overlap 이벤트 - 플레이어 처리
+
+<SplineMovementBlueprint />
+
+#### Begin Overlap
+```plaintext
+On Component Begin Overlap (BoxCollision)
+├── Cast to Character
+├── Add to PlayersOnPlatform Array
+└── Attach to Component
+    ├── Target: Character Mesh
+    ├── Parent: Platform Mesh
+    └── Attach Type: Keep World Transform
+```
+
+#### End Overlap
+```plaintext
+On Component End Overlap (BoxCollision)
+├── Cast to Character
+├── Remove from PlayersOnPlatform Array
+└── Detach from Component
+    └── Detachment Type: Keep World Transform
+```
+
+## 고급 기능
+
+### Timeline을 활용한 부드러운 이동
+
+<Callout type="tip" emoji="💡">
+  Timeline을 사용하면 더 부드럽고 자연스러운 이동을 구현할 수 있습니다.
+</Callout>
+
+<Steps>
+### Timeline 생성
+
+1. 그래프에서 우클릭 → **Add Timeline**
+2. 이름: `PlatformMovement`
+
+### 커브 설정
+
+1. Timeline 더블클릭
+2. **Add Float Track** 클릭
+3. 커브 편집:
+   - 0초: 값 0
+   - Duration초: 값 1
+   - 커브 타입: Linear 또는 Smooth
+
+### Timeline 연결
+
+```plaintext
+BeginPlay → Play (Timeline)
+Timeline Update → Get Spline Location at Time
+                 └── Set Actor Location
+```
+</Steps>
+
+### 다양한 이동 패턴
+
+<Tabs items={['왕복 이동', '순환 이동', '일시 정지']}>
+  <Tabs.Tab>
+    **왕복 이동 (Ping-Pong)**
+    
+    ```plaintext
+    Handle End Point
+    ├── Multiply CurrentDirection by -1
+    └── Continue Movement
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **순환 이동 (Loop)**
+    
+    ```plaintext
+    Handle End Point
+    ├── Set CurrentSplineDistance to 0
+    └── Continue Movement
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **포인트별 일시 정지**
+    
+    ```plaintext
+    At Spline Point
+    ├── Set bIsMoving to False
+    ├── Delay (WaitTimeAtPoints)
+    └── Set bIsMoving to True
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## 성능 최적화
+
+### 최적화 팁
+
+- **Event Tick 대신 Timeline 사용**: 프레임 독립적 이동
+- **거리 기반 활성화**: 플레이어가 가까이 있을 때만 이동
+- **LOD 설정**: 원거리에서 단순화된 메시 사용
+- **네트워크 최적화**: 서버에서만 이동 계산, 클라이언트는 보간
+
+### 거리 기반 활성화 구현
+
+```plaintext
+Event Tick
+├── Get Player Distance
+├── Branch (Distance < ActivationRange)
+│   ├── True: Enable Movement
+│   └── False: Disable Movement
+```
+
+## 문제 해결
+
+### 플레이어가 미끄러질 때
+
+1. Attach 설정을 `Keep World` → `Snap to Target` 변경
+2. Character Movement의 Ground Friction 증가
+3. 플랫폼 표면 Material의 Friction 조정
+
+### 플랫폼이 떨릴 때
+
+1. Interpolation Mode를 `Smooth`로 변경
+2. Move Speed 값 조정
+3. Sweep 옵션 확인
+
+### 스플라인 경로가 보이지 않을 때
+
+1. Show → **Splines** 활성화
+2. Spline Component 선택 상태 확인
+3. Editor에서만 표시되는 것이 정상
+
+## 다음 단계
+
+<Callout type="success" emoji="🎉">
+  움직이는 플랫폼을 완성했습니다!
+  이제 더 복잡한 메커니즘을 추가해봅시다.
+</Callout>
+
+다음에 시도해볼 기능들:
+- 🎵 플랫폼 이동 사운드 추가
+- ✨ 파티클 트레일 효과
+- 🔄 회전하며 이동하는 플랫폼
+- 🎮 플레이어 입력으로 제어 가능한 플랫폼
+
+[텔레포트 포털로 계속하기 →](/unreal-engine-5/jump-map/teleport-portals)
