@@ -2,12 +2,12 @@ import { Callout, Steps, Tabs } from 'nextra/components'
 import dynamic from 'next/dynamic'
 
 export const MovingPlatformBlueprint = dynamic(
-  () => import('../../../components/UE5BlueprintExamples').then(mod => ({ default: mod.MovingPlatformBlueprint })),
+  () => import('../../../components/UE5BlueprintExamples_New').then(mod => ({ default: mod.MovingPlatformBlueprint })),
   { ssr: false }
 )
 
 export const SplineMovementBlueprint = dynamic(
-  () => import('../../../components/UE5BlueprintExamples').then(mod => ({ default: mod.SplineMovementBlueprint })),
+  () => import('../../../components/UE5BlueprintExamples_New').then(mod => ({ default: mod.SplineMovementBlueprint })),
   { ssr: false }
 )
 

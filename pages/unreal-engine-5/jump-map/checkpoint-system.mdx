@@ -2,12 +2,12 @@ import { Callout, Steps, Tabs, Code } from 'nextra/components'
 import dynamic from 'next/dynamic'
 
 export const CheckpointBlueprint = dynamic(
-  () => import('../../../components/UE5BlueprintExamples').then(mod => ({ default: mod.CheckpointBlueprint })),
+  () => import('../../../components/UE5BlueprintExamples_New').then(mod => ({ default: mod.CheckpointBlueprint })),
   { ssr: false }
 )
 
 export const RespawnSystemBlueprint = dynamic(
-  () => import('../../../components/UE5BlueprintExamples').then(mod => ({ default: mod.RespawnSystemBlueprint })),
+  () => import('../../../components/UE5BlueprintExamples_New').then(mod => ({ default: mod.RespawnSystemBlueprint })),
   { ssr: false }
 )
 
