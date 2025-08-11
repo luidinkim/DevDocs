@@ -924,3 +924,428 @@ export function UE5ComplexGameLogic() {
     </ReactFlowProvider>
   )
 }
+
+// Jump Pad Basic Blueprint - 기본 점프패드
+function JumpPadBasicBlueprintInner() {
+  const nodes: Node[] = [
+    {
+      id: '1',
+      type: 'ue5Event',
+      position: { x: 50, y: 150 },
+      data: { 
+        label: 'On Component Begin Overlap',
+        subtitle: 'Box Collision',
+        execConnected: true,
+        outputs: [
+          { name: 'Other Actor', type: 'object', connected: true }
+        ]
+      }
+    },
+    {
+      id: '2',
+      type: 'ue5Cast',
+      position: { x: 350, y: 150 },
+      data: { 
+        label: 'Cast to Character',
+        execInConnected: true,
+        execOutConnected: true,
+        objectConnected: true,
+        castOutConnected: true
+      }
+    },
+    {
+      id: '3',
+      type: 'ue5Function',
+      position: { x: 650, y: 150 },
+      data: { 
+        label: 'Launch Character',
+        category: 'CHARACTER',
+        isPure: false,
+        execInConnected: true,
+        inputs: [
+          { name: 'Target', type: 'object', connected: true },
+          { name: 'Launch Velocity', type: 'vector', value: '0, 0, 1500' },
+          { name: 'XY Override', type: 'boolean', value: 'false' },
+          { name: 'Z Override', type: 'boolean', value: 'true' }
+        ]
+      }
+    }
+  ]
+
+  const edges: Edge[] = [
+    {
+      id: 'e1',
+      source: '1',
+      target: '2',
+      sourceHandle: 'exec-out',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+        width: 18,
+        height: 18,
+        color: '#ffffff'
+      }
+    },
+    {
+      id: 'e2',
+      source: '1',
+      target: '2',
+      sourceHandle: 'output-0',
+      targetHandle: 'object-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 3, stroke: DataTypeColors.object }
+    },
+    {
+      id: 'e3',
+      source: '2',
+      target: '3',
+      sourceHandle: 'exec-out',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+        width: 18,
+        height: 18,
+        color: '#ffffff'
+      }
+    },
+    {
+      id: 'e4',
+      source: '2',
+      target: '3',
+      sourceHandle: 'cast-out',
+      targetHandle: 'input-0',
+      type: 'smoothstep',
+      style: { strokeWidth: 3, stroke: DataTypeColors.object }
+    }
+  ]
+
+  return (
+    <div style={{ width: '100%', height: '400px', background: '#1a1a1a', borderRadius: '8px', border: '1px solid #333' }}>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={ue5NodeTypes}
+        defaultEdgeOptions={defaultEdgeOptions}
+        connectionMode={ConnectionMode.Loose}
+        fitView
+        fitViewOptions={{ padding: 0.2 }}
+        minZoom={0.5}
+        maxZoom={1.5}
+      >
+        <Background color="#444" gap={16} />
+        <MiniMap 
+          nodeColor={node => {
+            switch(node.type) {
+              case 'ue5Event': return '#a82929'
+              case 'ue5Function': return '#2b5f3f'
+              case 'ue5Cast': return '#2b3d5f'
+              default: return '#666'
+            }
+          }}
+          style={{
+            backgroundColor: '#1a1a1a',
+            border: '1px solid #444'
+          }}
+        />
+      </ReactFlow>
+    </div>
+  )
+}
+
+export function JumpPadBasicBlueprint() {
+  return (
+    <ReactFlowProvider>
+      <JumpPadBasicBlueprintInner />
+    </ReactFlowProvider>
+  )
+}
+
+// Jump Pad Intermediate Blueprint - 중급 점프패드 (변수와 방향 제어)
+function JumpPadIntermediateBlueprintInner() {
+  const nodes: Node[] = [
+    {
+      id: '1',
+      type: 'ue5Event',
+      position: { x: 50, y: 200 },
+      data: { 
+        label: 'On Component Begin Overlap',
+        subtitle: 'Box Collision',
+        execConnected: true,
+        outputs: [
+          { name: 'Other Actor', type: 'object', connected: true }
+        ]
+      }
+    },
+    {
+      id: '2',
+      type: 'ue5Get',
+      position: { x: 250, y: 50 },
+      data: { 
+        label: 'Is Active',
+        varType: 'boolean',
+        connected: true
+      }
+    },
+    {
+      id: '3',
+      type: 'ue5Branch',
+      position: { x: 350, y: 200 },
+      data: {
+        execInConnected: true,
+        execTrueConnected: true,
+        conditionConnected: true
+      }
+    },
+    {
+      id: '4',
+      type: 'ue5Cast',
+      position: { x: 550, y: 200 },
+      data: { 
+        label: 'Cast to Character',
+        execInConnected: true,
+        execOutConnected: true,
+        objectConnected: true,
+        castOutConnected: true
+      }
+    },
+    {
+      id: '5',
+      type: 'ue5Function',
+      position: { x: 750, y: 350 },
+      data: { 
+        label: 'Get Forward Vector',
+        subtitle: 'Arrow Component',
+        category: 'TRANSFORM',
+        isPure: true,
+        outputs: [
+          { name: 'Forward', type: 'vector', connected: true }
+        ]
+      }
+    },
+    {
+      id: '6',
+      type: 'ue5Get',
+      position: { x: 750, y: 450 },
+      data: { 
+        label: 'Jump Force',
+        varType: 'float',
+        value: '2000',
+        connected: true
+      }
+    },
+    {
+      id: '7',
+      type: 'ue5Function',
+      position: { x: 950, y: 350 },
+      data: { 
+        label: 'Vector * Float',
+        category: 'MATH',
+        isPure: true,
+        inputs: [
+          { name: 'A', type: 'vector', connected: true },
+          { name: 'B', type: 'float', connected: true }
+        ],
+        outputs: [
+          { name: 'Result', type: 'vector', connected: true }
+        ]
+      }
+    },
+    {
+      id: '8',
+      type: 'ue5Function',
+      position: { x: 850, y: 200 },
+      data: { 
+        label: 'Launch Character',
+        category: 'CHARACTER',
+        isPure: false,
+        execInConnected: true,
+        execOutConnected: true,
+        inputs: [
+          { name: 'Target', type: 'object', connected: true },
+          { name: 'Launch Velocity', type: 'vector', connected: true },
+          { name: 'XY Override', type: 'boolean', value: 'true' },
+          { name: 'Z Override', type: 'boolean', value: 'true' }
+        ]
+      }
+    },
+    {
+      id: '9',
+      type: 'ue5Function',
+      position: { x: 1150, y: 200 },
+      data: { 
+        label: 'Play Effects',
+        subtitle: 'Custom Event',
+        category: 'CUSTOM',
+        isPure: false,
+        execInConnected: true,
+        execOutConnected: true
+      }
+    },
+    {
+      id: '10',
+      type: 'ue5Function',
+      position: { x: 1350, y: 200 },
+      data: { 
+        label: 'Handle Reactivation',
+        subtitle: 'Custom Event',
+        category: 'CUSTOM',
+        isPure: false,
+        execInConnected: true
+      }
+    }
+  ]
+
+  const edges: Edge[] = [
+    // Execution flow
+    {
+      id: 'e1',
+      source: '1',
+      target: '3',
+      sourceHandle: 'exec-out',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
+    },
+    {
+      id: 'e2',
+      source: '2',
+      target: '3',
+      sourceHandle: 'output',
+      targetHandle: 'condition',
+      type: 'smoothstep',
+      style: { strokeWidth: 3, stroke: DataTypeColors.boolean }
+    },
+    {
+      id: 'e3',
+      source: '3',
+      target: '4',
+      sourceHandle: 'exec-true',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
+    },
+    {
+      id: 'e4',
+      source: '1',
+      target: '4',
+      sourceHandle: 'output-0',
+      targetHandle: 'object-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 3, stroke: DataTypeColors.object }
+    },
+    {
+      id: 'e5',
+      source: '4',
+      target: '8',
+      sourceHandle: 'exec-out',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
+    },
+    {
+      id: 'e6',
+      source: '4',
+      target: '8',
+      sourceHandle: 'cast-out',
+      targetHandle: 'input-0',
+      type: 'smoothstep',
+      style: { strokeWidth: 3, stroke: DataTypeColors.object }
+    },
+    {
+      id: 'e7',
+      source: '5',
+      target: '7',
+      sourceHandle: 'output-0',
+      targetHandle: 'input-0',
+      type: 'smoothstep',
+      style: { strokeWidth: 3, stroke: DataTypeColors.vector }
+    },
+    {
+      id: 'e8',
+      source: '6',
+      target: '7',
+      sourceHandle: 'output',
+      targetHandle: 'input-1',
+      type: 'smoothstep',
+      style: { strokeWidth: 3, stroke: DataTypeColors.float }
+    },
+    {
+      id: 'e9',
+      source: '7',
+      target: '8',
+      sourceHandle: 'output-0',
+      targetHandle: 'input-1',
+      type: 'smoothstep',
+      style: { strokeWidth: 3, stroke: DataTypeColors.vector }
+    },
+    {
+      id: 'e10',
+      source: '8',
+      target: '9',
+      sourceHandle: 'exec-out',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
+    },
+    {
+      id: 'e11',
+      source: '9',
+      target: '10',
+      sourceHandle: 'exec-out',
+      targetHandle: 'exec-in',
+      type: 'smoothstep',
+      style: { strokeWidth: 4, stroke: '#ffffff' },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#ffffff' }
+    }
+  ]
+
+  return (
+    <div style={{ width: '100%', height: '500px', background: '#1a1a1a', borderRadius: '8px', border: '1px solid #333' }}>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={ue5NodeTypes}
+        defaultEdgeOptions={defaultEdgeOptions}
+        connectionMode={ConnectionMode.Loose}
+        fitView
+        fitViewOptions={{ padding: 0.15 }}
+        minZoom={0.4}
+        maxZoom={1.5}
+      >
+        <Background color="#444" gap={16} />
+        <MiniMap 
+          nodeColor={node => {
+            switch(node.type) {
+              case 'ue5Event': return '#a82929'
+              case 'ue5Function': return '#2b5f3f'
+              case 'ue5Cast': return '#2b3d5f'
+              case 'ue5Get': return '#4a4a4a'
+              case 'ue5Branch': return '#8b5a00'
+              default: return '#666'
+            }
+          }}
+          style={{
+            backgroundColor: '#1a1a1a',
+            border: '1px solid #444'
+          }}
+        />
+      </ReactFlow>
+    </div>
+  )
+}
+
+export function JumpPadIntermediateBlueprint() {
+  return (
+    <ReactFlowProvider>
+      <JumpPadIntermediateBlueprintInner />
+    </ReactFlowProvider>
+  )
+}

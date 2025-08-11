@@ -1,15 +1,11 @@
 import { Callout, Steps, Tabs, Code } from 'nextra/components'
 import dynamic from 'next/dynamic'
 
-export const UE5BlueprintNodes = dynamic(
-  () => import('../../../components/UE5BlueprintNodes'),
+export const JumpPadBasicBlueprint = dynamic(
+  () => import('../../../components/UE5BlueprintExamples').then(mod => ({ default: mod.JumpPadBasicBlueprint })),
   { ssr: false }
 )
 
-export const UE5BlueprintLayout = dynamic(
-  () => import('../../../components/UE5BlueprintLayout'),
-  { ssr: false }
-)
 
 # 기본 점프패드 만들기
 
@@ -94,120 +90,7 @@ BP_JumpPad_Basic (Actor)
 
 이제 블루프린트의 핵심인 이벤트 그래프를 구현합니다.
 
-<UE5BlueprintLayout algorithm="smart">
-  {() => {
-    const { 
-      EventNode, 
-      CastNode, 
-      FunctionNode,
-      VariableNode,
-      BranchNode,
-      BasicNode
-    } = UE5BlueprintNodes;
-    
-    const nodes = [
-      {
-        id: 'overlap',
-        type: 'custom',
-        position: { x: 0, y: 0 },
-        data: {
-          render: () => (
-            <EventNode 
-              title="On Component Begin Overlap"
-              subtitle="Box Collision"
-              outputs={[
-                { name: '', type: 'exec' },
-                { name: 'Other Actor', type: 'object' },
-                { name: 'Other Comp', type: 'object' }
-              ]}
-            />
-          )
-        }
-      },
-      {
-        id: 'cast',
-        type: 'custom',
-        position: { x: 300, y: 0 },
-        data: {
-          render: () => (
-            <CastNode
-              title="Cast to Character"
-              inputs={[
-                { name: '', type: 'exec' },
-                { name: 'Object', type: 'object' }
-              ]}
-              outputs={[
-                { name: '', type: 'exec' },
-                { name: 'Cast Failed', type: 'exec' },
-                { name: 'As Character', type: 'object' }
-              ]}
-            />
-          )
-        }
-      },
-      {
-        id: 'launch',
-        type: 'custom',
-        position: { x: 600, y: 0 },
-        data: {
-          render: () => (
-            <FunctionNode
-              title="Launch Character"
-              subtitle="Target is Character"
-              inputs={[
-                { name: '', type: 'exec' },
-                { name: 'Target', type: 'object' },
-                { name: 'Launch Velocity', type: 'vector', value: '0, 0, 1500' },
-                { name: 'XY Override', type: 'boolean', value: 'false' },
-                { name: 'Z Override', type: 'boolean', value: 'true' }
-              ]}
-              outputs={[
-                { name: '', type: 'exec' }
-              ]}
-            />
-          )
-        }
-      }
-    ];
-    
-    const edges = [
-      { 
-        id: 'e1', 
-        source: 'overlap', 
-        target: 'cast',
-        sourceHandle: 'output-0',
-        targetHandle: 'input-0',
-        type: 'exec'
-      },
-      { 
-        id: 'e2', 
-        source: 'overlap', 
-        target: 'cast',
-        sourceHandle: 'output-1',
-        targetHandle: 'input-1',
-        type: 'data'
-      },
-      { 
-        id: 'e3', 
-        source: 'cast', 
-        target: 'launch',
-        sourceHandle: 'output-0',
-        targetHandle: 'input-0',
-        type: 'exec'
-      },
-      { 
-        id: 'e4', 
-        source: 'cast', 
-        target: 'launch',
-        sourceHandle: 'output-2',
-        targetHandle: 'input-1',
-        type: 'data'
-      }
-    ];
-    
-    return { nodes, edges };
-  }}
-</UE5BlueprintLayout>
+<JumpPadBasicBlueprint />
 
 ### 블루프린트 노드 연결 단계별 설명
 
