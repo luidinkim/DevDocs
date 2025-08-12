@@ -215,7 +215,7 @@ export function JumpPadBasicBlueprint() {
     },
     {
       id: '2',
-      type: 'ue5CastNode',
+      type: 'ue5Cast',
       position: { x: 350, y: 100 },
       data: {
         targetClass: 'Character',
@@ -276,7 +276,7 @@ export function JumpPadBasicBlueprint() {
       id: 'e4',
       source: '2',
       target: '3',
-      sourceHandle: 'as',
+      sourceHandle: 'cast-out',
       targetHandle: 'Target',
       type: 'smoothstep',
       style: { strokeWidth: 3, stroke: DataTypeColors.object }
@@ -329,7 +329,7 @@ export function JumpPadIntermediateBlueprint() {
     },
     {
       id: '4',
-      type: 'ue5CastNode',
+      type: 'ue5Cast',
       position: { x: 450, y: 150 },
       data: {
         targetClass: 'Character',
@@ -506,7 +506,7 @@ export function JumpPadIntermediateBlueprint() {
       id: 'e8',
       source: '4',
       target: '9',
-      sourceHandle: 'as',
+      sourceHandle: 'cast-out',
       targetHandle: 'Target',
       type: 'smoothstep',
       style: { strokeWidth: 3, stroke: DataTypeColors.object }
