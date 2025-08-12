@@ -14,8 +14,7 @@ import ReactFlow, {
   EdgeChange,
   ConnectionMode,
   MarkerType,
-  ReactFlowProvider,
-  useReactFlow
+  ReactFlowProvider
 } from 'reactflow'
 import 'reactflow/dist/style.css'
 import { ue5NodeTypes, DataTypeColors } from './UE5BlueprintNodes'
@@ -369,7 +368,7 @@ export function SplineMovementBlueprint() {
     },
     {
       id: '2',
-      type: 'ue5CastNode',
+      type: 'ue5Cast',
       position: { x: 350, y: 150 },
       data: {
         targetClass: 'Character',
@@ -718,7 +717,7 @@ export function PortalOverlapBlueprint() {
     },
     {
       id: '2',
-      type: 'ue5CastNode',
+      type: 'ue5Cast',
       position: { x: 350, y: 200 },
       data: {
         targetClass: 'Character',
@@ -925,7 +924,7 @@ export function CheckpointBlueprint() {
     },
     {
       id: '2',
-      type: 'ue5CastNode',
+      type: 'ue5Cast',
       position: { x: 350, y: 200 },
       data: {
         targetClass: 'Character',

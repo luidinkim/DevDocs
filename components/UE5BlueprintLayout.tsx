@@ -62,6 +62,10 @@ export const getLayoutedElements = (
         width = 200
         height = 160
         break
+      case 'ue5Cast':
+        width = 240
+        height = 180
+        break
     }
     
     dagreGraph.setNode(node.id, { 
@@ -253,108 +257,183 @@ export const getSmartLayout = (
   nodes: Node[],
   edges: Edge[]
 ) => {
+  if (nodes.length === 0) return { nodes, edges }
+  
+  // 노드 크기 정보 수집
+  const nodeSizes = new Map<string, { width: number; height: number }>()
+  nodes.forEach(node => {
+    let width = 240
+    let height = 120
+    
+    switch(node.type) {
+      case 'ue5Event':
+        width = 220
+        height = 100
+        break
+      case 'ue5Function':
+        const inputs = node.data?.inputs?.length || 0
+        const outputs = node.data?.outputs?.length || 0
+        height = 120 + Math.max(inputs, outputs) * 25
+        width = 260
+        break
+      case 'ue5Get':
+        width = 180
+        height = 80
+        break
+      case 'ue5Set':
+        width = 220
+        height = 140
+        break
+      case 'ue5Branch':
+        width = 200
+        height = 160
+        break
+      case 'ue5Cast':
+        width = 240
+        height = 180
+        break
+    }
+    
+    nodeSizes.set(node.id, { width, height })
+  })
+  
   // 실행 흐름과 데이터 흐름 분리
   const executionEdges = edges.filter(e => 
-    e.sourceHandle?.includes('exec') || e.targetHandle?.includes('exec')
-  )
-  const dataEdges = edges.filter(e => 
-    !e.sourceHandle?.includes('exec') && !e.targetHandle?.includes('exec')
+    e.sourceHandle?.includes('exec') || 
+    e.targetHandle?.includes('exec') ||
+    e.sourceHandle === 'true' || 
+    e.sourceHandle === 'false' ||
+    e.targetHandle === 'true' || 
+    e.targetHandle === 'false'
   )
   
   // 메인 실행 경로 찾기
   const mainPath: string[] = []
+  const visited = new Set<string>()
   const eventNode = nodes.find(n => n.type === 'ue5Event')
   
   if (eventNode) {
     mainPath.push(eventNode.id)
+    visited.add(eventNode.id)
     let currentNode = eventNode.id
     
-    // 실행 경로 따라가기
+    // 실행 경로 따라가기 (Branch 노드 처리 포함)
     while (true) {
-      const nextEdge = executionEdges.find(e => e.source === currentNode)
+      const nextEdge = executionEdges.find(e => 
+        e.source === currentNode && !visited.has(e.target)
+      )
       if (!nextEdge) break
       
       mainPath.push(nextEdge.target)
+      visited.add(nextEdge.target)
       currentNode = nextEdge.target
     }
   }
   
+  // 메인 경로가 없으면 첫 번째 노드부터 시작
+  if (mainPath.length === 0 && nodes.length > 0) {
+    mainPath.push(nodes[0].id)
+  }
+  
   // 메인 경로 노드들을 수평으로 배치
   const layoutedNodes: Node[] = []
-  const xSpacing = 350
-  const mainY = 400
+  const processedNodes = new Set<string>()
+  const xSpacing = 320
+  const baseY = 300
   
   mainPath.forEach((nodeId, index) => {
     const node = nodes.find(n => n.id === nodeId)
     if (node) {
+      const size = nodeSizes.get(nodeId) || { width: 240, height: 120 }
       layoutedNodes.push({
         ...node,
         position: {
           x: 50 + index * xSpacing,
-          y: mainY
+          y: baseY - size.height / 2
         },
         targetPosition: Position.Left,
         sourcePosition: Position.Right
       })
+      processedNodes.add(nodeId)
     }
   })
   
-  // 데이터 노드들을 메인 경로 위아래에 배치
-  const dataNodes = nodes.filter(n => !mainPath.includes(n.id))
-  let topOffset = 150
-  let bottomOffset = 150
+  // 데이터 노드들을 연결된 메인 노드 근처에 배치
+  const dataNodes = nodes.filter(n => !processedNodes.has(n.id))
+  const nodeYOffsets = new Map<string, { top: number; bottom: number }>()
+  
+  // 각 메인 노드의 위아래 오프셋 초기화
+  mainPath.forEach(nodeId => {
+    nodeYOffsets.set(nodeId, { top: 120, bottom: 120 })
+  })
   
   dataNodes.forEach(node => {
     // 이 노드가 연결된 메인 경로 노드 찾기
-    const connectedMainNode = edges.find(e => 
+    const connection = edges.find(e => 
       (e.source === node.id && mainPath.includes(e.target)) ||
       (e.target === node.id && mainPath.includes(e.source))
     )
     
-    if (connectedMainNode) {
-      const mainNodeId = mainPath.includes(connectedMainNode.source) 
-        ? connectedMainNode.source 
-        : connectedMainNode.target
+    const nodeSize = nodeSizes.get(node.id) || { width: 240, height: 120 }
+    
+    if (connection) {
+      const mainNodeId = mainPath.includes(connection.source) 
+        ? connection.source 
+        : connection.target
       const mainNodeIndex = mainPath.indexOf(mainNodeId)
       const mainNodeX = 50 + mainNodeIndex * xSpacing
+      const offsets = nodeYOffsets.get(mainNodeId)!
       
-      // GET 노드는 위에, SET 노드는 아래에
+      // GET 노드는 위에, 다른 노드는 아래에 배치
       if (node.type === 'ue5Get') {
         layoutedNodes.push({
           ...node,
           position: {
-            x: mainNodeX,
-            y: mainY - topOffset
+            x: mainNodeX - 50, // 약간 왼쪽에
+            y: baseY - offsets.top - nodeSize.height / 2
           },
           targetPosition: Position.Left,
           sourcePosition: Position.Right
         })
-        topOffset += 100
+        offsets.top += nodeSize.height + 20
       } else {
         layoutedNodes.push({
           ...node,
           position: {
-            x: mainNodeX,
-            y: mainY + bottomOffset
+            x: mainNodeX + 50, // 약간 오른쪽에
+            y: baseY + offsets.bottom - nodeSize.height / 2
           },
           targetPosition: Position.Left,
           sourcePosition: Position.Right
         })
-        bottomOffset += 100
+        offsets.bottom += nodeSize.height + 20
       }
-    } else {
-      // 연결되지 않은 노드는 오른쪽 끝에
+      processedNodes.add(node.id)
+    }
+  })
+  
+  // 남은 노드들을 격자로 배치
+  const remainingNodes = nodes.filter(n => !processedNodes.has(n.id))
+  if (remainingNodes.length > 0) {
+    const startX = 50 + Math.max(mainPath.length, 3) * xSpacing
+    const gridCols = 3
+    
+    remainingNodes.forEach((node, index) => {
+      const row = Math.floor(index / gridCols)
+      const col = index % gridCols
+      const nodeSize = nodeSizes.get(node.id) || { width: 240, height: 120 }
+      
       layoutedNodes.push({
         ...node,
         position: {
-          x: 50 + mainPath.length * xSpacing,
-          y: mainY + (topOffset - bottomOffset)
+          x: startX + col * 280,
+          y: 100 + row * 180
         },
         targetPosition: Position.Left,
         sourcePosition: Position.Right
       })
-    }
-  })
+    })
+  }
   
   return { nodes: layoutedNodes, edges }
 }
