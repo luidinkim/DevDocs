@@ -4,8 +4,7 @@ description: "언리얼 엔진 5에서 점프맵 게임모드를 처음부터 �
 ---
 
 import { Callout, Steps, Tabs, Cards, Card } from 'nextra/components'
-import { Code, Gamepad2, Timer, Trophy, Coins } from 'lucide-react'
-import { LinkCard } from '@/components/link-card'
+import { LinkCard } from '../../../components/LinkCard'
 
 # 🎮 점프맵 게임모드 완전 구현 가이드
 
@@ -51,16 +50,16 @@ graph TB
 ## 📋 주요 기능
 
 <Cards>
-  <Card icon={<Timer className="w-4 h-4" />} title="타이머 시스템" href="/unreal/jumpmap/game-mode">
+  <Card title="⏱️ 타이머 시스템" href="/unreal/jumpmap/game-mode">
     실시간 타이머와 시간 기반 점수 계산
   </Card>
-  <Card icon={<Coins className="w-4 h-4" />} title="코인 수집" href="/unreal/jumpmap/actors">
+  <Card title="💰 코인 수집" href="/unreal/jumpmap/actors">
     수집 가능한 코인과 점수 시스템
   </Card>
-  <Card icon={<Trophy className="w-4 h-4" />} title="점수 시스템" href="/unreal/jumpmap/player-state">
+  <Card title="🏆 점수 시스템" href="/unreal/jumpmap/player-state">
     다양한 보너스와 점수 계산 로직
   </Card>
-  <Card icon={<Gamepad2 className="w-4 h-4" />} title="게임 플로우" href="/unreal/jumpmap/game-mode">
+  <Card title="🎮 게임 플로우" href="/unreal/jumpmap/game-mode">
     시작, 진행, 종료까지의 완전한 게임 사이클
   </Card>
 </Cards>

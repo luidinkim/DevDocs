@@ -4,9 +4,7 @@ description: "점프맵의 핵심 게임 로직과 상태 관리 시스템 구�
 ---
 
 import { Callout, Steps, Tabs, FileTree } from 'nextra/components'
-import { Code, Settings, Timer, Trophy } from 'lucide-react'
-import { LinkCard } from '@/components/link-card'
-import BlueprintExample_New from '@/components/blueprint-example-new'
+import { LinkCard } from '../../../components/LinkCard'
 
 # 📊 Game Mode & Game State 구현
 
@@ -99,10 +97,8 @@ graph LR
 
 #### StartGame 함수
 
-<BlueprintExample_New
-  title="StartGame Function"
-  description="게임 시작 로직을 처리하는 함수"
-  code={`Function: StartGame
+```cpp
+Function: StartGame
 ├─ Input: None
 ├─ Output: None
 │
@@ -113,25 +109,13 @@ graph LR
     4. Get Player Controller → Set Input Mode Game Only
     5. Teleport Player to StartZone Location
     6. Play Sound 2D "GameStart"
-    7. Update HUD → Show "Game Started!"`}
-  nodes={[
-    { type: "event", label: "StartGame" },
-    { type: "setter", label: "Set bIsGameActive" },
-    { type: "function", label: "Reset Player Score" },
-    { type: "function", label: "Start Timer" },
-    { type: "function", label: "Set Input Mode" },
-    { type: "function", label: "Teleport Player" },
-    { type: "function", label: "Play Sound 2D" },
-    { type: "function", label: "Update HUD" }
-  ]}
-/>
+    7. Update HUD → Show "Game Started!"
+```
 
 #### EndGame 함수
 
-<BlueprintExample_New
-  title="EndGame Function"
-  description="게임 종료 처리를 담당하는 함수"
-  code={`Function: EndGame
+```cpp
+Function: EndGame
 ├─ Input: bCompleted (Boolean)
 ├─ Output: None
 │
@@ -143,19 +127,8 @@ graph LR
     5. Create Results Widget
     6. Add to Viewport
     7. Set bIsGameActive = False
-    8. Play End Sound (Victory/Defeat)`}
-  nodes={[
-    { type: "function", label: "EndGame", color: "blue" },
-    { type: "function", label: "Stop Timer" },
-    { type: "getter", label: "Get Final Time" },
-    { type: "function", label: "Calculate Final Score" },
-    { type: "function", label: "Save Game Data" },
-    { type: "function", label: "Create Widget" },
-    { type: "function", label: "Add to Viewport" },
-    { type: "setter", label: "Set bIsGameActive" },
-    { type: "function", label: "Play Sound" }
-  ]}
-/>
+    8. Play End Sound (Victory/Defeat)
+```
 
 #### CalculateFinalScore 함수
 
@@ -253,10 +226,8 @@ graph TB
     I --> J[Broadcast OnTimerStarted]
 ```
 
-<BlueprintExample_New
-  title="StartTimer Function"
-  description="타이머를 시작하고 초기화하는 함수"
-  code={`Function: StartTimer
+```cpp
+Function: StartTimer
 │
 ├─ Set bIsTimerActive = True
 ├─ ElapsedTime = 0.0
@@ -264,22 +235,13 @@ graph TB
 │   ├─ Event: UpdateTimer
 │   ├─ Time: 0.01
 │   └─ Looping: True
-└─ Event Dispatcher: OnTimerStarted (Broadcast)`}
-  nodes={[
-    { type: "function", label: "StartTimer", color: "blue" },
-    { type: "setter", label: "Set bIsTimerActive" },
-    { type: "setter", label: "Set ElapsedTime" },
-    { type: "function", label: "Set Timer by Event" },
-    { type: "event", label: "Event Dispatcher" }
-  ]}
-/>
+└─ Event Dispatcher: OnTimerStarted (Broadcast)
+```
 
 #### UpdateTimer 이벤트
 
-<BlueprintExample_New
-  title="UpdateTimer Event"
-  description="매 프레임마다 타이머를 업데이트하는 이벤트"
-  code={`Custom Event: UpdateTimer
+```cpp
+Custom Event: UpdateTimer
 │
 ├─ Branch: bIsTimerActive?
 │   └─ False → Return
@@ -292,16 +254,8 @@ graph TB
 │   └─ True → Call GameMode->TimeOut()
 │
 └─ Update Replicated Time (if Multiplayer)
-    └─ Rep_ElapsedTime = ElapsedTime`}
-  nodes={[
-    { type: "event", label: "UpdateTimer", color: "red" },
-    { type: "branch", label: "Is Timer Active?" },
-    { type: "math", label: "Add Delta Time" },
-    { type: "function", label: "Update Timer Display" },
-    { type: "branch", label: "Check Time Limit" },
-    { type: "setter", label: "Update Replicated Time" }
-  ]}
-/>
+    └─ Rep_ElapsedTime = ElapsedTime
+```
 
 #### StopTimer 함수
 

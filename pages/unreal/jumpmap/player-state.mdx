@@ -4,9 +4,7 @@ description: "플레이어 제어와 상태 관리 시스템 구현"
 ---
 
 import { Callout, Steps, Tabs, Card } from 'nextra/components'
-import { User, Gamepad2, Trophy, BarChart3 } from 'lucide-react'
-import { LinkCard } from '@/components/link-card'
-import BlueprintExample_New from '@/components/blueprint-example-new'
+import { LinkCard } from '../../../components/LinkCard'
 
 # 👤 Player Controller & Player State 구현
 
@@ -83,10 +81,8 @@ graph LR
     H --> I[Set Input Mode]
 ```
 
-<BlueprintExample_New
-  title="BeginPlay Event"
-  description="Player Controller 초기화 로직"
-  code={`Event BeginPlay
+```cpp
+Event BeginPlay
 │
 ├─ Super BeginPlay
 │
@@ -101,19 +97,8 @@ graph LR
 │   └─ Add to Viewport (Z-Order: 0)
 │
 └─ Set Input Mode Game Only
-    └─ Flush Input`}
-  nodes={[
-    { type: "event", label: "BeginPlay", color: "red" },
-    { type: "function", label: "Super BeginPlay" },
-    { type: "getter", label: "Get Game Mode" },
-    { type: "cast", label: "Cast to GM_JumpMap" },
-    { type: "getter", label: "Get Player State" },
-    { type: "cast", label: "Cast to PS_JumpMap" },
-    { type: "function", label: "Create Widget" },
-    { type: "function", label: "Add to Viewport" },
-    { type: "function", label: "Set Input Mode" }
-  ]}
-/>
+    └─ Flush Input
+```
 
 #### Input Actions 설정
 

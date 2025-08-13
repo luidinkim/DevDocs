@@ -3,10 +3,8 @@ title: "Save System & 추가 기능"
 description: "게임 저장 시스템과 고급 기능 구현"
 ---
 
-import { Callout, Steps, Tabs, Card } from 'nextra/components'
-import { Save, Trophy, Zap, Settings } from 'lucide-react'
-import { LinkCard } from '@/components/link-card'
-import BlueprintExample_New from '@/components/blueprint-example-new'
+import { Callout, Steps, Tabs, Card, Cards } from 'nextra/components'
+import { LinkCard } from '../../../components/LinkCard'
 
 # 💾 Save System & 추가 기능
 
@@ -601,16 +599,16 @@ Function UnlockAchievement(Achievement: FAchievement)
 ### 게임 모드 종류
 
 <Cards>
-  <Card title="Classic Mode" icon={<Trophy />}>
+  <Card title="🏆 Classic Mode">
     기본 점프맵 게임플레이
   </Card>
-  <Card title="Time Attack" icon={<Zap />}>
+  <Card title="⚡ Time Attack">
     시간 제한 속도 도전
   </Card>
-  <Card title="Survival Mode" icon={<Settings />}>
+  <Card title="⚙️ Survival Mode">
     끝없는 도전, 점진적 난이도
   </Card>
-  <Card title="Multiplayer Race" icon={<Save />}>
+  <Card title="💾 Multiplayer Race">
     실시간 멀티플레이어 경쟁
   </Card>
 </Cards>
