@@ -1,0 +1,519 @@
+import { Callout, Steps, Tabs, Code } from 'nextra/components'
+
+# UI/HUD 시스템 구현
+
+<Callout type="info" emoji="📊">
+  사용자 인터페이스는 게임 정보를 시각적으로 전달하는 핵심 요소입니다.
+  HUD, 메뉴, 결과 화면 등 완전한 UI 시스템을 구현합니다.
+</Callout>
+
+## 🎨 메인 HUD 위젯
+
+### HUD 위젯 생성
+
+<Steps>
+
+### Widget Blueprint 생성
+
+1. Content Browser → **User Interface** → **Widget Blueprint**
+2. 이름: `WBP_JumpMapHUD`
+3. 폴더: `Content/Blueprints/UI/`
+
+### 캔버스 구조
+
+```
+Canvas Panel
+├── Top Bar (Horizontal Box)
+│   ├── Timer Display
+│   ├── Spacer
+│   └── Score Display
+├── Left Side (Vertical Box)
+│   ├── Coins Counter
+│   ├── Lives Display
+│   └── Power-up Status
+├── Right Side (Vertical Box)
+│   ├── Minimap
+│   └── Objectives List
+├── Bottom Center
+│   ├── Combo Display
+│   └── Speed Indicator
+└── Center (Notifications)
+    └── Achievement Popup
+```
+
+</Steps>
+
+### 타이머 디스플레이
+
+<Code language="blueprint">
+Widget Structure:
+├── Horizontal Box
+│   ├── Icon (Clock Image)
+│   ├── Time Text (Bind)
+│   └── Best Time (Smaller)
+└── Progress Bar (Optional)
+
+Binding Function: GetFormattedTime
+├── Get Game Mode
+├── Get Current Game Time
+├── Format: MM:SS.MS
+├── Color Code:
+│   ├── Green: < 50% of limit
+│   ├── Yellow: 50-80% of limit
+│   └── Red: > 80% of limit
+└── Return Formatted String
+</Code>
+
+### 스코어 시스템
+
+<Tabs items={['점수 표시', '코인 카운터', '콤보 시스템']}>
+  <Tabs.Tab>
+    **점수 디스플레이**
+    
+    ```blueprint
+    Widget Components:
+    ├── Score Label ("SCORE")
+    ├── Current Score (Large)
+    ├── Score Addition (+100)
+    └── Animation
+    
+    Update Function:
+    ├── Get New Score Value
+    ├── Show Difference (+X)
+    ├── Play Scale Animation
+    ├── Update Number (Lerp)
+    └── Flash on Milestone
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **코인 카운터**
+    
+    ```blueprint
+    Widget Components:
+    ├── Coin Icon (Image)
+    ├── Current/Total Text
+    ├── Progress Bar
+    └── Shine Effect
+    
+    Format: "12 / 50"
+    
+    Animation:
+    ├── Coin Collected
+    ├── Icon Bounce
+    ├── Number Increment
+    └── Bar Fill
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **콤보 디스플레이**
+    
+    ```blueprint
+    Widget Components:
+    ├── Combo Text ("x5 COMBO!")
+    ├── Combo Timer Bar
+    ├── Multiplier Display
+    └── Fire Effect (High Combo)
+    
+    Visibility Logic:
+    ├── Show when Combo > 1
+    ├── Pulse with beat
+    ├── Grow with combo
+    └── Explode on break
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## 📋 메뉴 시스템
+
+### 메인 메뉴
+
+<Steps>
+
+### 메인 메뉴 위젯 생성
+
+1. Create `WBP_MainMenu`
+2. 전체 화면 캔버스
+3. 배경 이미지/비디오
+
+### 메뉴 구조
+
+<Code language="blueprint">
+Main Menu Layout:
+├── Title Section
+│   ├── Game Logo
+│   ├── Version Text
+│   └── Animated BG
+├── Button List (Vertical)
+│   ├── Play Button
+│   ├── Level Select
+│   ├── Options
+│   ├── Leaderboard
+│   └── Quit
+├── Player Info (Corner)
+│   ├── Player Name
+│   ├── Best Time
+│   └── Total Coins
+└── News/Updates Panel
+</Code>
+
+</Steps>
+
+### 일시정지 메뉴
+
+<Code language="blueprint">
+WBP_PauseMenu:
+├── Background Blur
+├── Menu Container
+│   ├── "PAUSED" Title
+│   ├── Resume Button
+│   ├── Restart Button
+│   ├── Options Button
+│   └── Main Menu Button
+├── Current Stats
+│   ├── Time Elapsed
+│   ├── Coins Collected
+│   └── Current Score
+└── Controls Display
+</Code>
+
+### 옵션 메뉴
+
+<Tabs items={['게임플레이', '비디오', '오디오', '컨트롤']}>
+  <Tabs.Tab>
+    ```blueprint
+    Gameplay Settings:
+    ├── Difficulty Selector
+    ├── Show Timer Toggle
+    ├── Show Hints Toggle
+    ├── Auto-Save Toggle
+    ├── Ghost Mode Toggle
+    └── Reset Progress Button
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```blueprint
+    Video Settings:
+    ├── Resolution Dropdown
+    ├── Window Mode
+    ├── Quality Presets
+    ├── VSync Toggle
+    ├── FPS Limit
+    ├── Brightness Slider
+    └── Apply Button
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```blueprint
+    Audio Settings:
+    ├── Master Volume
+    ├── Music Volume
+    ├── SFX Volume
+    ├── Voice Volume
+    ├── Audio Device
+    └── Test Sound Button
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```blueprint
+    Control Settings:
+    ├── Mouse Sensitivity
+    ├── Invert Y-Axis
+    ├── Key Bindings List
+    ├── Controller Layout
+    ├── Vibration Toggle
+    └── Reset Defaults
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## 🏆 결과 화면
+
+### 레벨 완료 화면
+
+<Code language="blueprint">
+WBP_LevelComplete:
+├── Victory Animation
+│   ├── Stars (1-3)
+│   ├── Confetti
+│   └── Glow Effects
+├── Statistics Grid
+│   ├── Completion Time
+│   ├── Coins: X/Y
+│   ├── Deaths: N
+│   ├── Secret Areas: X/Y
+│   └── Final Score
+├── Rank Display
+│   ├── Letter Grade (S-F)
+│   ├── Rank Progress Bar
+│   └── Next Rank Requirement
+├── Buttons
+│   ├── Next Level
+│   ├── Replay
+│   ├── Share Score
+│   └── Main Menu
+└── Leaderboard Preview
+</Code>
+
+### 순위표 시스템
+
+<Code language="blueprint">
+WBP_Leaderboard:
+├── Tab Selection
+│   ├── Global
+│   ├── Friends
+│   └── Personal Best
+├── Leaderboard List
+│   ├── Rank Column
+│   ├── Player Name
+│   ├── Time/Score
+│   ├── Date
+│   └── Replay Button
+├── Filters
+│   ├── Time Period
+│   ├── Level Select
+│   └── Category
+└── Player Highlight
+    └── Current Position
+</Code>
+
+## 🔔 알림 시스템
+
+### 업적 팝업
+
+<Code language="blueprint">
+Achievement Notification:
+├── Slide In Animation
+├── Achievement Icon
+├── Title ("Achievement Unlocked!")
+├── Description
+├── Points/Reward
+├── Auto-Dismiss (3s)
+└── Queue System
+</Code>
+
+### 게임 내 알림
+
+<Tabs items={['체크포인트', '파워업', '경고', '힌트']}>
+  <Tabs.Tab>
+    ```blueprint
+    Checkpoint Notification:
+    ├── "Checkpoint Reached!"
+    ├── Checkpoint Number
+    ├── Icon Animation
+    └── Sound Effect
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```blueprint
+    Power-up Notification:
+    ├── Power-up Name
+    ├── Duration Bar
+    ├── Icon
+    ├── Effect Description
+    └── Countdown Timer
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```blueprint
+    Warning Messages:
+    ├── "Time Running Low!"
+    ├── "Wrong Way!"
+    ├── "Fall Damage!"
+    ├── Red Flash
+    └── Warning Sound
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```blueprint
+    Hint System:
+    ├── Context Tips
+    ├── Control Hints
+    ├── Secret Hints
+    ├── Fade In/Out
+    └── Dismiss Option
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## 🎮 특수 UI 요소
+
+### 미니맵
+
+<Code language="blueprint">
+Minimap Implementation:
+├── Render Target Setup
+│   ├── Top-Down Camera
+│   ├── 256x256 Texture
+│   └── Update Rate: 10fps
+├── Display Widget
+│   ├── Circular Mask
+│   ├── Player Indicator
+│   ├── Objective Markers
+│   └── Zoom Controls
+└── Features
+    ├── Rotate with Player
+    ├── Show Collectibles
+    └── Fog of War
+</Code>
+
+### 스피드 인디케이터
+
+<Code language="blueprint">
+Speed Indicator:
+├── Visual Elements
+│   ├── Speed Lines
+│   ├── Motion Blur
+│   └── FOV Change
+├── Speedometer
+│   ├── Current Speed
+│   ├── Max Speed
+│   └── Speed Gauge
+└── Boost Indicator
+    ├── Boost Available
+    └── Cooldown Timer
+</Code>
+
+## 🔄 UI 애니메이션
+
+### 위젯 애니메이션
+
+<Steps>
+
+### 애니메이션 생성
+
+1. Widget Designer에서 **Animations** 탭
+2. **+ Animation** 클릭
+3. 타임라인에서 키프레임 설정
+
+### 공통 애니메이션
+
+```blueprint
+Fade In/Out:
+├── Opacity: 0 → 1
+├── Duration: 0.3s
+└── Curve: Ease In/Out
+
+Scale Bounce:
+├── Scale: 1 → 1.2 → 1
+├── Duration: 0.5s
+└── Curve: Elastic
+
+Slide In:
+├── Position: Off-screen → Target
+├── Duration: 0.4s
+└── Curve: Ease Out
+```
+
+</Steps>
+
+### 트랜지션 효과
+
+<Code language="blueprint">
+Screen Transitions:
+├── Fade to Black
+│   ├── Duration: 0.5s
+│   ├── Hold: 0.2s
+│   └── Fade In: 0.5s
+├── Slide Transition
+│   ├── Direction: Any
+│   └── Duration: 0.3s
+└── Zoom Transition
+    ├── Scale: 1 → 10
+    └── Blur: 0 → 1
+</Code>
+
+## 📱 반응형 UI
+
+### 스케일링 설정
+
+<Callout type="tip" emoji="📐">
+  다양한 화면 크기에 대응하는 반응형 UI를 만듭니다.
+</Callout>
+
+```blueprint
+DPI Scaling:
+├── Scale Rule: Shortest Side
+├── Scale Curve: 1.0
+└── Reference Resolution: 1920x1080
+
+Anchor Presets:
+├── Top Elements: Top Center
+├── Score/Timer: Top Corners
+├── Buttons: Center
+└── Minimap: Bottom Right
+```
+
+## 🎨 UI 스타일 가이드
+
+### 색상 팔레트
+
+```blueprint
+Primary Colors:
+├── Blue: #3498DB (Main)
+├── Green: #2ECC71 (Success)
+├── Red: #E74C3C (Danger)
+└── Yellow: #F39C12 (Warning)
+
+UI Colors:
+├── Background: #2C3E50
+├── Text: #ECF0F1
+├── Accent: #9B59B6
+└── Disabled: #7F8C8D
+```
+
+### 폰트 설정
+
+```blueprint
+Font Hierarchy:
+├── Title: Bold 48pt
+├── Heading: Regular 32pt
+├── Body: Regular 18pt
+├── Caption: Light 14pt
+└── Button: Bold 20pt
+```
+
+## 🐛 UI 디버깅
+
+### 디버그 오버레이
+
+<Code language="blueprint">
+Debug HUD Elements:
+├── FPS Counter
+├── Ping Display
+├── Position Coords
+├── Velocity Vector
+├── Input Display
+├── Collision Info
+└── Performance Stats
+</Code>
+
+## ✅ 구현 체크리스트
+
+- ✅ 메인 HUD 위젯
+- ✅ 타이머 및 점수 시스템
+- ✅ 메인 메뉴
+- ✅ 일시정지 메뉴
+- ✅ 옵션 메뉴
+- ✅ 결과 화면
+- ✅ 순위표
+- ✅ 알림 시스템
+- ✅ 특수 UI 요소
+- ✅ 애니메이션
+- ✅ 반응형 설정
+
+## 🚀 다음 단계
+
+<Callout type="success" emoji="💾">
+  UI 시스템이 완성되었습니다!
+  이제 세이브 시스템을 구현해봅시다.
+</Callout>
+
+[세이브 시스템 구현하기 →](/unreal-engine-5/jumpmap-gamemode/save-system)

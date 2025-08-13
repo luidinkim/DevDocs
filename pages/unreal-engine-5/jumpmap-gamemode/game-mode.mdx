@@ -1,0 +1,363 @@
+import { Callout, Steps, Tabs, Code } from 'nextra/components'
+
+# 게임모드 & 게임스테이트 구현
+
+<Callout type="info" emoji="🎯">
+  게임모드는 게임의 규칙을 정의하고, 게임스테이트는 현재 게임 상태를 관리합니다.
+  이 두 시스템이 점프맵 게임의 핵심입니다.
+</Callout>
+
+## 📋 Game Mode 생성
+
+### 블루프린트 클래스 생성
+
+<Steps>
+
+### Game Mode Base 상속
+
+1. Content Browser에서 우클릭
+2. **Blueprint Class** 선택
+3. **Game Mode Base** 검색 및 선택
+4. 이름: `BP_JumpMapGameMode`
+5. 폴더: `Content/Blueprints/GameMode/`
+
+### 기본 설정
+
+Details 패널에서 설정:
+- **Default Pawn Class**: ThirdPersonCharacter
+- **Player Controller Class**: 나중에 생성할 커스텀 컨트롤러
+- **Game State Class**: 나중에 생성할 커스텀 스테이트
+- **Player State Class**: 나중에 생성할 커스텀 스테이트
+
+</Steps>
+
+## 🎮 Game Mode 변수 설정
+
+### 필수 변수 추가
+
+<Tabs items={['게임 설정', '시간 관리', '점수 시스템']}>
+  <Tabs.Tab>
+    **게임 설정 변수**
+    
+    ```
+    변수명: GameDifficulty
+    타입: Enum (Easy, Normal, Hard)
+    기본값: Normal
+    설명: 게임 난이도 설정
+    
+    변수명: MaxPlayers
+    타입: Integer
+    기본값: 1
+    설명: 최대 플레이어 수
+    
+    변수명: IsGameActive
+    타입: Boolean
+    기본값: False
+    설명: 게임 진행 상태
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **시간 관리 변수**
+    
+    ```
+    변수명: TimeLimit
+    타입: Float
+    기본값: 300.0 (5분)
+    설명: 게임 제한 시간
+    
+    변수명: CurrentGameTime
+    타입: Float
+    기본값: 0.0
+    설명: 현재 게임 시간
+    
+    변수명: BestTime
+    타입: Float
+    기본값: 999999.0
+    설명: 최고 기록
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **점수 시스템 변수**
+    
+    ```
+    변수명: CoinValue
+    타입: Integer
+    기본값: 10
+    설명: 코인 1개 점수
+    
+    변수명: TimeBonus
+    타입: Integer
+    기본값: 100
+    설명: 시간 보너스 점수
+    
+    변수명: CompletionBonus
+    타입: Integer
+    기본값: 500
+    설명: 완주 보너스
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## 📊 Event Graph 구현
+
+### Begin Play 이벤트
+
+게임 시작 시 초기화 로직:
+
+<Code language="blueprint">
+Event BeginPlay
+├── Super: BeginPlay (부모 클래스 호출)
+├── Set IsGameActive: False
+├── Set CurrentGameTime: 0.0
+├── Load Best Time from Save Game
+├── Initialize HUD
+└── Setup Game Rules
+</Code>
+
+### 게임 시작 함수
+
+<Code language="blueprint">
+Custom Event: StartGame
+├── Set IsGameActive: True
+├── Set CurrentGameTime: 0.0
+├── Reset All Coins
+├── Spawn Player at Start Zone
+├── Start Timer (Set Timer by Event)
+│   ├── Event: UpdateGameTime
+│   ├── Time: 0.1
+│   └── Looping: True
+└── Update HUD (Game Started)
+</Code>
+
+### 게임 종료 함수
+
+<Code language="blueprint">
+Custom Event: EndGame
+├── Set IsGameActive: False
+├── Stop Timer (Clear Timer by Handle)
+├── Calculate Final Score
+│   ├── Base Score = Coins Collected × CoinValue
+│   ├── Time Bonus = (TimeLimit - CurrentGameTime) × TimeBonus
+│   └── Total = Base + Time Bonus + CompletionBonus
+├── Save Best Time (if better)
+├── Show Results UI
+└── Trigger Celebration Effects
+</Code>
+
+## 🌐 Game State 생성
+
+### Game State Base 상속
+
+<Steps>
+
+### 블루프린트 생성
+
+1. **Blueprint Class** → **Game State Base**
+2. 이름: `BP_JumpMapGameState`
+3. 폴더: `Content/Blueprints/GameMode/`
+
+### 변수 추가
+
+게임 전체 상태를 관리할 변수들:
+
+```
+변수명: TotalCoinsInLevel
+타입: Integer
+설명: 레벨의 전체 코인 수
+
+변수명: CoinsCollected
+타입: Integer
+설명: 수집한 코인 수
+
+변수명: PlayerScores
+타입: Map (PlayerState to Integer)
+설명: 플레이어별 점수
+
+변수명: LeaderboardData
+타입: Array of Struct_LeaderboardEntry
+설명: 순위표 데이터
+```
+
+</Steps>
+
+## 🎯 핵심 함수 구현
+
+### 코인 수집 처리
+
+<Code language="blueprint">
+Function: OnCoinCollected
+입력:
+├── PlayerState (Player State Reference)
+└── CoinValue (Integer)
+
+실행:
+├── CoinsCollected++
+├── Get Player Score from Map
+├── Add CoinValue to Score
+├── Update Map with New Score
+├── Update HUD
+└── Check Achievement Progress
+</Code>
+
+### 타이머 업데이트
+
+<Code language="blueprint">
+Function: UpdateGameTime
+실행:
+├── If (IsGameActive)
+│   ├── CurrentGameTime += 0.1
+│   ├── Update HUD Timer Display
+│   ├── Check Time Limit
+│   │   └── If (CurrentGameTime >= TimeLimit)
+│   │       └── Call: GameOver (Time Out)
+│   └── Update Ghost Player Position (if enabled)
+└── Return
+</Code>
+
+### 순위표 업데이트
+
+<Code language="blueprint">
+Function: UpdateLeaderboard
+입력:
+├── PlayerName (String)
+├── Score (Integer)
+└── Time (Float)
+
+실행:
+├── Create LeaderboardEntry Struct
+├── Add to LeaderboardData Array
+├── Sort Array by Score (Descending)
+├── Limit to Top 10
+├── Save to File
+└── Broadcast Update Event
+</Code>
+
+## 🔧 World Settings 설정
+
+### Game Mode 적용
+
+<Steps>
+
+### World Settings 열기
+
+1. 레벨 에디터에서 **Window** → **World Settings**
+2. 또는 툴바의 **Settings** → **World Settings**
+
+### Game Mode Override 설정
+
+1. **Game Mode** 섹션 찾기
+2. **GameMode Override**: `BP_JumpMapGameMode` 선택
+3. 자동으로 연결되는 클래스들 확인
+
+</Steps>
+
+## 💾 Save Game 시스템 연동
+
+### Save Game 객체 생성
+
+<Code language="blueprint">
+Blueprint Class: SaveGame
+이름: BP_JumpMapSaveGame
+
+변수:
+├── BestTimes: Map (String to Float)
+├── TotalCoinsCollected: Integer
+├── UnlockedLevels: Array of String
+└── PlayerSettings: Struct_PlayerSettings
+</Code>
+
+### 저장 함수
+
+<Code language="blueprint">
+Function: SaveGameData
+실행:
+├── Create Save Game Object
+├── Set Best Time
+├── Set Total Coins
+├── Set Unlocked Levels
+├── Save Game to Slot
+│   ├── Slot Name: "JumpMapSave"
+│   └── User Index: 0
+└── Print: "Game Saved Successfully"
+</Code>
+
+## 🎨 디버그 및 테스트
+
+### 디버그 표시 설정
+
+<Callout type="tip" emoji="💡">
+  개발 중에는 디버그 정보를 화면에 표시하여 쉽게 테스트할 수 있습니다.
+</Callout>
+
+<Code language="blueprint">
+Custom Event: ToggleDebugDisplay
+├── Branch (Is Debug Mode)
+│   ├── True: Hide Debug Info
+│   └── False: Show Debug Info
+└── Update Debug Variables
+    ├── Show Current Time
+    ├── Show Coins Collected
+    ├── Show Player Position
+    └── Show Current Score
+</Code>
+
+### 치트 명령어
+
+개발용 치트 명령어 구현:
+
+<Tabs items={['시간 조작', '점수 조작', '위치 이동']}>
+  <Tabs.Tab>
+    ```blueprint
+    Console Command: "jumpmap.addtime 30"
+    → Add 30 seconds to timer
+    
+    Console Command: "jumpmap.settime 0"
+    → Reset timer to 0
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```blueprint
+    Console Command: "jumpmap.addcoins 10"
+    → Add 10 coins to score
+    
+    Console Command: "jumpmap.setscore 1000"
+    → Set score to 1000
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```blueprint
+    Console Command: "jumpmap.teleport end"
+    → Teleport to end zone
+    
+    Console Command: "jumpmap.teleport start"
+    → Teleport to start zone
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## 📝 체크리스트
+
+구현 완료 확인:
+
+- ✅ Game Mode 블루프린트 생성
+- ✅ Game State 블루프린트 생성
+- ✅ 필수 변수 모두 추가
+- ✅ 게임 시작/종료 로직 구현
+- ✅ 타이머 시스템 작동
+- ✅ 점수 계산 로직 완성
+- ✅ World Settings에 Game Mode 적용
+- ✅ Save/Load 시스템 연동
+- ✅ 디버그 모드 구현
+
+## 🚀 다음 단계
+
+<Callout type="success" emoji="✨">
+  Game Mode와 Game State 구현이 완료되었습니다!
+  이제 플레이어 컨트롤러와 스테이트를 구현해봅시다.
+</Callout>
+
+[플레이어 시스템 구현하기 →](/unreal-engine-5/jumpmap-gamemode/player-controller)

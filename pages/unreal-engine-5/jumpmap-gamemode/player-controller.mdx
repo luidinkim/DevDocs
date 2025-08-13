@@ -1,0 +1,414 @@
+import { Callout, Steps, Tabs, Code } from 'nextra/components'
+
+# 플레이어 컨트롤러 & 플레이어 스테이트
+
+<Callout type="info" emoji="🎮">
+  플레이어 컨트롤러는 입력을 처리하고, 플레이어 스테이트는 개별 플레이어의 데이터를 저장합니다.
+  이 두 시스템이 함께 작동하여 플레이어 경험을 만듭니다.
+</Callout>
+
+## 🎮 Player Controller 생성
+
+### 블루프린트 클래스 생성
+
+<Steps>
+
+### Player Controller 상속
+
+1. Content Browser → **Blueprint Class**
+2. **Player Controller** 검색 및 선택
+3. 이름: `BP_JumpMapPlayerController`
+4. 폴더: `Content/Blueprints/Player/`
+
+### 기본 설정
+
+Class Defaults에서:
+- **Show Mouse Cursor**: True (메뉴용)
+- **Enable Click Events**: True
+- **Enable Mouse Over Events**: True
+- **Default Mouse Cursor**: Default
+
+</Steps>
+
+## 📱 입력 시스템 설정
+
+### Enhanced Input 설정
+
+<Callout type="tip" emoji="💡">
+  UE5의 Enhanced Input System을 사용하여 더 유연한 입력 처리를 구현합니다.
+</Callout>
+
+<Steps>
+
+### Input Actions 생성
+
+`Content/Input/Actions/` 폴더에 생성:
+
+```
+IA_Jump - 점프 액션
+IA_Move - 이동 액션  
+IA_Look - 카메라 회전
+IA_Sprint - 달리기
+IA_Pause - 일시정지
+IA_Restart - 재시작
+```
+
+### Input Mapping Context 생성
+
+`Content/Input/` 폴더에 `IMC_JumpMap` 생성:
+
+```
+Jump - Space/Gamepad Face Button Bottom
+Move - WASD/Left Stick
+Look - Mouse/Right Stick
+Sprint - Left Shift/Left Trigger
+Pause - Escape/Start Button
+Restart - R/Select Button
+```
+
+</Steps>
+
+### 입력 처리 구현
+
+<Code language="blueprint">
+Event BeginPlay
+├── Get Enhanced Input Subsystem
+├── Add Mapping Context (IMC_JumpMap)
+├── Setup HUD Widget
+└── Initialize Player Settings
+
+Event: IA_Jump
+├── Branch (Can Player Jump?)
+│   ├── True: Character->Jump()
+│   └── False: Play Denied Sound
+└── Update Jump Count
+
+Event: IA_Pause
+├── Flip Flop
+│   ├── A: Pause Game
+│   │   ├── Set Game Paused: True
+│   │   ├── Show Pause Menu
+│   │   └── Set Input Mode: UI Only
+│   └── B: Resume Game
+│       ├── Set Game Paused: False
+│       ├── Hide Pause Menu
+│       └── Set Input Mode: Game Only
+</Code>
+
+## 👤 Player State 생성
+
+### Player State 클래스
+
+<Steps>
+
+### 블루프린트 생성
+
+1. **Blueprint Class** → **Player State**
+2. 이름: `BP_JumpMapPlayerState`
+3. 폴더: `Content/Blueprints/Player/`
+
+### 플레이어 데이터 변수
+
+```
+변수명: PlayerName
+타입: String
+설명: 플레이어 이름
+
+변수명: CurrentScore
+타입: Integer
+설명: 현재 점수
+
+변수명: CoinsCollected
+타입: Integer
+설명: 수집한 코인 수
+
+변수명: DeathCount
+타입: Integer
+설명: 죽은 횟수
+
+변수명: CheckpointIndex
+타입: Integer
+설명: 현재 체크포인트
+
+변수명: PersonalBestTime
+타입: Float
+설명: 개인 최고 기록
+```
+
+</Steps>
+
+## 🎯 핵심 기능 구현
+
+### 체크포인트 시스템
+
+<Code language="blueprint">
+Function: SetCheckpoint
+입력:
+├── CheckpointActor (Actor Reference)
+└── CheckpointIndex (Integer)
+
+실행:
+├── Save Current Position
+├── Update CheckpointIndex
+├── Store Checkpoint Transform
+├── Play Checkpoint Sound
+├── Show Checkpoint UI Notification
+└── Save Game Progress
+</Code>
+
+### 리스폰 시스템
+
+<Code language="blueprint">
+Function: RespawnPlayer
+실행:
+├── Get Last Checkpoint Transform
+├── Fade Out Screen (0.3s)
+├── Teleport Player to Checkpoint
+├── Reset Player Velocity
+├── Increment Death Count
+├── Fade In Screen (0.3s)
+├── Apply Respawn Penalty
+│   └── Subtract Score (if enabled)
+└── Update HUD Death Counter
+</Code>
+
+### 스코어 시스템
+
+<Tabs items={['점수 추가', '점수 계산', '보너스 시스템']}>
+  <Tabs.Tab>
+    **점수 추가 함수**
+    
+    ```blueprint
+    Function: AddScore
+    입력: ScoreAmount (Integer)
+    
+    실행:
+    ├── CurrentScore += ScoreAmount
+    ├── Check for Score Milestones
+    │   ├── 1000 points: Unlock Achievement
+    │   ├── 5000 points: Grant Extra Life
+    │   └── 10000 points: Unlock Bonus Level
+    ├── Update HUD Score Display
+    └── Play Score Sound (pitched by amount)
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **최종 점수 계산**
+    
+    ```blueprint
+    Function: CalculateFinalScore
+    
+    계산:
+    ├── Base Score = CurrentScore
+    ├── Time Bonus = (TimeLimit - CompletionTime) × 10
+    ├── No Death Bonus = (DeathCount == 0) ? 1000 : 0
+    ├── Coin Bonus = CoinsCollected × 50
+    ├── Combo Multiplier = GetComboMultiplier()
+    └── Final = (Base + Bonuses) × Multiplier
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **콤보 시스템**
+    
+    ```blueprint
+    Variables:
+    ├── ComboCount (Integer)
+    ├── ComboTimer (Float)
+    └── MaxComboTime (Float = 5.0)
+    
+    Function: UpdateCombo
+    ├── ComboCount++
+    ├── Reset ComboTimer to MaxComboTime
+    ├── Calculate Multiplier (1 + ComboCount × 0.1)
+    ├── Update HUD Combo Display
+    └── If ComboTimer expires: Reset Combo
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## 🎨 HUD 연결
+
+### HUD 위젯 생성 및 관리
+
+<Code language="blueprint">
+Event BeginPlay (in PlayerController)
+├── Create Widget: WBP_JumpMapHUD
+├── Add to Viewport
+├── Store Widget Reference
+└── Initialize HUD Values
+    ├── Set Player Name
+    ├── Set Score to 0
+    ├── Set Timer to 0:00
+    └── Hide Death Counter
+</Code>
+
+### HUD 업데이트 함수
+
+<Code language="blueprint">
+Function: UpdateHUD
+입력:
+├── UpdateType (Enum: Score/Time/Coins/Deaths/All)
+└── Value (Float)
+
+실행:
+├── Switch on UpdateType
+│   ├── Score: HUDWidget->SetScore(Value)
+│   ├── Time: HUDWidget->SetTime(FormatTime(Value))
+│   ├── Coins: HUDWidget->SetCoins(Value)
+│   ├── Deaths: HUDWidget->SetDeaths(Value)
+│   └── All: Update All Fields
+└── Play Update Animation (if enabled)
+</Code>
+
+## 🔄 Game Mode 연동
+
+### Player Controller를 Game Mode에 연결
+
+<Steps>
+
+### Game Mode 설정
+
+1. `BP_JumpMapGameMode` 열기
+2. Class Defaults에서:
+   - **Player Controller Class**: `BP_JumpMapPlayerController`
+   - **Player State Class**: `BP_JumpMapPlayerState`
+
+### 초기화 확인
+
+Event Graph에서:
+```blueprint
+Event: OnPostLogin
+├── Cast to BP_JumpMapPlayerController
+├── Initialize Player Settings
+├── Setup Input Mappings
+└── Spawn Initial HUD
+```
+
+</Steps>
+
+## 🎮 고급 기능
+
+### 카메라 전환 시스템
+
+<Code language="blueprint">
+Function: SwitchCameraView
+입력: ViewType (Enum: ThirdPerson/FirstPerson/TopDown)
+
+실행:
+├── Get Current Pawn
+├── Switch on ViewType
+│   ├── ThirdPerson:
+│   │   ├── Set Camera Boom Length: 400
+│   │   └── Set Camera Rotation: (-20, 0, 0)
+│   ├── FirstPerson:
+│   │   ├── Set Camera Boom Length: 0
+│   │   └── Attach to Head Socket
+│   └── TopDown:
+│       ├── Set Camera Boom Length: 1000
+│       └── Set Camera Rotation: (-70, 0, 0)
+└── Smooth Transition (0.5s)
+</Code>
+
+### 플레이어 설정 저장
+
+<Code language="blueprint">
+Struct: PlayerSettings
+├── MouseSensitivity (Float)
+├── InvertYAxis (Boolean)
+├── FOV (Float)
+├── CameraDistance (Float)
+└── ControlScheme (Enum)
+
+Function: SavePlayerSettings
+├── Create Settings Struct
+├── Populate with Current Values
+├── Save to Config File
+└── Apply Settings Immediately
+</Code>
+
+## 🐛 디버그 기능
+
+### 디버그 명령어
+
+<Tabs items={['이동 관련', '점수 관련', '상태 관련']}>
+  <Tabs.Tab>
+    ```blueprint
+    Console Commands:
+    - "jumpmap.teleport X Y Z" - 특정 좌표로 이동
+    - "jumpmap.noclip" - 벽 통과 모드
+    - "jumpmap.fly" - 비행 모드
+    - "jumpmap.walk" - 일반 이동 모드
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```blueprint
+    Console Commands:
+    - "jumpmap.addscore 1000" - 점수 추가
+    - "jumpmap.resetstats" - 통계 초기화
+    - "jumpmap.maxcombo" - 최대 콤보 설정
+    - "jumpmap.unlockall" - 모든 업적 해제
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```blueprint
+    Console Commands:
+    - "jumpmap.godmode" - 무적 모드
+    - "jumpmap.showdebug" - 디버그 정보 표시
+    - "jumpmap.slowmo 0.5" - 슬로우 모션
+    - "jumpmap.timescale 2.0" - 시간 가속
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## 📊 성능 최적화
+
+### 입력 최적화
+
+<Callout type="tip" emoji="⚡">
+  불필요한 Tick 이벤트 대신 입력 이벤트를 사용하여 성능을 향상시킵니다.
+</Callout>
+
+```blueprint
+❌ 피해야 할 방법:
+Event Tick → Check if Key Pressed → Execute Action
+
+✅ 권장 방법:
+Enhanced Input Action → Direct Execution
+```
+
+### 메모리 관리
+
+```blueprint
+Function: CleanupPlayer
+├── Clear Widget References
+├── Remove Input Mappings
+├── Clear Timer Handles
+├── Reset Player State
+└── Garbage Collection
+```
+
+## ✅ 구현 체크리스트
+
+- ✅ Player Controller 생성
+- ✅ Player State 생성  
+- ✅ Enhanced Input 설정
+- ✅ 기본 입력 처리
+- ✅ 체크포인트 시스템
+- ✅ 리스폰 시스템
+- ✅ 점수 및 콤보 시스템
+- ✅ HUD 연결 및 업데이트
+- ✅ Game Mode 연동
+- ✅ 디버그 기능
+
+## 🚀 다음 단계
+
+<Callout type="success" emoji="🎯">
+  플레이어 시스템이 완성되었습니다!
+  이제 게임 액터들을 구현해봅시다.
+</Callout>
+
+[게임 액터 구현하기 →](/unreal-engine-5/jumpmap-gamemode/actors)

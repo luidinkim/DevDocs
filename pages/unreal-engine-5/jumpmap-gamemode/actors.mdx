@@ -1,0 +1,500 @@
+import { Callout, Steps, Tabs, Code } from 'nextra/components'
+
+# 게임 액터 구현
+
+<Callout type="info" emoji="⭐">
+  Start Zone, End Zone, 코인 시스템 등 점프맵의 핵심 액터들을 구현합니다.
+  이 액터들이 게임플레이의 기본 메커니즘을 만듭니다.
+</Callout>
+
+## 🏁 Start Zone 구현
+
+### Start Zone 액터 생성
+
+<Steps>
+
+### 블루프린트 생성
+
+1. **Blueprint Class** → **Actor**
+2. 이름: `BP_StartZone`
+3. 폴더: `Content/Blueprints/Actors/`
+
+### 컴포넌트 구성
+
+```
+BP_StartZone
+├── DefaultSceneRoot
+├── StaticMesh (플랫폼)
+│   ├── Scale: (5, 5, 0.5)
+│   └── Material: M_StartZone (녹색)
+├── BoxCollision (트리거)
+│   ├── Box Extent: (250, 250, 100)
+│   └── Location: (0, 0, 100)
+├── TextRender (START 텍스트)
+│   ├── Text: "START"
+│   ├── Size: 200
+│   └── Location: (0, 0, 200)
+└── ParticleSystem (시작 효과)
+```
+
+</Steps>
+
+### 이벤트 구현
+
+<Code language="blueprint">
+Event: On Component Begin Overlap (BoxCollision)
+├── Cast to Character
+├── Get Game Mode → Cast to BP_JumpMapGameMode
+├── Check if Game Not Started
+│   ├── True: Start Game Sequence
+│   │   ├── Call GM->StartGame()
+│   │   ├── Play Start Sound
+│   │   ├── Spawn Start Particles
+│   │   ├── Flash UI (Game Started!)
+│   │   └── Disable Further Triggers
+│   └── False: Do Nothing
+└── Optional: Teleport to Checkpoint
+</Code>
+
+### 시각 효과
+
+<Tabs items={['머티리얼', '파티클', '사운드']}>
+  <Tabs.Tab>
+    **동적 머티리얼**
+    
+    ```blueprint
+    Construction Script:
+    ├── Create Dynamic Material Instance
+    ├── Set Base Color: (0, 1, 0) - Green
+    ├── Set Emissive: (0, 2, 0) - Glowing
+    └── Pulse Effect (Timeline)
+        ├── Alpha: 0 to 1 (Loop)
+        ├── Duration: 2 seconds
+        └── Update Emissive Intensity
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **파티클 효과**
+    
+    ```blueprint
+    Niagara System: NS_StartZone
+    ├── Spawn Rate: 50 particles/sec
+    ├── Lifetime: 2-3 seconds
+    ├── Velocity: (0, 0, 100-200)
+    ├── Color: Green to Yellow gradient
+    ├── Size: 5-10 units
+    └── Spawn in cylinder shape
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **사운드 효과**
+    
+    ```blueprint
+    Sound Cues:
+    ├── Ambient Loop: Soft energy hum
+    ├── Activation: Bright chime
+    ├── Countdown: Beep sequence
+    └── Start: Racing start sound
+    
+    Attenuation:
+    ├── Inner Radius: 500
+    ├── Falloff Distance: 2000
+    └── Volume: 0.7
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## 🏆 End Zone 구현
+
+### End Zone 액터 생성
+
+<Steps>
+
+### 블루프린트 구성
+
+1. **Blueprint Class** → **Actor**
+2. 이름: `BP_EndZone`
+3. 컴포넌트 구조는 Start Zone과 유사
+
+### 완주 로직
+
+<Code language="blueprint">
+Event: On Component Begin Overlap
+├── Cast to Character
+├── Get Game Mode
+├── Check if Game Active
+│   ├── True: Complete Game
+│   │   ├── Stop Timer
+│   │   ├── Calculate Final Score
+│   │   ├── Save Best Time
+│   │   ├── Play Victory Animation
+│   │   ├── Show Results UI
+│   │   ├── Spawn Fireworks
+│   │   └── Unlock Next Level
+│   └── False: Show "Start First!" Message
+└── Disable Further Input
+</Code>
+
+</Steps>
+
+### 승리 시퀀스
+
+<Code language="blueprint">
+Function: PlayVictorySequence
+├── Phase 1: Immediate (0-0.5s)
+│   ├── Play Victory Sound
+│   ├── Flash Screen (White)
+│   └── Freeze Player
+├── Phase 2: Celebration (0.5-3s)
+│   ├── Spawn Confetti Particles
+│   ├── Camera Orbit Player
+│   └── Play Victory Music
+└── Phase 3: Results (3s+)
+    ├── Fade to Results Screen
+    ├── Show Statistics
+    └── Display Leaderboard
+</Code>
+
+## 💰 코인 시스템
+
+### 코인 액터 생성
+
+<Steps>
+
+### 기본 코인 블루프린트
+
+1. **Blueprint Class** → **Actor**
+2. 이름: `BP_Coin`
+3. 폴더: `Content/Blueprints/Actors/Coins/`
+
+### 컴포넌트 설정
+
+```
+BP_Coin
+├── DefaultSceneRoot
+├── StaticMesh (코인 모델)
+│   ├── Scale: (1, 1, 0.2)
+│   └── Material: M_Gold
+├── SphereCollision
+│   ├── Radius: 50
+│   └── Collision: OverlapAllDynamic
+├── RotatingMovement
+│   ├── Rotation Rate: (0, 180, 0)
+│   └── Pivot: Center
+├── AudioComponent (Idle Sound)
+└── PointLight (Glow Effect)
+```
+
+</Steps>
+
+### 수집 메커니즘
+
+<Code language="blueprint">
+Event: On Component Begin Overlap
+├── Cast to Character
+├── Get Player State → Cast to BP_JumpMapPlayerState
+├── Add Coin Value to Score
+├── Increment Coins Collected
+├── Play Collection Effects
+│   ├── Spawn Particle Burst
+│   ├── Play Collect Sound
+│   └── UI Coin Animation
+├── Check for Achievements
+│   ├── First Coin
+│   ├── 10 Coins
+│   ├── All Coins
+│   └── Speed Collector
+├── Destroy Actor (with delay)
+└── Update HUD
+</Code>
+
+### 코인 종류
+
+<Tabs items={['일반 코인', '실버 코인', '골드 코인', '레인보우 코인']}>
+  <Tabs.Tab>
+    **일반 코인 (Bronze)**
+    
+    ```blueprint
+    Properties:
+    ├── Value: 10 points
+    ├── Color: Bronze/Brown
+    ├── Size: 1.0x
+    ├── Respawn: Never
+    └── Special: None
+    
+    Distribution:
+    └── Common (70% of all coins)
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **실버 코인**
+    
+    ```blueprint
+    Properties:
+    ├── Value: 25 points
+    ├── Color: Silver
+    ├── Size: 1.2x
+    ├── Respawn: Never
+    └── Special: Speed boost (2s)
+    
+    Distribution:
+    └── Uncommon (20% of all coins)
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **골드 코인**
+    
+    ```blueprint
+    Properties:
+    ├── Value: 50 points
+    ├── Color: Gold
+    ├── Size: 1.5x
+    ├── Respawn: Never
+    └── Special: Shield (5s)
+    
+    Distribution:
+    └── Rare (8% of all coins)
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **레인보우 코인**
+    
+    ```blueprint
+    Properties:
+    ├── Value: 100 points
+    ├── Color: Rainbow (animated)
+    ├── Size: 2.0x
+    ├── Respawn: 30 seconds
+    └── Special: 2x multiplier (10s)
+    
+    Distribution:
+    └── Very Rare (2% of all coins)
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## 🔄 체크포인트 시스템
+
+### 체크포인트 액터
+
+<Code language="blueprint">
+BP_Checkpoint
+├── Components
+│   ├── Flag Mesh
+│   ├── Box Trigger
+│   ├── Spot Light
+│   └── Save Icon
+├── Variables
+│   ├── CheckpointID (Integer)
+│   ├── IsActivated (Boolean)
+│   └── RespawnTransform (Transform)
+└── Functions
+    ├── ActivateCheckpoint()
+    ├── SaveProgress()
+    └── SetRespawnPoint()
+</Code>
+
+### 체크포인트 로직
+
+<Code language="blueprint">
+Event: On Overlap
+├── Check if Not Already Activated
+├── Get Player Controller
+├── Set as Current Checkpoint
+├── Save Game Progress
+├── Visual Feedback
+│   ├── Change Flag Color
+│   ├── Play Sound
+│   ├── Spawn Particles
+│   └── UI Notification
+└── Mark as Activated
+</Code>
+
+## 🌟 파워업 시스템
+
+### 파워업 베이스 클래스
+
+<Steps>
+
+### 부모 클래스 생성
+
+1. **Blueprint Class** → **Actor**
+2. 이름: `BP_PowerupBase`
+3. 기본 파워업 로직 구현
+
+### 파워업 종류
+
+<Code language="blueprint">
+Enum: PowerupType
+├── SpeedBoost - 이동속도 증가
+├── SuperJump - 점프력 증가
+├── Shield - 무적 상태
+├── Magnet - 코인 자석
+├── SlowTime - 시간 감속
+└── Ghost - 벽 통과
+</Code>
+
+</Steps>
+
+### 파워업 효과 구현
+
+<Tabs items={['Speed Boost', 'Super Jump', 'Shield', 'Magnet']}>
+  <Tabs.Tab>
+    ```blueprint
+    Function: ApplySpeedBoost
+    ├── Get Character Movement
+    ├── Store Original Speed
+    ├── Multiply Speed by 1.5
+    ├── Set Timer (5 seconds)
+    ├── Show Speed Lines VFX
+    └── On Timer End: Restore Speed
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```blueprint
+    Function: ApplySuperJump
+    ├── Get Character Movement
+    ├── Store Original Jump Velocity
+    ├── Set Jump Velocity to 1500
+    ├── Enable Double Jump
+    ├── Set Timer (10 seconds)
+    └── On Timer End: Restore Jump
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```blueprint
+    Function: ApplyShield
+    ├── Set Invulnerable Flag
+    ├── Create Shield Mesh
+    ├── Attach to Character
+    ├── Play Shield Sound Loop
+    ├── Set Timer (8 seconds)
+    └── On Timer End: Remove Shield
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```blueprint
+    Function: ApplyMagnet
+    ├── Create Sphere Trigger (500 units)
+    ├── Attach to Character
+    ├── On Overlap with Coin:
+    │   ├── Calculate Direction
+    │   ├── Move Coin to Player
+    │   └── Auto-Collect
+    ├── Set Timer (7 seconds)
+    └── On Timer End: Destroy Trigger
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## 🎯 인터랙티브 요소
+
+### 움직이는 플랫폼
+
+<Code language="blueprint">
+BP_MovingPlatform
+├── Movement Pattern
+│   ├── Linear - A to B
+│   ├── Circular - Orbit
+│   ├── Sine Wave - Smooth
+│   └── Custom Spline
+├── Settings
+│   ├── Speed: 100-500
+│   ├── Wait Time: 0-5s
+│   ├── Loop: True/False
+│   └── Reverse: True/False
+└── Safety Features
+    ├── Player Detection
+    ├── Smooth Start/Stop
+    └── Edge Warning
+</Code>
+
+### 트램폴린
+
+<Code language="blueprint">
+BP_Trampoline
+├── On Character Land
+├── Calculate Bounce Force
+│   ├── Base Force: 2000
+│   ├── + Fall Velocity
+│   └── × Bounce Multiplier
+├── Launch Character
+├── Play Bounce Animation
+├── Squash and Stretch
+└── Sound Effect (pitched)
+</Code>
+
+## 🔧 액터 관리 시스템
+
+### 액터 스포너
+
+<Code language="blueprint">
+Function: SpawnGameActors
+├── Load Level Data
+├── For Each Spawn Point:
+│   ├── Determine Actor Type
+│   ├── Spawn Actor
+│   ├── Set Properties
+│   └── Register with GameMode
+├── Initialize Coin Counter
+├── Setup Checkpoints Order
+└── Activate Start Zone
+</Code>
+
+### 액터 풀링
+
+<Callout type="tip" emoji="⚡">
+  자주 생성/제거되는 액터는 풀링을 사용하여 성능을 최적화합니다.
+</Callout>
+
+```blueprint
+Actor Pool System:
+├── Pre-spawn Actors (Begin Play)
+├── Hide Instead of Destroy
+├── Reuse Hidden Actors
+├── Reset Properties on Reuse
+└── Expand Pool if Needed
+```
+
+## 📊 디버그 시각화
+
+### 액터 디버그 표시
+
+```blueprint
+Debug Display Options:
+├── Show Trigger Volumes
+├── Show Spawn Points
+├── Show Actor IDs
+├── Show Collection Radius
+├── Show Movement Paths
+└── Show Respawn Timers
+```
+
+## ✅ 구현 체크리스트
+
+- ✅ Start Zone 구현
+- ✅ End Zone 구현
+- ✅ 기본 코인 시스템
+- ✅ 다양한 코인 종류
+- ✅ 체크포인트 시스템
+- ✅ 파워업 시스템
+- ✅ 움직이는 플랫폼
+- ✅ 인터랙티브 요소
+- ✅ 액터 관리 시스템
+
+## 🚀 다음 단계
+
+<Callout type="success" emoji="🎨">
+  게임 액터들이 준비되었습니다!
+  이제 UI/HUD 시스템을 구현해봅시다.
+</Callout>
+
+[UI 시스템 구현하기 →](/unreal-engine-5/jumpmap-gamemode/ui-system)

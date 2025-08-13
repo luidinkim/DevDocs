@@ -1,0 +1,440 @@
+import { Callout, Steps, Tabs, Code } from 'nextra/components'
+
+# 세이브 시스템 구현
+
+<Callout type="info" emoji="💾">
+  게임 진행 상황을 저장하고 불러오는 시스템을 구현합니다.
+  로컬 저장, 클라우드 저장, 자동 저장 등 다양한 저장 방식을 다룹니다.
+</Callout>
+
+## 📁 Save Game 클래스 생성
+
+### 기본 Save Game 구조
+
+<Steps>
+
+### Save Game 블루프린트 생성
+
+1. **Blueprint Class** → **Save Game** 선택
+2. 이름: `BP_JumpMapSaveGame`
+3. 폴더: `Content/Blueprints/SaveSystem/`
+
+### 저장할 데이터 변수 추가
+
+```blueprint
+Player Data:
+├── PlayerName (String)
+├── TotalPlayTime (Float)
+├── TotalCoinsCollected (Integer)
+└── UnlockedAchievements (Array of String)
+
+Level Progress:
+├── CompletedLevels (Array of String)
+├── LevelBestTimes (Map - String to Float)
+├── LevelHighScores (Map - String to Integer)
+└── CollectedCoins (Map - String to Array of Vector)
+
+Settings:
+├── AudioSettings (Struct)
+├── VideoSettings (Struct)
+├── ControlSettings (Struct)
+└── GameplaySettings (Struct)
+```
+
+</Steps>
+
+## 💾 저장 시스템 구현
+
+### Save Game Manager
+
+<Code language="blueprint">
+Actor: BP_SaveGameManager (Game Instance Subsystem)
+
+Functions:
+├── CreateSaveGame()
+├── SaveGame()
+├── LoadGame()
+├── DeleteSave()
+├── GetSaveSlots()
+└── AutoSave()
+</Code>
+
+### 저장 함수 구현
+
+<Tabs items={['기본 저장', '자동 저장', '체크포인트 저장', '설정 저장']}>
+  <Tabs.Tab>
+    **수동 저장 함수**
+    
+    ```blueprint
+    Function: SaveGameData
+    입력: SlotName (String), UserIndex (Integer)
+    
+    실행:
+    ├── Create Save Game Object
+    ├── Gather Current Data
+    │   ├── Get Player State
+    │   ├── Get Game State
+    │   ├── Get Level Progress
+    │   └── Get Settings
+    ├── Populate Save Object
+    ├── Save to Slot
+    │   ├── Slot Name: Custom or Default
+    │   ├── User Index: 0
+    │   └── Async Save
+    ├── Show Save Notification
+    └── Return Success
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **자동 저장 시스템**
+    
+    ```blueprint
+    Function: AutoSaveGame
+    
+    Settings:
+    ├── Auto Save Interval: 60s
+    ├── Max Auto Saves: 3
+    └── Rotate Old Saves
+    
+    실행:
+    ├── Check Auto Save Enabled
+    ├── Create Timestamped Name
+    ├── Save Current State
+    ├── Manage Save Rotation
+    │   ├── Keep Last 3 Saves
+    │   └── Delete Oldest
+    ├── Update UI Indicator
+    └── Schedule Next Save
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **체크포인트 저장**
+    
+    ```blueprint
+    Function: SaveCheckpoint
+    입력: CheckpointID (Integer)
+    
+    실행:
+    ├── Create Checkpoint Save
+    ├── Store Position/Rotation
+    ├── Store Current Stats
+    │   ├── Time Elapsed
+    │   ├── Coins Collected
+    │   ├── Power-ups Active
+    │   └── Health/Lives
+    ├── Quick Save (Async)
+    ├── Update Save Icon
+    └── Keep in Memory
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    **설정 저장**
+    
+    ```blueprint
+    Function: SaveSettings
+    
+    Categories:
+    ├── Audio Settings
+    │   ├── Master Volume
+    │   ├── Music Volume
+    │   └── SFX Volume
+    ├── Video Settings
+    │   ├── Resolution
+    │   ├── Quality
+    │   └── VSync
+    └── Controls
+        ├── Key Bindings
+        └── Sensitivity
+    
+    저장 위치:
+    └── GameUserSettings.ini
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## 📂 불러오기 시스템
+
+### Load Game 구현
+
+<Code language="blueprint">
+Function: LoadGameData
+입력: SlotName (String), UserIndex (Integer)
+
+실행:
+├── Check if Save Exists
+│   ├── True: Continue
+│   └── False: Return Error
+├── Load Save Game Object
+├── Validate Save Version
+│   ├── Compatible: Continue
+│   └── Incompatible: Migrate
+├── Apply Loaded Data
+│   ├── Restore Player Stats
+│   ├── Restore Level Progress
+│   ├── Restore Settings
+│   └── Restore Position
+├── Verify Data Integrity
+└── Trigger Load Complete Event
+</Code>
+
+### 세이브 슬롯 관리
+
+<Code language="blueprint">
+Function: GetSaveSlots
+반환: Array of SaveSlotInfo
+
+SaveSlotInfo Struct:
+├── SlotName (String)
+├── SaveDate (DateTime)
+├── PlayTime (Float)
+├── Progress (Float %)
+├── Thumbnail (Texture2D)
+└── IsAutoSave (Boolean)
+
+UI Display:
+├── Sort by Date
+├── Show Preview
+├── Allow Rename
+└── Delete Option
+</Code>
+
+## 🔄 세이브 데이터 마이그레이션
+
+### 버전 관리
+
+<Callout type="warning" emoji="⚠️">
+  게임 업데이트 시 기존 세이브 파일과의 호환성을 유지해야 합니다.
+</Callout>
+
+<Code language="blueprint">
+Save Version System:
+├── Current Version: 1.2.0
+├── Minimum Compatible: 1.0.0
+└── Migration Functions
+
+Function: MigrateSaveData
+├── Check Save Version
+├── Switch on Version
+│   ├── 1.0.0 → 1.1.0
+│   │   └── Add New Fields
+│   ├── 1.1.0 → 1.2.0
+│   │   └── Convert Structure
+│   └── Future Versions
+├── Update Version Number
+└── Save Migrated Data
+</Code>
+
+## ☁️ 클라우드 세이브
+
+### Steam Cloud 연동
+
+<Steps>
+
+### Steam 설정
+
+1. Steam SDK 통합
+2. Cloud Save 활성화
+3. 할당 용량 설정 (1MB)
+
+### 구현 코드
+
+<Code language="blueprint">
+Function: SyncWithSteamCloud
+├── Check Steam Connection
+├── Compare Local vs Cloud
+│   ├── Cloud Newer: Download
+│   ├── Local Newer: Upload
+│   └── Conflict: Show Dialog
+├── Sync Save Files
+├── Update Sync Status
+└── Handle Errors
+</Code>
+
+</Steps>
+
+### 충돌 해결
+
+<Code language="blueprint">
+Conflict Resolution Dialog:
+├── Show Both Saves
+│   ├── Local: Date, Progress
+│   └── Cloud: Date, Progress
+├── Options:
+│   ├── Keep Local
+│   ├── Keep Cloud
+│   ├── Keep Both (Rename)
+│   └── Cancel
+└── Apply Choice
+</Code>
+
+## 🔐 세이브 파일 보안
+
+### 데이터 검증
+
+<Code language="blueprint">
+Function: ValidateSaveData
+├── Calculate Checksum
+├── Verify Structure
+├── Check Bounds
+│   ├── Score Range
+│   ├── Time Limits
+│   └── Item Counts
+├── Detect Tampering
+└── Return Validity
+</Code>
+
+### 암호화 옵션
+
+<Tabs items={['기본 암호화', '체크섬', '난독화']}>
+  <Tabs.Tab>
+    ```blueprint
+    Basic Encryption:
+    ├── Generate Key
+    ├── Encrypt Data
+    ├── Save Encrypted
+    └── Decrypt on Load
+    
+    Algorithm: AES-256
+    Key Storage: Local
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```blueprint
+    Checksum Validation:
+    ├── Calculate MD5/SHA
+    ├── Store with Save
+    ├── Verify on Load
+    └── Reject if Mismatch
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```blueprint
+    Data Obfuscation:
+    ├── Scramble Values
+    ├── Add Dummy Data
+    ├── Use Offsets
+    └── Custom Encoding
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## 📊 세이브 통계
+
+### 플레이어 통계 추적
+
+<Code language="blueprint">
+Statistics Tracking:
+├── Gameplay Stats
+│   ├── Total Deaths
+│   ├── Total Jumps
+│   ├── Distance Traveled
+│   └── Time Played
+├── Collection Stats
+│   ├── Total Coins
+│   ├── Secrets Found
+│   ├── Power-ups Used
+│   └── Achievements
+└── Performance Stats
+    ├── Best Times
+    ├── High Scores
+    └── Perfect Runs
+</Code>
+
+## 🎮 프로필 시스템
+
+### 다중 프로필 관리
+
+<Code language="blueprint">
+Profile System:
+├── Profile Selection
+│   ├── Create New
+│   ├── Load Existing
+│   ├── Delete Profile
+│   └── Import/Export
+├── Profile Data
+│   ├── Avatar
+│   ├── Display Name
+│   ├── Statistics
+│   └── Preferences
+└── Quick Switch
+    └── Recent Profiles
+</Code>
+
+## 🔧 디버그 도구
+
+### 세이브 파일 검사기
+
+<Code language="blueprint">
+Debug Tools:
+├── View Save Contents
+├── Edit Values
+├── Force Save/Load
+├── Clear All Saves
+├── Export to JSON
+└── Import from JSON
+</Code>
+
+### 콘솔 명령어
+
+```blueprint
+Console Commands:
+├── "save.create [name]" - 새 세이브 생성
+├── "save.load [name]" - 세이브 불러오기
+├── "save.delete [name]" - 세이브 삭제
+├── "save.list" - 모든 세이브 표시
+├── "save.corrupt" - 손상 테스트
+└── "save.migrate" - 마이그레이션 테스트
+```
+
+## 🚨 에러 처리
+
+### 일반적인 오류와 해결
+
+<Callout type="error" emoji="❌">
+  **세이브 실패 시나리오:**
+  - 디스크 공간 부족
+  - 파일 권한 오류
+  - 손상된 세이브 파일
+  - 버전 비호환성
+</Callout>
+
+<Code language="blueprint">
+Error Handling:
+├── Try Save
+├── Catch Errors
+│   ├── Disk Full: Clear Cache
+│   ├── Permission: Request Access
+│   ├── Corrupted: Use Backup
+│   └── Version: Attempt Migration
+├── Show User Message
+├── Log Error Details
+└── Fallback Options
+</Code>
+
+## ✅ 구현 체크리스트
+
+- ✅ Save Game 클래스 생성
+- ✅ 저장/불러오기 함수
+- ✅ 자동 저장 시스템
+- ✅ 체크포인트 저장
+- ✅ 설정 저장
+- ✅ 세이브 슬롯 관리
+- ✅ 버전 마이그레이션
+- ✅ 클라우드 세이브
+- ✅ 보안 및 검증
+- ✅ 프로필 시스템
+- ✅ 에러 처리
+
+## 🚀 다음 단계
+
+<Callout type="success" emoji="✨">
+  세이브 시스템이 완성되었습니다!
+  이제 추가 기능들을 구현해봅시다.
+</Callout>
+
+[추가 기능 구현하기 →](/unreal-engine-5/jumpmap-gamemode/advanced)
