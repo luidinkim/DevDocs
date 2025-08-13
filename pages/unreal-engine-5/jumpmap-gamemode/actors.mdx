@@ -1,4 +1,10 @@
 import { Callout, Steps, Tabs, Code } from 'nextra/components'
+import dynamic from 'next/dynamic'
+
+export const StartZoneBlueprint = dynamic(
+  () => import('../../../components/UE5JumpMapComponents').then(mod => ({ default: mod.StartZoneBlueprint })),
+  { ssr: false }
+)
 
 # 게임 액터 구현
 
@@ -41,20 +47,15 @@ BP_StartZone
 
 ### 이벤트 구현
 
-<Code language="blueprint">
-Event: On Component Begin Overlap (BoxCollision)
-├── Cast to Character
-├── Get Game Mode → Cast to BP_JumpMapGameMode
-├── Check if Game Not Started
-│   ├── True: Start Game Sequence
-│   │   ├── Call GM->StartGame()
-│   │   ├── Play Start Sound
-│   │   ├── Spawn Start Particles
-│   │   ├── Flash UI (Game Started!)
-│   │   └── Disable Further Triggers
-│   └── False: Do Nothing
-└── Optional: Teleport to Checkpoint
-</Code>
+<StartZoneBlueprint />
+
+<Callout type="info" emoji="🏁">
+  **Start Zone 블루프린트 동작 방식**
+  - 플레이어가 Start Zone에 들어가면 Character로 Cast
+  - Game Mode를 가져와서 BP_JumpMapGameMode로 Cast
+  - 게임이 시작되지 않았다면 Start Game Sequence 실행
+  - 한 번 시작되면 더 이상 트리거되지 않음
+</Callout>
 
 ### 시각 효과
 

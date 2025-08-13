@@ -1,4 +1,20 @@
 import { Callout, Steps, Tabs, Code } from 'nextra/components'
+import dynamic from 'next/dynamic'
+
+export const GameModeStartGame = dynamic(
+  () => import('../../../components/UE5JumpMapComponents').then(mod => ({ default: mod.GameModeStartGame })),
+  { ssr: false }
+)
+
+export const CoinCollection = dynamic(
+  () => import('../../../components/UE5JumpMapComponents').then(mod => ({ default: mod.CoinCollection })),
+  { ssr: false }
+)
+
+export const SaveGameData = dynamic(
+  () => import('../../../components/UE5JumpMapComponents').then(mod => ({ default: mod.SaveGameData })),
+  { ssr: false }
+)
 
 # 게임모드 & 게임스테이트 구현
 
@@ -118,18 +134,16 @@ Event BeginPlay
 
 ### 게임 시작 함수
 
-<Code language="blueprint">
-Custom Event: StartGame
-├── Set IsGameActive: True
-├── Set CurrentGameTime: 0.0
-├── Reset All Coins
-├── Spawn Player at Start Zone
-├── Start Timer (Set Timer by Event)
-│   ├── Event: UpdateGameTime
-│   ├── Time: 0.1
-│   └── Looping: True
-└── Update HUD (Game Started)
-</Code>
+<GameModeStartGame />
+
+<Callout type="info" emoji="🎮">
+  **인터랙티브 블루프린트 기능**
+  - 🖱️ **노드 드래그**: 모든 노드를 자유롭게 이동 가능
+  - 🔗 **연결 생성**: 핀을 드래그하여 새로운 연결 만들기
+  - 📐 **Smart Layout**: 우측 상단 버튼으로 자동 정렬
+  - 🔍 **줌 인/아웃**: 마우스 휠로 확대/축소
+  - 🎯 **노드 포커스**: 노드 클릭으로 선택 및 하이라이트
+</Callout>
 
 ### 게임 종료 함수
 
@@ -186,20 +200,9 @@ Custom Event: EndGame
 
 ### 코인 수집 처리
 
-<Code language="blueprint">
-Function: OnCoinCollected
-입력:
-├── PlayerState (Player State Reference)
-└── CoinValue (Integer)
+<CoinCollection />
 
-실행:
-├── CoinsCollected++
-├── Get Player Score from Map
-├── Add CoinValue to Score
-├── Update Map with New Score
-├── Update HUD
-└── Check Achievement Progress
-</Code>
+이 블루프린트는 플레이어가 코인을 수집했을 때 실행되며, 점수를 업데이트하고 업적 진행 상황을 확인합니다.
 
 ### 타이머 업데이트
 
@@ -270,18 +273,9 @@ Blueprint Class: SaveGame
 
 ### 저장 함수
 
-<Code language="blueprint">
-Function: SaveGameData
-실행:
-├── Create Save Game Object
-├── Set Best Time
-├── Set Total Coins
-├── Set Unlocked Levels
-├── Save Game to Slot
-│   ├── Slot Name: "JumpMapSave"
-│   └── User Index: 0
-└── Print: "Game Saved Successfully"
-</Code>
+<SaveGameData />
+
+세이브 시스템은 플레이어의 진행 상황을 로컬에 저장합니다. 모든 데이터는 하나의 Save Object에 저장되어 효율적으로 관리됩니다.
 
 ## 🎨 디버그 및 테스트
 

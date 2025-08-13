@@ -1,4 +1,10 @@
 import { Callout, Steps, Tabs, Code } from 'nextra/components'
+import dynamic from 'next/dynamic'
+
+export const PlayerControllerInput = dynamic(
+  () => import('../../../components/UE5JumpMapComponents').then(mod => ({ default: mod.PlayerControllerInput })),
+  { ssr: false }
+)
 
 # 플레이어 컨트롤러 & 플레이어 스테이트
 
@@ -70,19 +76,17 @@ Restart - R/Select Button
 
 ### 입력 처리 구현
 
+<PlayerControllerInput />
+
+<Callout type="info" emoji="🎮">
+  **Enhanced Input System**
+  - UE5의 새로운 입력 시스템을 사용하여 더 유연한 입력 처리가 가능합니다.
+  - 위 블루프린트는 점프 액션 처리의 예시를 보여줍니다.
+</Callout>
+
+#### 일시정지 시스템
+
 <Code language="blueprint">
-Event BeginPlay
-├── Get Enhanced Input Subsystem
-├── Add Mapping Context (IMC_JumpMap)
-├── Setup HUD Widget
-└── Initialize Player Settings
-
-Event: IA_Jump
-├── Branch (Can Player Jump?)
-│   ├── True: Character->Jump()
-│   └── False: Play Denied Sound
-└── Update Jump Count
-
 Event: IA_Pause
 ├── Flip Flop
 │   ├── A: Pause Game
